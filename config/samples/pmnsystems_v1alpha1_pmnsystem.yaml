@@ -1,0 +1,12 @@
+apiVersion: pmnsystems.pmnsystem.com/v1alpha1
+kind: Pmnsystem
+metadata:
+  labels:
+    app.kubernetes.io/name: pmnsystem
+    app.kubernetes.io/instance: pmnsystem-sample
+    app.kubernetes.io/part-of: pmn-operator-two
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: pmn-operator-two
+  name: pmnsystem-sample
+spec:
+  # TODO(user): Add fields here

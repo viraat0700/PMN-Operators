@@ -1,0 +1,31 @@
+# permissions for end users to edit pmnsystems.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: pmnsystem-editor-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: pmn-operator-two
+    app.kubernetes.io/part-of: pmn-operator-two
+    app.kubernetes.io/managed-by: kustomize
+  name: pmnsystem-editor-role
+rules:
+- apiGroups:
+  - pmnsystems.pmnsystem.com
+  resources:
+  - pmnsystems
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - pmnsystems.pmnsystem.com
+  resources:
+  - pmnsystems/status
+  verbs:
+  - get
