@@ -29,7 +29,7 @@ type PmnsystemSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Foo is an example field of Pmnsystem. Edit pmnsystem_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	Type string `json:"type,omitempty"`
 }
 
 // PmnsystemStatus defines the observed state of Pmnsystem

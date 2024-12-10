@@ -1,0 +1,33 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: manager-role
+rules:
+- apiGroups:
+  - pmnsystems.pmnsystem.com
+  resources:
+  - pmnsystems
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - pmnsystems.pmnsystem.com
+  resources:
+  - pmnsystems/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - pmnsystems.pmnsystem.com
+  resources:
+  - pmnsystems/status
+  verbs:
+  - get
+  - patch
+  - update

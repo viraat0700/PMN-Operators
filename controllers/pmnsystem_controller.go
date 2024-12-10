@@ -19,17 +19,21 @@ package controllers
 import (
 	"context"
 
+	appsv1 "k8s.io/api/apps/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	pmnsystemsv1alpha1 "github.com/viraat0700/PMN-Operator-Two/api/v1alpha1"
+	"github.com/go-logr/logr"
+
+	v1 "github.com/viraat0700/PMN-Operator-Two/api/v1alpha1"
 )
 
 // PmnsystemReconciler reconciles a Pmnsystem object
 type PmnsystemReconciler struct {
 	client.Client
+	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
 
@@ -39,17 +43,30 @@ type PmnsystemReconciler struct {
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
-// TODO(user): Modify the Reconcile function to compare the state specified by
-// the Pmnsystem object against the actual cluster state, and then
-// perform operations to make the cluster state reflect the state specified by
-// the user.
-//
-// For more details, check Reconcile and its Result here:
-// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.14.1/pkg/reconcile
 func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	_ = r.Log.WithValues("Pmnsystem", req.NamespacedName)
 
-	// TODO(user): your logic here
+	r.Log.Info("Reconciling Pmnsystem")
+
+	pmnsystem := &v1.Pmnsystem{}
+
+	err := r.Client.Get(context.TODO(), req.NamespacedName, pmnsystem)
+
+	if err != nil {
+		if errors.IsNotFound(err) {
+			// Request object not found, could have been deleted after reconcile request.
+			return ctrl.Result{}, nil
+		}
+		// Error reading the object - requeue the request.
+		return ctrl.Result{}, err
+	}
+
+	var result *ctrl.Result
+	// ====ensure Deployments====
+	result, err = r.ensureDeployment(req, pmnsystem, r.createDeployment(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
 
 	return ctrl.Result{}, nil
 }
@@ -57,6 +74,7 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 // SetupWithManager sets up the controller with the Manager.
 func (r *PmnsystemReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&pmnsystemsv1alpha1.Pmnsystem{}).
+		For(&v1.Pmnsystem{}).
+		Owns(&appsv1.Deployment{}).
 		Complete(r)
 }
