@@ -22,148 +22,180 @@ import (
 	corev1 "k8s.io/api/core/v1"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
-// createDeployment creates a new Deployment for the Pmnsystem instance with hardcoded values
-func (r *PmnsystemReconciler) createDeployment(_ *v1.Pmnsystem) *appsv1.Deployment {
-	replicas := int32(3)
-	imageName := "linuxfoundation.jfrog.io/magma-docker/magmalte"
-	imageTag := "1.7.0"
-	imagePullPolicy := "IfNotPresent"
-
-	certsEnabled := false
-	var volumes []corev1.Volume
-
-	if certsEnabled {
-		components := []string{"admin-operator", "bootstrapper", "controller", "certifier", "fluentd", "root", "nms"}
-		for _, component := range components {
-			volumes = append(volumes, corev1.Volume{
-				Name: component,
-				VolumeSource: corev1.VolumeSource{
-					Secret: &corev1.SecretVolumeSource{
-						SecretName: "orc8r-" + component + "-tls",
-					},
-				},
-			})
-		}
-	} else {
-		// Static volumes when certs are not enabled
-		volumes = append(volumes, corev1.Volume{
-			Name: "certs",
-			VolumeSource: corev1.VolumeSource{
-				Secret: &corev1.SecretVolumeSource{
-					SecretName: "orc8r-certs",
-				},
-			},
-		}, corev1.Volume{
-			Name: "envdir",
-			VolumeSource: corev1.VolumeSource{
-				Secret: &corev1.SecretVolumeSource{
-					SecretName: "orc8r-envdir",
-				},
-			},
-		})
-
-		// Additional volumes from configs
-		configs := map[string]string{
-			"module1": "secret1",
-			"module2": "secret2",
-		} // Replace with actual data
-		if len(configs) > 0 {
-			for module, secretName := range configs {
-				volumes = append(volumes, corev1.Volume{
-					Name: secretName + "-" + module,
-					VolumeSource: corev1.VolumeSource{
-						Secret: &corev1.SecretVolumeSource{
-							SecretName: secretName,
-						},
-					},
-				})
-			}
-		} else {
-			volumes = append(volumes, corev1.Volume{
-				Name: "empty-configs",
-				VolumeSource: corev1.VolumeSource{
-					EmptyDir: &corev1.EmptyDirVolumeSource{},
-				},
-			})
-		}
+func (r *PmnsystemReconciler) deploymentForOrc8rAccessD(_ *v1.Pmnsystem) *appsv1.Deployment {
+	int32Ptr := func(i int32) *int32 { return &i }
+	int64Ptr := func(i int64) *int64 { return &i }
+	intstrPtr := func(i string) *intstr.IntOrString {
+		val := intstr.FromString(i)
+		return &val
 	}
-
 	return &appsv1.Deployment{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "apps/v1",
-			Kind:       "Deployment",
-		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "orc8r",
+			Name:      "orc8r-accessd",
+			Namespace: "pmn",
 			Labels: map[string]string{
-				"app.kubernetes.io/component":  "orc8r",
-				"app.kubernetes.io/name":       "orc8r",
-				"app.kubernetes.io/managed-by": "orc8r-Operator",
+				"app.kubernetes.io/name":       "orc8r-accessd",
+				"app.kubernetes.io/instance":   "orc8r",
+				"app.kubernetes.io/managed-by": "Orc8r-Operator",
 			},
 			Annotations: map[string]string{
-				"release-name-annotation": "orc8r",
+				"app.kubernetes.io/name":       "orc8r-accessd",
+				"app.kubernetes.io/instance":   "orc8r",
+				"app.kubernetes.io/managed-by": "Orc8r-Operator",
 			},
 		},
 		Spec: appsv1.DeploymentSpec{
-			Replicas: &replicas,
+			Replicas: int32Ptr(2),
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
-					"app.kubernetes.io/component":  "orc8r",
-					"app.kubernetes.io/name":       "orc8r",
-					"app.kubernetes.io/managed-by": "orc8r-Operator",
+					"app.kubernetes.io/name":       "orc8r-accessd",
+					"app.kubernetes.io/instance":   "orc8r",
+					"app.kubernetes.io/managed-by": "Orc8r-Operator",
+				},
+			},
+			Strategy: appsv1.DeploymentStrategy{
+				Type: appsv1.RecreateDeploymentStrategyType,
+				RollingUpdate: &appsv1.RollingUpdateDeployment{
+					MaxSurge:       intstrPtr("25%"),
+					MaxUnavailable: intstrPtr("25%"),
 				},
 			},
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Labels: map[string]string{
-						"app.kubernetes.io/component":  "orc8r",
-						"app.kubernetes.io/name":       "orc8r",
-						"app.kubernetes.io/managed-by": "orc8r-Operator",
+						"app.kubernetes.io/name":       "orc8r-accessd",
+						"app.kubernetes.io/instance":   "orc8r",
+						"app.kubernetes.io/managed-by": "Orc8r-Operator",
 					},
 					Annotations: map[string]string{
-						"release-name-annotation": "orc8r",
+						"app.kubernetes.io/name":       "orc8r-accessd",
+						"app.kubernetes.io/instance":   "orc8r",
+						"app.kubernetes.io/managed-by": "Orc8r-Operator",
 					},
 				},
 				Spec: corev1.PodSpec{
-					NodeSelector: map[string]string{
-						"key": "value",
-					},
-					Tolerations: []corev1.Toleration{
+					Volumes: []corev1.Volume{
 						{
-							Key:      "key",
-							Operator: corev1.TolerationOpEqual,
-							Value:    "value",
-							Effect:   corev1.TaintEffectNoSchedule,
+							Name: "certs",
+							VolumeSource: corev1.VolumeSource{
+								Secret: &corev1.SecretVolumeSource{
+									SecretName:  "orc8r-controller",
+									DefaultMode: int32Ptr(420),
+								},
+							},
 						},
-					},
-					Affinity: &corev1.Affinity{
-						NodeAffinity: &corev1.NodeAffinity{
-							PreferredDuringSchedulingIgnoredDuringExecution: []corev1.PreferredSchedulingTerm{
-								{
-									Weight: 1,
-									Preference: corev1.NodeSelectorTerm{
-										MatchExpressions: []corev1.NodeSelectorRequirement{
-											{
-												Key:      "key",
-												Operator: corev1.NodeSelectorOpIn,
-												Values:   []string{"value"},
-											},
-										},
-									},
+						{
+							Name: "envdir",
+							VolumeSource: corev1.VolumeSource{
+								Secret: &corev1.SecretVolumeSource{
+									SecretName:  "pmn-envdir",
+									DefaultMode: int32Ptr(420),
+								},
+							},
+						},
+						{
+							Name: "pmn-configs-orc8r",
+							VolumeSource: corev1.VolumeSource{
+								Secret: &corev1.SecretVolumeSource{
+									SecretName:  "pmn-configs",
+									DefaultMode: int32Ptr(420),
 								},
 							},
 						},
 					},
+					DNSPolicy:                     corev1.DNSClusterFirst,
+					TerminationGracePeriodSeconds: int64Ptr(30),
+					RestartPolicy:                 corev1.RestartPolicyAlways,
 					ImagePullSecrets: []corev1.LocalObjectReference{
 						{
 							Name: "artifactory",
 						},
 					},
-					Volumes: volumes,
 					Containers: []corev1.Container{
-						createOrc8rContainer(imageName, imageTag, imagePullPolicy),
+						{
+							VolumeMounts: []corev1.VolumeMount{
+								{Name: "certs", MountPath: "/var/opt/magma/certs", ReadOnly: true},
+								{Name: "envdir", MountPath: "/var/opt/magma/envdir", ReadOnly: true},
+								{Name: "pmn-configs-orc8r", MountPath: "/var/opt/magma/configs/orc8r", ReadOnly: true},
+							},
+							Name:            "accessd",
+							Image:           "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/controller:1.8.0-6c4579b5",
+							ImagePullPolicy: corev1.PullIfNotPresent,
+							Command: []string{
+								"/usr/bin/envdir",
+							},
+							Args: []string{
+								"/var/opt/magma/envdir",
+								"/var/opt/magma/bin/accessd",
+								"-logtostderr=true",
+								"-v=0",
+							},
+							Ports: []corev1.ContainerPort{
+								{Name: "grpc", ContainerPort: 9091, Protocol: corev1.ProtocolTCP},
+								{Name: "grpc-internal", ContainerPort: 9191, Protocol: corev1.ProtocolTCP},
+							},
+							Env: []corev1.EnvVar{
+								{
+									Name: "DATABASE_SOURCE",
+									ValueFrom: &corev1.EnvVarSource{
+										SecretKeyRef: &corev1.SecretKeySelector{
+											LocalObjectReference: corev1.LocalObjectReference{
+												Name: "orc8r-controller",
+											},
+											Key: "postgres.connstr",
+										},
+									},
+								},
+								{Name: "SQL_DRIVER", Value: "postgres"},
+								{Name: "SQL_DIALECT", Value: "psql"},
+								{Name: "SERVICE_HOSTNAME", ValueFrom: &corev1.EnvVarSource{
+									FieldRef: &corev1.ObjectFieldSelector{
+										APIVersion: "v1",
+										FieldPath:  "status.podIP",
+									},
+								}},
+								{Name: "SERVICE_REGISTRY_MODE", Value: "k8s"},
+								{Name: "HELM_RELEASE_NAME", Value: "orc8r"},
+								{Name: "SERVICE_REGISTRY_NAMESPACE", Value: "pmn"},
+								{Name: "HELM_VERSION_TAG", Value: "1.8.0"},
+								{Name: "VERSION_TAG", Value: "1.8.0-6c4579b5"},
+								{Name: "ORC8R_DOMAIN_NAME", Value: "magma.test"},
+								{Name: "PUBLISHER_PORT", Value: "5442"},
+								{Name: "SUBSCRIBER_PORT", Value: "443"},
+								{Name: "NOTIF_PUBLISHER", Value: "notifier-internal"},
+								{Name: "NOTIF_SUBSCRIBER", Value: "notifier-internal"},
+								{Name: "NOTIF_CERT_CA", Value: "notifier-ca.crt"},
+								{Name: "NOTIF_SERVER_CERT", Value: "notifier.crt"},
+								{Name: "NOTIF_SERVER_KEY", Value: "notifier.key"},
+							},
+							LivenessProbe: &corev1.Probe{
+								InitialDelaySeconds: 10,
+								PeriodSeconds:       30,
+								ProbeHandler: corev1.ProbeHandler{
+									TCPSocket: &corev1.TCPSocketAction{
+										Port: intstr.IntOrString{
+											Type:   intstr.Int,
+											IntVal: 9091,
+										},
+									},
+								},
+							},
+							ReadinessProbe: &corev1.Probe{
+								InitialDelaySeconds: 10,
+								PeriodSeconds:       30,
+								ProbeHandler: corev1.ProbeHandler{
+									TCPSocket: &corev1.TCPSocketAction{
+										Port: intstr.IntOrString{
+											Type:   intstr.Int,
+											IntVal: 9091,
+										},
+									},
+								},
+							},
+						},
 					},
 				},
 			},
