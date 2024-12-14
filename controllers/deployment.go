@@ -57,7 +57,6 @@ func (r *PmnsystemReconciler) deploymentForOrc8rAccessD(_ *v1.Pmnsystem) *appsv1
 				},
 			},
 			Strategy: appsv1.DeploymentStrategy{
-				Type: appsv1.RecreateDeploymentStrategyType,
 				RollingUpdate: &appsv1.RollingUpdateDeployment{
 					MaxSurge:       intstrPtr("25%"),
 					MaxUnavailable: intstrPtr("25%"),
