@@ -20,6 +20,10 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+type Persistent struct {
+	PvcClaimName string `json:"pvcClaimName,omitempty"`
+}
+
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
@@ -29,7 +33,10 @@ type PmnsystemSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Foo is an example field of Pmnsystem. Edit pmnsystem_types.go to remove/update
-	Type string `json:"type,omitempty"`
+	ReplicaCount int32      `json:"replicaCount,omitempty"`
+	PullPolicy   string     `json:"pullPolicy,omitempty"`
+	Persistent   Persistent `json:"persistent,omitempty"`
+	NameSpace    string     `json:"nameSpace,omitempty"`
 }
 
 // PmnsystemStatus defines the observed state of Pmnsystem

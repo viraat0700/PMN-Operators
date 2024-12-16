@@ -10,3 +10,8 @@ metadata:
   name: pmnsystem-sample
 spec:
   # TODO(user): Add fields here
+  replicaCount: 1
+  pullPolicy: IfNotPresent
+  nameSpace: "pmn"
+  persistent:
+    pvcClaimName: "abc"

@@ -35,10 +35,20 @@ spec:
           spec:
             description: PmnsystemSpec defines the desired state of Pmnsystem
             properties:
-              type:
+              nameSpace:
+                type: string
+              persistent:
+                properties:
+                  pvcClaimName:
+                    type: string
+                type: object
+              pullPolicy:
+                type: string
+              replicaCount:
                 description: Foo is an example field of Pmnsystem. Edit pmnsystem_types.go
                   to remove/update
-                type: string
+                format: int32
+                type: integer
             type: object
           status:
             description: PmnsystemStatus defines the observed state of Pmnsystem

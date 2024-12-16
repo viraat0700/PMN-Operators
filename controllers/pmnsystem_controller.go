@@ -63,7 +63,7 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 
 	var result *ctrl.Result
 	// ====ensure Deployments====
-	result, err = r.ensureDeployment(req, pmnsystem, r.deploymentForOrc8rAccessD(pmnsystem))
+	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rAccessD(pmnsystem))
 	if result != nil {
 		return *result, err
 	}
