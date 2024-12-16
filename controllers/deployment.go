@@ -56,6 +56,9 @@ func (r *PmnsystemReconciler) deployment(
 	imagePullSecrets []corev1.LocalObjectReference,
 	terminationGracePeriodSeconds *int64,
 	imagePullPolicy corev1.PullPolicy,
+	resources corev1.ResourceRequirements,
+	terminationMessagePath string,
+	terminationMessagePolicy corev1.TerminationMessagePolicy,
 ) *appsv1.Deployment {
 	finalLabels := make(map[string]string)
 	for k, v := range defaultLabels {
@@ -101,17 +104,20 @@ func (r *PmnsystemReconciler) deployment(
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{
 						{
-							Name:            name,
-							Image:           "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/controller:1.8.0-6c4579b5",
-							Command:         command,
-							Args:            args,
-							VolumeMounts:    volumeMounts,
-							Ports:           ports,
-							Env:             envVars,
-							LivenessProbe:   livenessProbe,
-							ReadinessProbe:  readinessProbe,
-							SecurityContext: securityContext,
-							ImagePullPolicy: imagePullPolicy,
+							Name:                     name,
+							Image:                    "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/controller:1.8.0-6c4579b5",
+							Command:                  command,
+							Args:                     args,
+							VolumeMounts:             volumeMounts,
+							Ports:                    ports,
+							Env:                      envVars,
+							LivenessProbe:            livenessProbe,
+							ReadinessProbe:           readinessProbe,
+							SecurityContext:          securityContext,
+							ImagePullPolicy:          imagePullPolicy,
+							Resources:                resources,
+							TerminationMessagePath:   terminationMessagePath,
+							TerminationMessagePolicy: terminationMessagePolicy,
 						},
 					},
 					InitContainers:                initContainers,
@@ -247,6 +253,12 @@ func (r *PmnsystemReconciler) orc8rAccessD(cr *v1.Pmnsystem) *appsv1.Deployment 
 
 	terminationGracePeriodSeconds := int64Ptr(30)
 
+	resources := corev1.ResourceRequirements{}
+
+	terminationMessagePath := "/dev/termination-log"
+
+	terminationMessagePolicy := corev1.TerminationMessagePolicy("File")
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -269,5 +281,8 @@ func (r *PmnsystemReconciler) orc8rAccessD(cr *v1.Pmnsystem) *appsv1.Deployment 
 		imagePullSecrets,              // Image pull secrets
 		terminationGracePeriodSeconds, // terminationGracePeriodSeconds
 		corev1.PullIfNotPresent,       // Image pull policy
+		resources,                     // Resources
+		terminationMessagePath,        // Termination message path
+		terminationMessagePolicy,      // Termination message policy
 	)
 }
