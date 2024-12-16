@@ -247,7 +247,6 @@ func (r *PmnsystemReconciler) orc8rAccessD(cr *v1.Pmnsystem) *appsv1.Deployment 
 
 	terminationGracePeriodSeconds := int64Ptr(30)
 
-	// Call the deployment function with all required arguments
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
