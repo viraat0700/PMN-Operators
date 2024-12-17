@@ -147,7 +147,7 @@ func (r *PmnsystemReconciler) orc8rAccessD(cr *v1.Pmnsystem) *appsv1.Deployment 
 			Name: "certs",
 			VolumeSource: corev1.VolumeSource{
 				Secret: &corev1.SecretVolumeSource{
-					SecretName:  "orc8r-controller",
+					SecretName:  "pmn-certs",
 					DefaultMode: int32Ptr(420),
 				},
 			},
@@ -263,8 +263,8 @@ func (r *PmnsystemReconciler) orc8rAccessD(cr *v1.Pmnsystem) *appsv1.Deployment 
 		strategy, // Deployment strategy
 		cr,
 		"orc8r-accessd",
-		labels,
-		command,
+		labels,                        // Labels
+		command,                       // Command
 		args,                          // args (nil if not needed)
 		volumeMounts,                  // Volume mounts
 		volumes,                       // Volumes
