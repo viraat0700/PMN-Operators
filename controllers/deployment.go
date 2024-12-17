@@ -59,6 +59,7 @@ func (r *PmnsystemReconciler) deployment(
 	resources corev1.ResourceRequirements,
 	terminationMessagePath string,
 	terminationMessagePolicy corev1.TerminationMessagePolicy,
+	image string,
 ) *appsv1.Deployment {
 	finalLabels := make(map[string]string)
 	for k, v := range defaultLabels {
@@ -105,7 +106,7 @@ func (r *PmnsystemReconciler) deployment(
 					Containers: []corev1.Container{
 						{
 							Name:                     name,
-							Image:                    "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/controller:1.8.0-6c4579b5",
+							Image:                    image,
 							Command:                  command,
 							Args:                     args,
 							VolumeMounts:             volumeMounts,
@@ -259,6 +260,8 @@ func (r *PmnsystemReconciler) orc8rAccessD(cr *v1.Pmnsystem) *appsv1.Deployment 
 
 	terminationMessagePolicy := corev1.TerminationMessagePolicy("File")
 
+	image := cr.Spec.Image.Repository + ":" + cr.Spec.Image.Tag
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -284,5 +287,6 @@ func (r *PmnsystemReconciler) orc8rAccessD(cr *v1.Pmnsystem) *appsv1.Deployment 
 		resources,                     // Resources
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
+		image,                         // Image
 	)
 }

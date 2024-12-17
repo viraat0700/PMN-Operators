@@ -19,8 +19,11 @@ package controllers
 import (
 	v1 "github.com/viraat0700/PMN-Operator-Two/api/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	policyv1 "k8s.io/api/policy/v1"
 
 	"context"
+
 	"k8s.io/apimachinery/pkg/api/errors"
 
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -88,5 +91,104 @@ func (r *PmnsystemReconciler) ensureDeployment(_ ctrl.Request, instance *v1.Pmns
 	}
 
 	// Step 6: Return nil to indicate success and no requeue
+	return nil, nil
+}
+
+func (r *PmnsystemReconciler) ensurePodDisruptionBudget(_ ctrl.Request, instance *v1.Pmnsystem, desired *policyv1.PodDisruptionBudget) (*ctrl.Result, error) {
+	// Step 1: Ensure the desired PodDisruptionBudget has the correct namespace
+	desired.Namespace = instance.Namespace
+
+	// Step 2: Check if the PodDisruptionBudget already exists
+	found := &policyv1.PodDisruptionBudget{}
+	err := r.Client.Get(context.TODO(), client.ObjectKey{
+		Namespace: instance.Namespace, // Ensure we're checking in the correct namespace
+		Name:      desired.Name,       // Name from the desired PodDisruptionBudget
+	}, found)
+
+	if err != nil && errors.IsNotFound(err) {
+		// Step 3: If the PodDisruptionBudget is not found, create it
+		r.Log.Info("PodDisruptionBudget not found, creating a new one", "PDB.Namespace", desired.Namespace, "PDB.Name", desired.Name)
+
+		// Set the owner reference for proper garbage collection
+		if err := ctrl.SetControllerReference(instance, desired, r.Scheme); err != nil {
+			r.Log.Error(err, "Failed to set owner reference on PDB", "PDB.Namespace", desired.Namespace, "PDB.Name", desired.Name)
+			return &ctrl.Result{}, err
+		}
+
+		// Create the PodDisruptionBudget
+		err = r.Client.Create(context.TODO(), desired)
+		if err != nil {
+			// Log the error if creation fails
+			r.Log.Error(err, "Failed to create PodDisruptionBudget", "PDB.Namespace", desired.Namespace, "PDB.Name", desired.Name)
+			return &ctrl.Result{}, err
+		}
+
+		// Successfully created the PDB
+		r.Log.Info("PodDisruptionBudget created successfully", "PDB.Namespace", desired.Namespace, "PDB.Name", desired.Name)
+		return nil, nil
+	} else if err != nil {
+		// Step 4: Handle other errors when fetching the PDB
+		r.Log.Error(err, "Failed to get PodDisruptionBudget", "PDB.Namespace", desired.Namespace, "PDB.Name", desired.Name)
+		return &ctrl.Result{}, err
+	}
+
+	// Step 5: Compare the found PDB's Spec with the desired Spec and update if necessary
+	if !equality.Semantic.DeepEqual(found.Spec, desired.Spec) {
+		r.Log.Info("Updating PodDisruptionBudget", "PDB.Namespace", found.Namespace, "PDB.Name", found.Name)
+		found.Spec = desired.Spec // Update the found PDB spec to match the desired spec
+
+		err = r.Client.Update(context.TODO(), found)
+		if err != nil {
+			// Log the error if update fails
+			r.Log.Error(err, "Failed to update PodDisruptionBudget", "PDB.Namespace", found.Namespace, "PDB.Name", found.Name)
+			return &ctrl.Result{}, err
+		}
+
+		// Successfully updated the PDB
+		r.Log.Info("PodDisruptionBudget updated successfully", "PDB.Namespace", found.Namespace, "PDB.Name", found.Name)
+	} else {
+		// No updates required, the PDB is already up-to-date
+		r.Log.Info("PodDisruptionBudget is up-to-date", "PDB.Namespace", found.Namespace, "PDB.Name", found.Name)
+	}
+
+	// Step 6: Return nil to indicate success and no requeue
+	return nil, nil
+}
+
+func (r *PmnsystemReconciler) ensureService(_ *v1.Pmnsystem, desired *corev1.Service) (*ctrl.Result, error) {
+	found := &corev1.Service{}
+	err := r.Client.Get(context.TODO(), client.ObjectKey{
+		Namespace: desired.Namespace,
+		Name:      desired.Name,
+	}, found)
+
+	if err != nil && errors.IsNotFound(err) {
+		// Service not found, create it
+		r.Log.Info("Service not found, creating a new one", "Service.Namespace", desired.Namespace, "Service.Name", desired.Name)
+		err = r.Client.Create(context.TODO(), desired)
+		if err != nil {
+			r.Log.Error(err, "Failed to create Service", "Service.Namespace", desired.Namespace, "Service.Name", desired.Name)
+			return &ctrl.Result{}, err
+		}
+		r.Log.Info("Service created successfully", "Service.Namespace", desired.Namespace, "Service.Name", desired.Name)
+		return nil, nil
+	} else if err != nil {
+		// Failed to get the Service due to some error other than NotFound
+		r.Log.Error(err, "Failed to get Service", "Service.Namespace", desired.Namespace, "Service.Name", desired.Name)
+		return &ctrl.Result{}, err
+	}
+
+	// Update the Service if needed
+	if !equality.Semantic.DeepEqual(found.Spec, desired.Spec) {
+		r.Log.Info("Updating Service", "Service.Namespace", found.Namespace, "Service.Name", found.Name)
+		found.Spec = desired.Spec
+		err = r.Client.Update(context.TODO(), found)
+		if err != nil {
+			r.Log.Error(err, "Failed to update Service", "Service.Namespace", found.Namespace, "Service.Name", found.Name)
+			return &ctrl.Result{}, err
+		}
+	}
+
+	r.Log.Info("Service already exists and is up-to-date", "Service.Namespace", found.Namespace, "Service.Name", found.Name)
 	return nil, nil
 }

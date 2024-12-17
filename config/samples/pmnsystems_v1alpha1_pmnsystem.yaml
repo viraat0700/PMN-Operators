@@ -15,3 +15,7 @@ spec:
   nameSpace: "pmn"
   persistent:
     pvcClaimName: "abc"
+    storageClassName: "standard"
+  image:
+    repository: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/controller"
+    tag: "1.8.0-6c4579b5"

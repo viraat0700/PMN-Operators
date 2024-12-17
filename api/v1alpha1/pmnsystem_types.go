@@ -20,8 +20,14 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+type Image struct {
+	Repository string `json:"repository,omitempty"`
+	Tag        string `json:"tag,omitempty"`
+}
+
 type Persistent struct {
-	PvcClaimName string `json:"pvcClaimName,omitempty"`
+	PvcClaimName     string `json:"pvcClaimName,omitempty"`
+	StorageClassName string `json:"storageClassName,omitempty"`
 }
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
@@ -37,6 +43,7 @@ type PmnsystemSpec struct {
 	PullPolicy   string     `json:"pullPolicy,omitempty"`
 	Persistent   Persistent `json:"persistent,omitempty"`
 	NameSpace    string     `json:"nameSpace,omitempty"`
+	Image        Image      `json:"image,omitempty"`
 }
 
 // PmnsystemStatus defines the observed state of Pmnsystem

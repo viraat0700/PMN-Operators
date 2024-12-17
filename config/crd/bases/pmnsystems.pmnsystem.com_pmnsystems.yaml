@@ -35,11 +35,20 @@ spec:
           spec:
             description: PmnsystemSpec defines the desired state of Pmnsystem
             properties:
+              image:
+                properties:
+                  repository:
+                    type: string
+                  tag:
+                    type: string
+                type: object
               nameSpace:
                 type: string
               persistent:
                 properties:
                   pvcClaimName:
+                    type: string
+                  storageClassName:
                     type: string
                 type: object
               pullPolicy:
