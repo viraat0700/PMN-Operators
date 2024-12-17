@@ -35,6 +35,15 @@ spec:
           spec:
             description: PmnsystemSpec defines the desired state of Pmnsystem
             properties:
+              envVariables:
+                items:
+                  properties:
+                    name:
+                      type: string
+                    value:
+                      type: string
+                  type: object
+                type: array
               image:
                 properties:
                   repository:
@@ -42,6 +51,8 @@ spec:
                   tag:
                     type: string
                 type: object
+              imagePullSecrets:
+                type: string
               nameSpace:
                 type: string
               persistent:

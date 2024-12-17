@@ -194,7 +194,7 @@ func (r *PmnsystemReconciler) orc8rAccessD(cr *v1.Pmnsystem) *appsv1.Deployment 
 
 	// Define imagePullSecrets
 	imagePullSecrets := []corev1.LocalObjectReference{
-		{Name: "artifactory"},
+		{Name: cr.Spec.ImagePullSecrets},
 	}
 
 	// Define environment variables if needed

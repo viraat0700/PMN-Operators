@@ -24,7 +24,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-func (r *PmnsystemReconciler) getEnvVarsForAccessD(_ *v1.Pmnsystem) []corev1.EnvVar {
+func (r *PmnsystemReconciler) getEnvVarsForAccessD(cr *v1.Pmnsystem) []corev1.EnvVar {
 	var envVars []corev1.EnvVar
 
 	// Default environment variables, always present
@@ -41,28 +41,20 @@ func (r *PmnsystemReconciler) getEnvVarsForAccessD(_ *v1.Pmnsystem) []corev1.Env
 				},
 			},
 		},
-		{Name: "SQL_DRIVER", Value: "postgres"},
-		{Name: "SQL_DIALECT", Value: "psql"},
 		{Name: "SERVICE_HOSTNAME", ValueFrom: &corev1.EnvVarSource{
 			FieldRef: &corev1.ObjectFieldSelector{
 				APIVersion: "v1",
 				FieldPath:  "status.podIP",
 			},
 		}},
-		{Name: "SERVICE_REGISTRY_MODE", Value: "k8s"},
-		{Name: "HELM_RELEASE_NAME", Value: "orc8r"},
-		{Name: "SERVICE_REGISTRY_NAMESPACE", Value: "pmn"},
-		{Name: "HELM_VERSION_TAG", Value: "1.8.0"},
-		{Name: "VERSION_TAG", Value: "1.8.0-6c4579b5"},
-		{Name: "ORC8R_DOMAIN_NAME", Value: "magma.test"},
-		{Name: "PUBLISHER_PORT", Value: "5442"},
-		{Name: "SUBSCRIBER_PORT", Value: "443"},
-		{Name: "NOTIF_PUBLISHER", Value: "notifier-internal"},
-		{Name: "NOTIF_SUBSCRIBER", Value: "notifier-internal"},
-		{Name: "NOTIF_CERT_CA", Value: "notifier-ca.crt"},
-		{Name: "NOTIF_SERVER_CERT", Value: "notifier.crt"},
-		{Name: "NOTIF_SERVER_KEY", Value: "notifier.key"},
 	}...)
-	fmt.Println("APPENDING DEFAULT VALUES", envVars)
+
+	for _, env := range cr.Spec.EnvVariables {
+		envVars = append(envVars, corev1.EnvVar{
+			Name:  env.Name,
+			Value: env.Value,
+		})
+	}
+	fmt.Println("FINAL ENV VARIABLES:", envVars)
 	return envVars
 }

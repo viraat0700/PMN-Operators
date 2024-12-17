@@ -20,6 +20,11 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+type EnvironmentVariables struct {
+	Name  string `json:"name,omitempty"`
+	Value string `json:"value,omitempty"`
+}
+
 type Image struct {
 	Repository string `json:"repository,omitempty"`
 	Tag        string `json:"tag,omitempty"`
@@ -39,11 +44,13 @@ type PmnsystemSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Foo is an example field of Pmnsystem. Edit pmnsystem_types.go to remove/update
-	ReplicaCount int32      `json:"replicaCount,omitempty"`
-	PullPolicy   string     `json:"pullPolicy,omitempty"`
-	Persistent   Persistent `json:"persistent,omitempty"`
-	NameSpace    string     `json:"nameSpace,omitempty"`
-	Image        Image      `json:"image,omitempty"`
+	ReplicaCount     int32                  `json:"replicaCount,omitempty"`
+	PullPolicy       string                 `json:"pullPolicy,omitempty"`
+	Persistent       Persistent             `json:"persistent,omitempty"`
+	NameSpace        string                 `json:"nameSpace,omitempty"`
+	Image            Image                  `json:"image,omitempty"`
+	EnvVariables     []EnvironmentVariables `json:"envVariables,omitempty"`
+	ImagePullSecrets string                 `json:"imagePullSecrets,omitempty"`
 }
 
 // PmnsystemStatus defines the observed state of Pmnsystem
