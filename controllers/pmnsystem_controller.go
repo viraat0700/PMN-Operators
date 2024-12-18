@@ -67,13 +67,26 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if result != nil {
 		return *result, err
 	}
+	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rAnalyticsDeployment(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
 	// ====ensure PodDisruptionBudget====
 	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rAccessDPDB(pmnsystem))
 	if result != nil {
 		return *result, err
 	}
+	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rAnalyticsDPDB(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
 	// ====ensure Service====
 	svc := r.orc8rAccessDService(pmnsystem)
+	result, err = r.ensureService(pmnsystem, svc)
+	if result != nil {
+		return *result, err
+	}
+	svc = r.orc8rAnalyticsService(pmnsystem)
 	result, err = r.ensureService(pmnsystem, svc)
 	if result != nil {
 		return *result, err
