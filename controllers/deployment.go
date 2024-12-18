@@ -373,7 +373,7 @@ func (r *PmnsystemReconciler) orc8rAnalyticsDeployment(cr *v1.Pmnsystem) *appsv1
 			TCPSocket: &corev1.TCPSocketAction{
 				Port: intstr.IntOrString{
 					Type:   intstr.Int,
-					IntVal: 9091,
+					IntVal: 9200,
 				},
 			},
 		},
@@ -389,7 +389,7 @@ func (r *PmnsystemReconciler) orc8rAnalyticsDeployment(cr *v1.Pmnsystem) *appsv1
 			TCPSocket: &corev1.TCPSocketAction{
 				Port: intstr.IntOrString{
 					Type:   intstr.Int,
-					IntVal: 9091,
+					IntVal: 9200,
 				},
 			},
 		},
