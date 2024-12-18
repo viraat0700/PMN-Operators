@@ -179,3 +179,50 @@ func (r *PmnsystemReconciler) orc8rCertifierService(cr *v1.Pmnsystem) *corev1.Se
 		},
 	}
 }
+func (r *PmnsystemReconciler) orc8rConfiguratorService(cr *v1.Pmnsystem) *corev1.Service {
+	labels := map[string]string{
+		"app":                          "orc8r-configurator",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "orc8r-configurator",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Type:     corev1.ServiceTypeClusterIP,
+			Selector: labels,
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "grpc",
+					Port:       9180,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(9108),
+				},
+				{
+					Name:       "grpc-internal",
+					Port:       9190,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(9208),
+				},
+				{
+					Name:       "moso",
+					Port:       8088,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(8088),
+				},
+			},
+			SessionAffinity: corev1.ServiceAffinityNone,
+		},
+	}
+}
