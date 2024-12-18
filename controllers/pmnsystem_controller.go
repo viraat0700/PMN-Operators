@@ -124,6 +124,10 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if result != nil {
 		return *result, err
 	}
+	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rDispatcherPDB(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
 	// ====ensure Service====
 	svc := r.orc8rAccessDService(pmnsystem)
 	result, err = r.ensureService(pmnsystem, svc)
