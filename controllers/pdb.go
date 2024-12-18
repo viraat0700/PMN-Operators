@@ -185,7 +185,7 @@ func (r *PmnsystemReconciler) orc8rConfiguratorPDB(cr *v1.Pmnsystem) *policyv1.P
 			Kind:       "PodDisruptionBudget",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "orc8r-certifier",
+			Name:      "orc8r-configurator",
 			Namespace: cr.Spec.NameSpace,
 			Annotations: map[string]string{
 				"app":                          "orc8r-configurator",
