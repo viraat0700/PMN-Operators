@@ -58,3 +58,37 @@ func (r *PmnsystemReconciler) getEnvVarsForAccessD(cr *v1.Pmnsystem) []corev1.En
 	fmt.Println("FINAL ENV VARIABLES:", envVars)
 	return envVars
 }
+func (r *PmnsystemReconciler) getEnvVarsForDirectoryD(cr *v1.Pmnsystem) []corev1.EnvVar {
+	var envVars []corev1.EnvVar
+
+	// Default environment variables, always present
+	envVars = append(envVars, []corev1.EnvVar{
+		// Add specific environment variables here if required
+		{
+			Name: "DATABASE_SOURCE",
+			ValueFrom: &corev1.EnvVarSource{
+				SecretKeyRef: &corev1.SecretKeySelector{
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: "orc8r-controller",
+					},
+					Key: "postgres.connstr",
+				},
+			},
+		},
+		{Name: "SERVICE_HOSTNAME", ValueFrom: &corev1.EnvVarSource{
+			FieldRef: &corev1.ObjectFieldSelector{
+				APIVersion: "v1",
+				FieldPath:  "status.podIP",
+			},
+		}},
+	}...)
+
+	for _, env := range cr.Spec.EnvVariablesDirectoryD {
+		envVars = append(envVars, corev1.EnvVar{
+			Name:  env.Name,
+			Value: env.Value,
+		})
+	}
+	fmt.Println("FINAL ENV VARIABLES:", envVars)
+	return envVars
+}

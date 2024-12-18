@@ -44,6 +44,15 @@ spec:
                       type: string
                   type: object
                 type: array
+              envVariablesDirectoryD:
+                items:
+                  properties:
+                    name:
+                      type: string
+                    value:
+                      type: string
+                  type: object
+                type: array
               image:
                 properties:
                   repository:
