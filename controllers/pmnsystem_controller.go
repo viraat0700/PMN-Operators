@@ -83,6 +83,10 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if result != nil {
 		return *result, err
 	}
+	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rDeviceDeployment(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
 	// ====ensure PodDisruptionBudget====
 	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rAccessDPDB(pmnsystem))
 	if result != nil {
@@ -101,6 +105,10 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return *result, err
 	}
 	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rConfiguratorPDB(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rDevicePDB(pmnsystem))
 	if result != nil {
 		return *result, err
 	}
@@ -126,6 +134,11 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return *result, err
 	}
 	svc = r.orc8rConfiguratorService(pmnsystem)
+	result, err = r.ensureService(pmnsystem, svc)
+	if result != nil {
+		return *result, err
+	}
+	svc = r.orc8rDeviceService(pmnsystem)
 	result, err = r.ensureService(pmnsystem, svc)
 	if result != nil {
 		return *result, err

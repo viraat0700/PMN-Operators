@@ -220,3 +220,45 @@ func (r *PmnsystemReconciler) orc8rConfiguratorPDB(cr *v1.Pmnsystem) *policyv1.P
 		},
 	}
 }
+func (r *PmnsystemReconciler) orc8rDevicePDB(cr *v1.Pmnsystem) *policyv1.PodDisruptionBudget {
+	return &policyv1.PodDisruptionBudget{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "policy/v1",
+			Kind:       "PodDisruptionBudget",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "orc8r-device",
+			Namespace: cr.Spec.NameSpace,
+			Annotations: map[string]string{
+				"app":                          "orc8r-device",
+				"app.kubernetes.io/instance":   "orc8r",
+				"app.kubernetes.io/managed-by": "Orc8r-Operator",
+			},
+			Labels: map[string]string{
+				"app":                          "orc8r-orc8r-device",
+				"app.kubernetes.io/instance":   "orc8r",
+				"app.kubernetes.io/managed-by": "Orc8r-Operator",
+			},
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: policyv1.PodDisruptionBudgetSpec{
+			MinAvailable: func(i int) *intstr.IntOrString {
+				v := intstr.FromInt(i)
+				return &v
+			}(1),
+			Selector: &metav1.LabelSelector{
+				MatchLabels: map[string]string{
+					"app":                          "orc8r-orc8r-device",
+					"app.kubernetes.io/instance":   "orc8r",
+					"app.kubernetes.io/managed-by": "Orc8r-Operator",
+				},
+			},
+		},
+	}
+}
