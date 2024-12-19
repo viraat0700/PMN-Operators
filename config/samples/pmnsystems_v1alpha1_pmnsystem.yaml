@@ -10,6 +10,22 @@ metadata:
   name: pmnsystem-sample
 spec:
   # TODO(user): Add fields here
+  envVariablesOrc8rNginx:
+    - name: "PROXY_BACKENDS"
+      value: "pmn.svc.cluster.local"
+    - name: "CONTROLLER_HOSTNAME"
+      value: "controller.pmn-dev.wavelabs.in"
+    - name: "RESOLVER"
+      value: "kube-dns.kube-system.svc.cluster.local valid=10s"
+    - name: "SERVICE_REGISTRY_MODE"
+      value: "k8s"
+    - name: "SSL_CERTIFICATE"
+      value: "/var/opt/magma/certs/controller.crt"
+    - name: "SSL_CERTIFICATE_KEY"
+      value: "/var/opt/magma/certs/controller.key"
+    - name: "SSL_CLIENT_CERTIFICATE"
+      value: "/var/opt/magma/certs/certifier.pem"
+  nginxImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/nginx:1.8.0-a914c772"
   imagePullSecrets: "artifactory"
   envVariablesDirectoryD:
     - name: "SQL_DRIVER"

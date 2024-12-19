@@ -103,6 +103,10 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if result != nil {
 		return *result, err
 	}
+	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rNginxDeployment(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
 	// result, err = r.ensureDeployment(req, pmnsystem, r.orc8rDomainProxyDeployment(pmnsystem))
 	// if result != nil {
 	// 	return *result, err
@@ -145,6 +149,10 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return *result, err
 	}
 	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rMetricsdPDB(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rNginxPDB(pmnsystem))
 	if result != nil {
 		return *result, err
 	}

@@ -24,6 +24,10 @@ type EnvironmentVariables struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
 }
+type EnvironmentVariablesOrc8rNginx struct {
+	Name  string `json:"name,omitempty"`
+	Value string `json:"value,omitempty"`
+}
 type EnvironmentVariablesDirectoryD struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
@@ -49,12 +53,14 @@ type PmnsystemSpec struct {
 
 	// Foo is an example field of Pmnsystem. Edit pmnsystem_types.go to remove/update
 	ReplicaCount           int32                            `json:"replicaCount,omitempty"`
+	NginxImage             string                           `json:"nginxImage,omitempty"`
 	PullPolicy             string                           `json:"pullPolicy,omitempty"`
 	Persistent             Persistent                       `json:"persistent,omitempty"`
 	NameSpace              string                           `json:"nameSpace,omitempty"`
 	Image                  Image                            `json:"image,omitempty"`
 	EnvVariables           []EnvironmentVariables           `json:"envVariables,omitempty"`
 	EnvVariablesDirectoryD []EnvironmentVariablesDirectoryD `json:"envVariablesDirectoryD,omitempty"`
+	EnvVariablesOrc8rNginx []EnvironmentVariablesOrc8rNginx `json:"envVariablesOrc8rNginx,omitempty"`
 	ImagePullSecrets       string                           `json:"imagePullSecrets,omitempty"`
 }
 
