@@ -135,6 +135,10 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if result != nil {
 		return *result, err
 	}
+	result, err = r.ensureDeployment(req, pmnsystem, r.orc8TenantsDeployment(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
 	// result, err = r.ensureDeployment(req, pmnsystem, r.orc8rDomainProxyDeployment(pmnsystem))
 	// if result != nil {
 	// 	return *result, err
@@ -205,6 +209,10 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return *result, err
 	}
 	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rStreamerDPDB(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rTenantsDPDB(pmnsystem))
 	if result != nil {
 		return *result, err
 	}
@@ -295,6 +303,11 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return *result, err
 	}
 	svc = r.orc8rStreamerService(pmnsystem)
+	result, err = r.ensureService(pmnsystem, svc)
+	if result != nil {
+		return *result, err
+	}
+	svc = r.orc8rTenantsService(pmnsystem)
 	result, err = r.ensureService(pmnsystem, svc)
 	if result != nil {
 		return *result, err
