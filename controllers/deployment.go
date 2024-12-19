@@ -2015,9 +2015,9 @@ func (r *PmnsystemReconciler) orc8rNotifierDeployment(cr *v1.Pmnsystem) *appsv1.
 	}
 
 	// Command for the container
-	command := []string{
-		"/usr/bin/envdir",
-	}
+	// command := []string{
+	// 	"/usr/bin/envdir",
+	// }
 
 	args := []string{
 		"sh",
@@ -2047,7 +2047,7 @@ func (r *PmnsystemReconciler) orc8rNotifierDeployment(cr *v1.Pmnsystem) *appsv1.
 		cr,
 		"orc8r-notifier",
 		labels,                        // Labels
-		command,                       // Command
+		nil,                           // Command
 		args,                          // args (nil if not needed)
 		volumeMounts,                  // Volume mounts
 		volumes,                       // Volumes
