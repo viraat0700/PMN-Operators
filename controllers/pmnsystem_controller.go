@@ -115,6 +115,10 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if result != nil {
 		return *result, err
 	}
+	result, err = r.ensureDeployment(req, pmnsystem, r.orc8WorkerDeployment(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
 	// result, err = r.ensureDeployment(req, pmnsystem, r.orc8rDomainProxyDeployment(pmnsystem))
 	// if result != nil {
 	// 	return *result, err
@@ -165,6 +169,10 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return *result, err
 	}
 	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rObsidianDPDB(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rWorkerDPDB(pmnsystem))
 	if result != nil {
 		return *result, err
 	}
@@ -230,6 +238,11 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return *result, err
 	}
 	svc = r.orc8rObsidianService(pmnsystem)
+	result, err = r.ensureService(pmnsystem, svc)
+	if result != nil {
+		return *result, err
+	}
+	svc = r.orc8rWorkerService(pmnsystem)
 	result, err = r.ensureService(pmnsystem, svc)
 	if result != nil {
 		return *result, err
