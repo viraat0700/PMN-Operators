@@ -398,18 +398,26 @@ func (r *PmnsystemReconciler) orc8rEventdService(cr *v1.Pmnsystem) *corev1.Servi
 		},
 	}
 }
-func (r *PmnsystemReconciler) orc8rDomainProxyService(cr *v1.Pmnsystem) *corev1.Service {
+func (r *PmnsystemReconciler) orc8rmetricsdService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-domain-proxy",
+		"app":                          "orc8r-metricsd",
 		"app.kubernetes.io/instance":   "orc8r",
 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"orc8r.io/obsidian_handlers":   "true",
+		"orc8r.io/swagger_spec":        "true",
 	}
 
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "orc8r-domain-proxy",
+			Name:      "orc8r-metricsd",
 			Namespace: cr.Spec.NameSpace,
 			Labels:    labels,
+			Annotations: map[string]string{
+				"app":                          "orc8r-metricsd",
+				"app.kubernetes.io/instance":   "orc8r",
+				"app.kubernetes.io/managed-by": "Orc8r-Operator",
+				"orc8r.io/obsidian_handlers_path_prefixes": "/magma/v1/networks/:network_id/alerts, /magma/v1/networks/:network_id/metrics, /magma/v1/networks/:network_id/prometheus, /magma/v1/tenants/:tenant_id/metrics, /magma/v1/tenants/targets_metadata,",
+			},
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
 					Group:   v1.GroupVersion.Group,
@@ -426,22 +434,70 @@ func (r *PmnsystemReconciler) orc8rDomainProxyService(cr *v1.Pmnsystem) *corev1.
 					Name:       "grpc",
 					Port:       9180,
 					Protocol:   corev1.ProtocolTCP,
-					TargetPort: intstr.FromInt(9124),
+					TargetPort: intstr.FromInt(9084),
 				},
 				{
 					Name:       "grpc-internal",
 					Port:       9190,
 					Protocol:   corev1.ProtocolTCP,
-					TargetPort: intstr.FromInt(9224),
+					TargetPort: intstr.FromInt(9184),
 				},
 				{
 					Name:       "http",
 					Port:       8080,
 					Protocol:   corev1.ProtocolTCP,
-					TargetPort: intstr.FromInt(10124),
+					TargetPort: intstr.FromInt(10084),
 				},
 			},
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
 	}
 }
+
+// func (r *PmnsystemReconciler) orc8rDomainProxyService(cr *v1.Pmnsystem) *corev1.Service {
+// 	labels := map[string]string{
+// 		"app":                          "orc8r-domain-proxy",
+// 		"app.kubernetes.io/instance":   "orc8r",
+// 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+// 	}
+
+// 	return &corev1.Service{
+// 		ObjectMeta: metav1.ObjectMeta{
+// 			Name:      "orc8r-domain-proxy",
+// 			Namespace: cr.Spec.NameSpace,
+// 			Labels:    labels,
+// 			OwnerReferences: []metav1.OwnerReference{
+// 				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+// 					Group:   v1.GroupVersion.Group,
+// 					Version: v1.GroupVersion.Version,
+// 					Kind:    "Pmnsystem",
+// 				}),
+// 			},
+// 		},
+// 		Spec: corev1.ServiceSpec{
+// 			Type:     corev1.ServiceTypeClusterIP,
+// 			Selector: labels,
+// 			Ports: []corev1.ServicePort{
+// 				{
+// 					Name:       "grpc",
+// 					Port:       9180,
+// 					Protocol:   corev1.ProtocolTCP,
+// 					TargetPort: intstr.FromInt(9124),
+// 				},
+// 				{
+// 					Name:       "grpc-internal",
+// 					Port:       9190,
+// 					Protocol:   corev1.ProtocolTCP,
+// 					TargetPort: intstr.FromInt(9224),
+// 				},
+// 				{
+// 					Name:       "http",
+// 					Port:       8080,
+// 					Protocol:   corev1.ProtocolTCP,
+// 					TargetPort: intstr.FromInt(10124),
+// 				},
+// 			},
+// 			SessionAffinity: corev1.ServiceAffinityNone,
+// 		},
+// 	}
+// }
