@@ -453,3 +453,83 @@ func (r *PmnsystemReconciler) orc8rmetricsdService(cr *v1.Pmnsystem) *corev1.Ser
 		},
 	}
 }
+func (r *PmnsystemReconciler) orc8rNotifierService(cr *v1.Pmnsystem) *corev1.Service {
+	labels := map[string]string{
+		"app":                          "orc8r-notifier",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "orc8r-notifier",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Type:     corev1.ServiceTypeClusterIP,
+			Selector: labels,
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "notifier-internal",
+					Port:       5442,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(5442),
+				},
+			},
+			SessionAffinity: corev1.ServiceAffinityNone,
+		},
+	}
+}
+func (r *PmnsystemReconciler) orc8rNotifierInternalService(cr *v1.Pmnsystem) *corev1.Service {
+	labels := map[string]string{
+		"app":                          "orc8r-notifier",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "orc8r-notifier",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Type:     corev1.ServiceTypeLoadBalancer,
+			Selector: labels,
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "notifier",
+					NodePort: 32001,
+					Port:       4443,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(443),
+				},
+			},
+			SessionAffinity: corev1.ServiceAffinityNone,
+		},
+		Status: corev1.ServiceStatus{
+			LoadBalancer: corev1.LoadBalancerStatus{
+				Ingress: []corev1.LoadBalancerIngress{
+					{
+						Hostname: "a4ca190bb09f048a19690cc67ab7038f-7f3c2eb6df85f47a.elb.us-west-2.amazonaws.com",
+					},
+				},
+			},
+		},
+	}
+}

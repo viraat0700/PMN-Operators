@@ -1910,3 +1910,163 @@ func (r *PmnsystemReconciler) orc8rNginxDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 		image,                         // Image
 	)
 }
+func (r *PmnsystemReconciler) orc8rNotifierDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
+	int64Ptr := func(i int64) *int64 { return &i }
+	int32Ptr := func(i int32) *int32 { return &i }
+
+	labels := map[string]string{
+		"app": "orc8r-notifier",
+	}
+
+	// Define volumes in a separate variable
+	volumes := []corev1.Volume{
+		{
+			Name: "certs",
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName:  "pmn-certs",
+					DefaultMode: int32Ptr(420),
+				},
+			},
+		},
+		{
+			Name: "envdir",
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName:  "pmn-envdir",
+					DefaultMode: int32Ptr(420),
+				},
+			},
+		},
+		{
+			Name: "pmn-configs-orc8r",
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName:  "pmn-configs",
+					DefaultMode: int32Ptr(420),
+				},
+			},
+		},
+	}
+
+	// Define volumeMounts in a separate variable
+	volumeMounts := []corev1.VolumeMount{
+		{Name: "certs", MountPath: "/var/opt/magma/certs", ReadOnly: true},
+		{Name: "envdir", MountPath: "/var/opt/magma/envdir", ReadOnly: true},
+		{Name: "pmn-configs-orc8r", MountPath: "/var/opt/magma/configs/orc8r", ReadOnly: true},
+	}
+
+	// Define the securityContext for the container
+	securityContext := &corev1.SecurityContext{
+		Privileged: func(b bool) *bool { return &b }(true),
+	}
+
+	// If Bevo is true, add the NET_ADMIN capability
+	// if cr.Spec.Bevo {
+	// 	securityContext.Capabilities = &corev1.Capabilities{
+	// 		Add: []corev1.Capability{"NET_ADMIN"},
+	// 	}
+	// }
+
+	// Define imagePullSecrets
+	imagePullSecrets := []corev1.LocalObjectReference{
+		{Name: cr.Spec.ImagePullSecrets},
+	}
+
+	// Define environment variables if needed
+	envVars := r.getEnvVarsForOrc8rNotifier(cr)
+
+	// Define ports (use nil if not needed)
+	ports := []corev1.ContainerPort{
+		{Name: "notifier", ContainerPort: 443, Protocol: corev1.ProtocolTCP},
+	}
+
+	// Liveness and Readiness Probes
+	livenessProbe := &corev1.Probe{
+		FailureThreshold:    3,
+		SuccessThreshold:    1,
+		TimeoutSeconds:      1,
+		InitialDelaySeconds: 10,
+		PeriodSeconds:       30,
+		ProbeHandler: corev1.ProbeHandler{
+			TCPSocket: &corev1.TCPSocketAction{
+				Port: intstr.IntOrString{
+					Type:   intstr.Int,
+					IntVal: 5442,
+				},
+			},
+		},
+	}
+
+	readinessProbe := &corev1.Probe{
+		FailureThreshold:    3,
+		SuccessThreshold:    1,
+		TimeoutSeconds:      1,
+		InitialDelaySeconds: 10,
+		PeriodSeconds:       30,
+		ProbeHandler: corev1.ProbeHandler{
+			TCPSocket: &corev1.TCPSocketAction{
+				Port: intstr.IntOrString{
+					Type:   intstr.Int,
+					IntVal: 5442,
+				},
+			},
+		},
+	}
+
+	// Command for the container
+	command := []string{
+		"/usr/bin/envdir",
+	}
+
+	args := []string{
+		"sh",
+		"-c",
+		"java -jar Orc8rNotificationService-1.0-SNAPSHOT.jar \"5442\" \"443\"",
+	}
+
+	strategy := &appsv1.DeploymentStrategy{
+		RollingUpdate: &appsv1.RollingUpdateDeployment{
+			MaxSurge:       &intstr.IntOrString{Type: intstr.String, StrVal: "25%"},
+			MaxUnavailable: &intstr.IntOrString{Type: intstr.String, StrVal: "25%"},
+		},
+	}
+
+	terminationGracePeriodSeconds := int64Ptr(30)
+
+	resources := corev1.ResourceRequirements{}
+
+	terminationMessagePath := "/dev/termination-log"
+
+	terminationMessagePolicy := corev1.TerminationMessagePolicy("File")
+
+	image := cr.Spec.Image.Repository + ":" + cr.Spec.Image.Tag
+
+	return r.deployment(
+		strategy, // Deployment strategy
+		cr,
+		"orc8r-notifier",
+		labels,                        // Labels
+		command,                       // Command
+		args,                          // args (nil if not needed)
+		volumeMounts,                  // Volume mounts
+		volumes,                       // Volumes
+		ports,                         // Ports (empty if not needed)
+		nil,                           // Init containers
+		nil,                           // DNS config
+		nil,                           // Annotations
+		envVars,                       // Environment variables
+		livenessProbe,                 // Liveness probe
+		readinessProbe,                // Readiness probe
+		securityContext,               // Security context
+		corev1.DNSClusterFirst,        // DNS policy
+		corev1.RestartPolicyAlways,    // Restart policy
+		imagePullSecrets,              // Image pull secrets
+		terminationGracePeriodSeconds, // terminationGracePeriodSeconds
+		corev1.PullIfNotPresent,       // Image pull policy
+		resources,                     // Resources
+		terminationMessagePath,        // Termination message path
+		terminationMessagePolicy,      // Termination message policy
+		image,                         // Image
+	)
+}

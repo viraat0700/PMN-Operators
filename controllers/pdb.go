@@ -465,8 +465,8 @@ func (r *PmnsystemReconciler) orc8rNginxPDB(cr *v1.Pmnsystem) *policyv1.PodDisru
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
 					"app":                          "orc8r-nginx-proxy",
-				"app.kubernetes.io/instance":   "orc8r",
-				"app.kubernetes.io/managed-by": "Orc8r-Operator",
+					"app.kubernetes.io/instance":   "orc8r",
+					"app.kubernetes.io/managed-by": "Orc8r-Operator",
 				},
 			},
 		},

@@ -104,3 +104,15 @@ func (r *PmnsystemReconciler) getEnvVarsForOrc8rNginx(cr *v1.Pmnsystem) []corev1
 	fmt.Println("FINAL ENV VARIABLES:", envVars)
 	return envVars
 }
+func (r *PmnsystemReconciler) getEnvVarsForOrc8rNotifier(cr *v1.Pmnsystem) []corev1.EnvVar {
+	var envVars []corev1.EnvVar
+
+	for _, env := range cr.Spec.EnvVariablesOrc8rNotifier {
+		envVars = append(envVars, corev1.EnvVar{
+			Name:  env.Name,
+			Value: env.Value,
+		})
+	}
+	fmt.Println("FINAL ENV VARIABLES:", envVars)
+	return envVars
+}
