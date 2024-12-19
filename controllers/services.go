@@ -635,13 +635,6 @@ func (r *PmnsystemReconciler) orc8rOrchestratorService(cr *v1.Pmnsystem) *corev1
 		"app":                          "orc8r-orchestrator",
 		"app.kubernetes.io/instance":   "orc8r",
 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
-		"orc8r.io/analytics_collector": "true",
-		"orc8r.io/mconfig_builder":     "true",
-		"orc8r.io/metrics_exporter":    "true",
-		"orc8r.io/obsidian_handlers":   "true",
-		"orc8r.io/state_indexer":       "true",
-		"orc8r.io/stream_provider":     "true",
-		"orc8r.io/swagger_spec":        "true",
 	}
 
 	return &corev1.Service{
@@ -649,12 +642,6 @@ func (r *PmnsystemReconciler) orc8rOrchestratorService(cr *v1.Pmnsystem) *corev1
 			Name:      "orc8r-orchestrator",
 			Namespace: cr.Spec.NameSpace,
 			Labels:    labels,
-			Annotations: map[string]string{
-				"orc8r.io/obsidian_handlers_path_prefixes": "/, /magma/v1/channels, /magma/v1/networks, /magma/v1/networks/:network_id, /magma/v1/about",
-				"orc8r.io/state_indexer_types":             "directory_record",
-				"orc8r.io/state_indexer_version":           "1",
-				"orc8r.io/stream_provider_streams":         "configs",
-			},
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
 					Group:   v1.GroupVersion.Group,
