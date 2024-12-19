@@ -630,3 +630,63 @@ func (r *PmnsystemReconciler) orc8rWorkerService(cr *v1.Pmnsystem) *corev1.Servi
 		},
 	}
 }
+func (r *PmnsystemReconciler) orc8rOrchestratorService(cr *v1.Pmnsystem) *corev1.Service {
+	labels := map[string]string{
+		"app":                          "orc8r-orchestrator",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"orc8r.io/analytics_collector": "true",
+		"orc8r.io/mconfig_builder":     "true",
+		"orc8r.io/metrics_exporter":    "true",
+		"orc8r.io/obsidian_handlers":   "true",
+		"orc8r.io/state_indexer":       "true",
+		"orc8r.io/stream_provider":     "true",
+		"orc8r.io/swagger_spec":        "true",
+	}
+
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "orc8r-orchestrator",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			Annotations: map[string]string{
+				"orc8r.io/obsidian_handlers_path_prefixes": "/, /magma/v1/channels, /magma/v1/networks, /magma/v1/networks/:network_id, /magma/v1/about",
+				"orc8r.io/state_indexer_types":             "directory_record",
+				"orc8r.io/state_indexer_version":           "1",
+				"orc8r.io/stream_provider_streams":         "configs",
+			},
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Type:     corev1.ServiceTypeClusterIP,
+			Selector: labels,
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "grpc",
+					Port:       9180,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(9112),
+				},
+				{
+					Name:       "grpc-internal",
+					Port:       9190,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(9212),
+				},
+				{
+					Name:       "http",
+					Port:       8080,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(10112),
+				},
+			},
+			SessionAffinity: corev1.ServiceAffinityNone,
+		},
+	}
+}
