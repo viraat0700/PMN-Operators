@@ -1853,17 +1853,9 @@ func (r *PmnsystemReconciler) orc8rNginxDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 	}
 
 	// Command for the container
-	command := []string{
-		"/usr/bin/envdir",
-	}
+	command := []string{}
 
-	args := []string{
-		"/var/opt/magma/envdir",
-		"/var/opt/magma/bin/metricsd",
-		"-run_echo_server=true",
-		"-logtostderr=true",
-		"-v=0",
-	}
+	args := []string{}
 
 	strategy := &appsv1.DeploymentStrategy{
 		RollingUpdate: &appsv1.RollingUpdateDeployment{
