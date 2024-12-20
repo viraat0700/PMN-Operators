@@ -2040,7 +2040,7 @@ func (r *PmnsystemReconciler) orc8rNotifierDeployment(cr *v1.Pmnsystem) *appsv1.
 
 	terminationMessagePolicy := corev1.TerminationMessagePolicy("File")
 
-	image := cr.Spec.Image.Repository + ":" + cr.Spec.Image.Tag
+	image := cr.Spec.NotifierImage
 
 	return r.deployment(
 		strategy, // Deployment strategy

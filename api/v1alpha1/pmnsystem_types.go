@@ -58,6 +58,7 @@ type PmnsystemSpec struct {
 	// Foo is an example field of Pmnsystem. Edit pmnsystem_types.go to remove/update
 	ReplicaCount              int32                               `json:"replicaCount,omitempty"`
 	NginxImage                string                              `json:"nginxImage,omitempty"`
+	NotifierImage                string                              `json:"notifierImage,omitempty"`
 	PullPolicy                string                              `json:"pullPolicy,omitempty"`
 	Persistent                Persistent                          `json:"persistent,omitempty"`
 	NameSpace                 string                              `json:"nameSpace,omitempty"`

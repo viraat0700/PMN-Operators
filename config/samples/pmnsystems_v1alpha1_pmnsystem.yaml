@@ -10,7 +10,7 @@ metadata:
   name: pmnsystem-sample
 spec:
   # TODO(user): Add fields here
-  envVariablesOrc8rNotifier: 
+  envVariablesOrc8rNotifier:
     - name: "PUBLISHER_PORT"
       value: "5442"
     - name: "SUBSCRIBER_PORT"
@@ -40,8 +40,6 @@ spec:
       value: "/var/opt/magma/certs/controller.key"
     - name: "SSL_CLIENT_CERTIFICATE"
       value: "/var/opt/magma/certs/certifier.pem"
-  nginxImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/nginx:1.8.0-a914c772"
-  imagePullSecrets: "artifactory"
   envVariablesDirectoryD:
     - name: "SQL_DRIVER"
       value: "postgres"
@@ -101,6 +99,9 @@ spec:
   replicaCount: 1
   pullPolicy: IfNotPresent
   nameSpace: "pmn"
+  notifierImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/notifier:1.8.0-a914c772"
+  nginxImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/nginx:1.8.0-a914c772"
+  imagePullSecrets: "artifactory"
   persistent:
     pvcClaimName: "abc"
     storageClassName: "standard"
