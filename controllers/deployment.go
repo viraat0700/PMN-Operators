@@ -2483,6 +2483,7 @@ func (r *PmnsystemReconciler) orc8orchestratorDeployment(cr *v1.Pmnsystem) *apps
 	args := []string{
 		"/var/opt/magma/envdir",
 		"/var/opt/magma/bin/orchestrator",
+		"-run_echo_server=true",
 		"-logtostderr=true",
 		"-v=0",
 	}
