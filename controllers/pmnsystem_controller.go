@@ -139,6 +139,34 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if result != nil {
 		return *result, err
 	}
+	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rHaDeployment(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensureDeployment(req, pmnsystem, r.orc8LteDeployment(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensureDeployment(req, pmnsystem, r.orc8NprobeDeployment(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensureDeployment(req, pmnsystem, r.orc8PolicyDbDeployment(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensureDeployment(req, pmnsystem, r.orc8SmsdDeployment(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensureDeployment(req, pmnsystem, r.orc8SubscriberDbCacheDeployment(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensureDeployment(req, pmnsystem, r.orc8SubscriberDbDeployment(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
 	// result, err = r.ensureDeployment(req, pmnsystem, r.orc8rDomainProxyDeployment(pmnsystem))
 	// if result != nil {
 	// 	return *result, err
@@ -213,6 +241,34 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return *result, err
 	}
 	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rTenantsDPDB(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rHaDPDB(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rLteDPDB(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rNprobeDPDB(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rPolicyDbDPDB(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rSmSdDbDPDB(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rSubscriberDbCachedDbDPDB(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rSubscriberDbDbDPDB(pmnsystem))
 	if result != nil {
 		return *result, err
 	}
@@ -308,6 +364,41 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return *result, err
 	}
 	svc = r.orc8rTenantsService(pmnsystem)
+	result, err = r.ensureService(pmnsystem, svc)
+	if result != nil {
+		return *result, err
+	}
+	svc = r.orc8rHaService(pmnsystem)
+	result, err = r.ensureService(pmnsystem, svc)
+	if result != nil {
+		return *result, err
+	}
+	svc = r.orc8rLteService(pmnsystem)
+	result, err = r.ensureService(pmnsystem, svc)
+	if result != nil {
+		return *result, err
+	}
+	svc = r.orc8rNprobeService(pmnsystem)
+	result, err = r.ensureService(pmnsystem, svc)
+	if result != nil {
+		return *result, err
+	}
+	svc = r.orc8rPolicyDbService(pmnsystem)
+	result, err = r.ensureService(pmnsystem, svc)
+	if result != nil {
+		return *result, err
+	}
+	svc = r.orc8rSmsdService(pmnsystem)
+	result, err = r.ensureService(pmnsystem, svc)
+	if result != nil {
+		return *result, err
+	}
+	svc = r.orc8rSubscriberDbCacheService(pmnsystem)
+	result, err = r.ensureService(pmnsystem, svc)
+	if result != nil {
+		return *result, err
+	}
+	svc = r.orc8rSubscriberDbService(pmnsystem)
 	result, err = r.ensureService(pmnsystem, svc)
 	if result != nil {
 		return *result, err

@@ -847,3 +847,314 @@ func (r *PmnsystemReconciler) orc8rTenantsService(cr *v1.Pmnsystem) *corev1.Serv
 		},
 	}
 }
+func (r *PmnsystemReconciler) orc8rHaService(cr *v1.Pmnsystem) *corev1.Service {
+	labels := map[string]string{
+		"app":                          "orc8r-ha",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "orc8r-ha",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Type:     corev1.ServiceTypeClusterIP,
+			Selector: labels,
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "grpc",
+					Port:       9180,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(9119),
+				},
+			},
+			SessionAffinity: corev1.ServiceAffinityNone,
+		},
+	}
+}
+func (r *PmnsystemReconciler) orc8rLteService(cr *v1.Pmnsystem) *corev1.Service {
+	labels := map[string]string{
+		"app":                          "orc8r-lte",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "orc8r-lte",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Type:     corev1.ServiceTypeClusterIP,
+			Selector: labels,
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "grpc",
+					Port:       9180,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(9113),
+				},
+				{
+					Name:       "grpc-internal",
+					Port:       9190,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(9213),
+				},
+				{
+					Name:       "http",
+					Port:       8080,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(10113),
+				},
+			},
+			SessionAffinity: corev1.ServiceAffinityNone,
+		},
+	}
+}
+func (r *PmnsystemReconciler) orc8rNprobeService(cr *v1.Pmnsystem) *corev1.Service {
+	labels := map[string]string{
+		"app":                          "orc8r-nprobe",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "orc8r-nprobe",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Type:     corev1.ServiceTypeClusterIP,
+			Selector: labels,
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "grpc",
+					Port:       9180,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(9666),
+				},
+				{
+					Name:       "grpc-internal",
+					Port:       9190,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(9766),
+				},
+				{
+					Name:       "http",
+					Port:       8080,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(10088),
+				},
+			},
+			SessionAffinity: corev1.ServiceAffinityNone,
+		},
+	}
+}
+func (r *PmnsystemReconciler) orc8rPolicyDbService(cr *v1.Pmnsystem) *corev1.Service {
+	labels := map[string]string{
+		"app":                          "orc8r-policydb",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "orc8r-policydb",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Type:     corev1.ServiceTypeClusterIP,
+			Selector: labels,
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "grpc",
+					Port:       9180,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(9085),
+				},
+				{
+					Name:       "grpc-internal",
+					Port:       9190,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(9185),
+				},
+				{
+					Name:       "http",
+					Port:       8080,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(10085),
+				},
+			},
+			SessionAffinity: corev1.ServiceAffinityNone,
+		},
+	}
+}
+func (r *PmnsystemReconciler) orc8rSmsdService(cr *v1.Pmnsystem) *corev1.Service {
+	labels := map[string]string{
+		"app":                          "orc8r-smsd",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "orc8r-smsd",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Type:     corev1.ServiceTypeClusterIP,
+			Selector: labels,
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "grpc",
+					Port:       9180,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(9120),
+				},
+				{
+					Name:       "grpc-internal",
+					Port:       9190,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(9220),
+				},
+				{
+					Name:       "http",
+					Port:       8080,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(10086),
+				},
+			},
+			SessionAffinity: corev1.ServiceAffinityNone,
+		},
+	}
+}
+func (r *PmnsystemReconciler) orc8rSubscriberDbCacheService(cr *v1.Pmnsystem) *corev1.Service {
+	labels := map[string]string{
+		"app":                          "orc8r-subscriberdb-cache",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "orc8r-subscriberdb-cache",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Type:     corev1.ServiceTypeClusterIP,
+			Selector: labels,
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "grpc",
+					Port:       9180,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(9089),
+				},
+				{
+					Name:       "http",
+					Port:       8080,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(10087),
+				},
+			},
+			SessionAffinity: corev1.ServiceAffinityNone,
+		},
+	}
+}
+func (r *PmnsystemReconciler) orc8rSubscriberDbService(cr *v1.Pmnsystem) *corev1.Service {
+	labels := map[string]string{
+		"app":                          "orc8r-subscriberdb",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "orc8r-subscriberdb",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Type:     corev1.ServiceTypeClusterIP,
+			Selector: labels,
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "grpc",
+					Port:       9180,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(9083),
+				},
+				{
+					Name:       "grpc-internal",
+					Port:       9190,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(9183),
+				},
+				{
+					Name:       "http",
+					Port:       8080,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(10083),
+				},
+			},
+			SessionAffinity: corev1.ServiceAffinityNone,
+		},
+	}
+}
