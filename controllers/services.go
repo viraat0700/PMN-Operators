@@ -494,18 +494,14 @@ func (r *PmnsystemReconciler) orc8rNotifierInternalService(cr *v1.Pmnsystem) *co
 			Name:      "orc8r-notifier-internal",
 			Namespace: cr.Spec.NameSpace,
 			Labels:    labels,
-			Annotations: map[string]string{
-				"app":                          "orc8r-notifier-internal",
-				"app.kubernetes.io/instance":   "orc8r",
-				"app.kubernetes.io/managed-by": "Orc8r-Operator",
-				"external-dns.alpha.kubernetes.io/hostname":                             "notifier.pmn-dev.wavelabs.in",
-				"kubectl.kubernetes.io/last-applied-configuration":                      `{"apiVersion":"v1","kind":"Service","metadata":{"annotations":{"external-dns.alpha.kubernetes.io/hostname":"notifier.pmn-dev.wavelabs.in","meta.helm.sh/release-name":"orc8r","meta.helm.sh/release-namespace":"pmn","service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags":"lbtype=service","service.beta.kubernetes.io/aws-load-balancer-type":"nlb"},"labels":{"app.kubernetes.io/component":"notifier","app.kubernetes.io/managed-by":"Helm"},"name":"notifier","namespace":"pmn"},"spec":{"allocateLoadBalancerNodePorts":true,"clusterIP":"172.20.227.67","clusterIPs":["172.20.227.67"],"externalTrafficPolicy":"Cluster","internalTrafficPolicy":"Cluster","ipFamilies":["IPv4"],"ipFamilyPolicy":"SingleStack","ports":[{"name":"notifier","nodePort":32001,"port":443,"protocol":"TCP","targetPort":443}],"selector":{"app.kubernetes.io/component":"notifier"},"sessionAffinity":"None","type":"LoadBalancer"},"status":{"loadBalancer":{"ingress":[{"hostname":"ae7e0c4a79e194bf8b11966c881be819-cf7367a52c2eed60.elb.us-west-2.amazonaws.com"}]}}}`,
-				"service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags": "lbtype=service",
-				"service.beta.kubernetes.io/aws-load-balancer-type":                     "nlb",
-			},
-			Finalizers: []string{
-				"service.kubernetes.io/load-balancer-cleanup",
-			},
+			// Annotations: map[string]string{
+			// 	"app":                          "orc8r-notifier-internal",
+			// 	"app.kubernetes.io/instance":   "orc8r",
+			// 	"app.kubernetes.io/managed-by": "Orc8r-Operator",
+			// },
+			// Finalizers: []string{
+			// 	"service.kubernetes.io/load-balancer-cleanup",
+			// },
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
 					Group:   v1.GroupVersion.Group,
