@@ -2951,7 +2951,7 @@ func (r *PmnsystemReconciler) orc8StreamerDeployment(cr *v1.Pmnsystem) *appsv1.D
 
 	args := []string{
 		"/var/opt/magma/envdir",
-		"/var/opt/magma/bin/state",
+		"/var/opt/magma/bin/streamer",
 		"-logtostderr=true",
 		"-v=0",
 	}
