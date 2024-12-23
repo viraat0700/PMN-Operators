@@ -400,8 +400,6 @@ func (r *PmnsystemReconciler) orc8rmetricsdService(cr *v1.Pmnsystem) *corev1.Ser
 		"app":                          "orc8r-metricsd",
 		"app.kubernetes.io/instance":   "orc8r",
 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
-		"orc8r.io/obsidian_handlers":   "true",
-		"orc8r.io/swagger_spec":        "true",
 	}
 
 	return &corev1.Service{
@@ -413,7 +411,6 @@ func (r *PmnsystemReconciler) orc8rmetricsdService(cr *v1.Pmnsystem) *corev1.Ser
 				"app":                          "orc8r-metricsd",
 				"app.kubernetes.io/instance":   "orc8r",
 				"app.kubernetes.io/managed-by": "Orc8r-Operator",
-				"orc8r.io/obsidian_handlers_path_prefixes": "/magma/v1/networks/:network_id/alerts, /magma/v1/networks/:network_id/metrics, /magma/v1/networks/:network_id/prometheus, /magma/v1/tenants/:tenant_id/metrics, /magma/v1/tenants/targets_metadata,",
 			},
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
