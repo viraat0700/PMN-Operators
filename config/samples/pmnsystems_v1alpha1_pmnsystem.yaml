@@ -10,102 +10,125 @@ metadata:
   name: pmnsystem-sample
 spec:
   # TODO(user): Add fields here
-envVariablesNMSMagmaLte:
-  - name: API_CERT_FILE
-    value: /run/secrets/admin_operator.pem
-  - name: API_PRIVATE_KEY_FILENAME
-    value: /run/secrets/admin_operator.key.pem
-  - name: API_HOST
-    value: api.pmn-dev.wavelabs.in
-  - name: HOST
-    value: 0.0.0.0
-  - name: PORT
-    value: "8081"
-  - name: MYSQL_DB
-    value: pmndev
-  - name: MYSQL_HOST
-    value: pmn-dev-db.cm9kunmuwhce.us-west-2.rds.amazonaws.com
-  - name: MYSQL_PORT
-    value: "5432"
-  - name: MYSQL_DIALECT
-    value: postgres
-  - name: MYSQL_PASS
-    valueFrom:
-      secretKeyRef:
-        key: MYSQL_PASS
-        name: magmalte-mysql-secrets
-  - name: MYSQL_USER
-    valueFrom:
-      secretKeyRef:
-        key: MYSQL_USER
-        name: magmalte-mysql-secrets
-  - name: USER_GRAFANA_ADDRESS
-    value: orc8r-user-grafana:3000
-envVariablesOrc8rNotifier:
-  - name: "PUBLISHER_PORT"
-    value: "5442"
-  - name: "SUBSCRIBER_PORT"
-    value: "443"
-  - name: "NOTIF_CERT_CA"
-    value: "notifier-ca.crt"
-  - name: "NOTIF_SERVER_CERT"
-    value: "notifier.crt"
-  - name: "NOTIF_SERVER_KEY"
-    value: "notifier.key"
-  - name: "NOTIF_SUBSCRIBER"
-    value: "notifier-internal"
-  - name: "NOTIF_PUBLISHER"
-    value: "notifier-internal"
-envVariablesOrc8rNginx:
-  - name: "PROXY_BACKENDS"
-    value: "pmn.svc.cluster.local"
-  - name: "CONTROLLER_HOSTNAME"
-    value: "controller.pmn-dev.wavelabs.in"
-  - name: "RESOLVER"
-    value: "kube-dns.kube-system.svc.cluster.local valid=10s"
-  - name: "SERVICE_REGISTRY_MODE"
-    value: "k8s"
-  - name: "SSL_CERTIFICATE"
-    value: "/var/opt/magma/certs/controller.crt"
-  - name: "SSL_CERTIFICATE_KEY"
-    value: "/var/opt/magma/certs/controller.key"
-  - name: "SSL_CLIENT_CERTIFICATE"
-    value: "/var/opt/magma/certs/certifier.pem"
-envVariablesDirectoryD:
-  - name: "SQL_DRIVER"
-    value: "postgres"
-  - name: "SQL_DIALECT"
-    value: "psql"
-  - name: "SERVICE_REGISTRY_MODE"
-    value: "k8s"
-  - name: "HELM_RELEASE_NAME"
-    value: "orc8r"
-  - name: "SERVICE_REGISTRY_NAMESPACE"
-    value: "pmn"
-  - name: "HELM_VERSION_TAG"
-    value: "1.8.0"
-  - name: "VERSION_TAG"
-    value: "1.8.0-6c4579b5"
-  - name: "ORC8R_DOMAIN_NAME"
-    value: "magma.test"
-  - name: "PUBLISHER_PORT"
-    value: "5442"
-  - name: "SUBSCRIBER_PORT"
-    value: "443"
-  - name: "NOTIF_PUBLISHER"
-    value: "notifier-internal"
-  - name: "NOTIF_SUBSCRIBER"
-    value: "notifier-internal"
-replicaCount: 1
-pullPolicy: IfNotPresent
-nameSpace: "pmn"
-notifierImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/notifier:1.8.0-a914c772"
-nginxImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/nginx:1.8.0-a914c772"
-imageMagmaLte: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/magmalte:1.8.0-a914c772"
-imagePullSecrets: "artifactory"
-persistent:
-  pvcClaimName: "abc"
-  storageClassName: "standard"
-image:
-  repository: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/controller"
-  tag: "1.8.0-6c4579b5"
+  envVariablesNMSMagmaLte:
+    - name: "API_CERT_FILE"
+      value: "/run/secrets/admin_operator.pem"
+    - name: "API_PRIVATE_KEY_FILENAME"
+      value: "/run/secrets/admin_operator.key.pem"  
+    - name: "API_HOST" 
+      value: "api.pmn-dev.wavelabs.in"
+    - name: "HOST"
+      value: "0.0.0.0"
+    - name: "PORT"
+      value: "8081"
+    - name: "MYSQL_DB"
+      value: "pmndev"
+    - name: "MYSQL_HOST"
+      value: "pmn-dev-db.cm9kunmuwhce.us-west-2.rds.amazonaws.com"
+    - name: "MYSQL_PORT"
+      value: "5432"
+    - name: "MYSQL_DIALECT"
+      value: "postgres"
+    - name: "USER_GRAFANA_ADDRESS"
+      value: "orc8r-user-grafana:3000"
+  envVariablesOrc8rNotifier:
+    - name: "PUBLISHER_PORT"
+      value: "5442"
+    - name: "SUBSCRIBER_PORT"
+      value: "443"
+    - name: "NOTIF_CERT_CA"
+      value: "notifier-ca.crt"
+    - name: "NOTIF_SERVER_CERT"
+      value: "notifier.crt"
+    - name: "NOTIF_SERVER_KEY"
+      value: "notifier.key"
+    - name: "NOTIF_SUBSCRIBER"
+      value: "notifier-internal"
+    - name: "NOTIF_PUBLISHER"
+      value: "notifier-internal"
+  envVariablesOrc8rNginx:
+    - name: "PROXY_BACKENDS"
+      value: "pmn.svc.cluster.local"
+    - name: "CONTROLLER_HOSTNAME"
+      value: "controller.pmn-dev.wavelabs.in"
+    - name: "RESOLVER"
+      value: "kube-dns.kube-system.svc.cluster.local valid=10s"
+    - name: "SERVICE_REGISTRY_MODE"
+      value: "k8s"
+    - name: "SSL_CERTIFICATE"
+      value: "/var/opt/magma/certs/controller.crt"
+    - name: "SSL_CERTIFICATE_KEY"
+      value: "/var/opt/magma/certs/controller.key"
+    - name: "SSL_CLIENT_CERTIFICATE"
+      value: "/var/opt/magma/certs/certifier.pem"
+  envVariablesDirectoryD:
+    - name: "SQL_DRIVER"
+      value: "postgres"
+    - name: "SQL_DIALECT"
+      value: "psql"
+    - name: "SERVICE_REGISTRY_MODE"
+      value: "k8s"
+    - name: "HELM_RELEASE_NAME"
+      value: "orc8r"
+    - name: "SERVICE_REGISTRY_NAMESPACE"
+      value: "pmn"
+    - name: "HELM_VERSION_TAG"
+      value: "1.8.0"
+    - name: "VERSION_TAG"
+      value: "1.8.0-6c4579b5"
+    - name: "ORC8R_DOMAIN_NAME"
+      value: "magma.test"
+    - name: "PUBLISHER_PORT"
+      value: "5442"
+    - name: "SUBSCRIBER_PORT"
+      value: "443"
+    - name: "NOTIF_PUBLISHER"
+      value: "notifier-internal"
+    - name: "NOTIF_SUBSCRIBER"
+      value: "notifier-internal"
+  envVariables:
+    - name: "SQL_DRIVER"
+      value: "postgres"
+    - name: "SQL_DIALECT"
+      value: "psql"
+    - name: "SERVICE_REGISTRY_MODE"
+      value: "k8s"
+    - name: "HELM_RELEASE_NAME"
+      value: "orc8r"
+    - name: "SERVICE_REGISTRY_NAMESPACE"
+      value: "pmn"
+    - name: "HELM_VERSION_TAG"
+      value: "1.8.0"
+    - name: "VERSION_TAG"
+      value: "1.8.0-6c4579b5"
+    - name: "ORC8R_DOMAIN_NAME"
+      value: "magma.test"
+    - name: "PUBLISHER_PORT"
+      value: "5442"
+    - name: "SUBSCRIBER_PORT"
+      value: "443"
+    - name: "NOTIF_PUBLISHER"
+      value: "notifier-internal"
+    - name: "NOTIF_SUBSCRIBER"
+      value: "notifier-internal"
+    - name: "NOTIF_CERT_CA"
+      value: "notifier-ca.crt"
+    - name: "NOTIF_SERVER_CERT"
+      value: "notifier.crt"
+    - name: "NOTIF_SERVER_KEY"
+      value: "notifier.key"
+  replicaCount: 1
+  pullPolicy: IfNotPresent
+  nameSpace: "pmn"
+  notifierImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/notifier:1.8.0-a914c772"
+  nginxImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/nginx:1.8.0-a914c772"
+  imagePullSecrets: "artifactory"
+  persistent:
+    pvcClaimName: "abc"
+    storageClassName: "standard"
+  imageFluentd:
+    repository: "gcr.io/google-containers/fluentd-elasticsearch"
+    tag: "v2.4.0"
+  image:
+    repository: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/controller"
+    tag: "1.8.0-6c4579b5"

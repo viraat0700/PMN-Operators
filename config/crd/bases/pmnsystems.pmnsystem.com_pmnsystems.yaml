@@ -87,8 +87,13 @@ spec:
                   tag:
                     type: string
                 type: object
-              imageMagmaLte:
-                type: string
+              imageFluentd:
+                properties:
+                  repository:
+                    type: string
+                  tag:
+                    type: string
+                type: object
               imagePullSecrets:
                 type: string
               nameSpace:

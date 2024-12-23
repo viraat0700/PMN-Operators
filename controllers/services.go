@@ -1181,6 +1181,7 @@ func (r *PmnsystemReconciler) NmsMagmaLteService(cr *v1.Pmnsystem) *corev1.Servi
 					Protocol:   corev1.ProtocolTCP,
 					TargetPort: intstr.FromInt(8081),
 				},
+				
 			},
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
