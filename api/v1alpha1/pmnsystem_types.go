@@ -36,6 +36,15 @@ type EnvironmentVariablesDirectoryD struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
 }
+type EnvironmentVariablesFluentd struct {
+	Name  string `json:"name,omitempty"`
+	Value string `json:"value,omitempty"`
+}
+
+type ImageFluentd struct {
+	Repository string `json:"repository,omitempty"`
+	Tag        string `json:"tag,omitempty"`
+}
 
 type Image struct {
 	Repository string `json:"repository,omitempty"`
@@ -63,10 +72,12 @@ type PmnsystemSpec struct {
 	Persistent                Persistent                          `json:"persistent,omitempty"`
 	NameSpace                 string                              `json:"nameSpace,omitempty"`
 	Image                     Image                               `json:"image,omitempty"`
+	ImageFluentd              ImageFluentd                         `json:"imageFluentd,omitempty"`
 	EnvVariables              []EnvironmentVariables              `json:"envVariables,omitempty"`
 	EnvVariablesDirectoryD    []EnvironmentVariablesDirectoryD    `json:"envVariablesDirectoryD,omitempty"`
 	EnvVariablesOrc8rNginx    []EnvironmentVariablesOrc8rNginx    `json:"envVariablesOrc8rNginx,omitempty"`
 	EnvVariablesOrc8rNotifier []EnvironmentVariablesOrc8rNotifier `json:"envVariablesOrc8rNotifier,omitempty"`
+	EnvVariablesFluentd       []EnvironmentVariablesFluentd       `json:"envVariablesFluentd,omitempty"`
 	ImagePullSecrets          string                              `json:"imagePullSecrets,omitempty"`
 }
 

@@ -1151,3 +1151,50 @@ func (r *PmnsystemReconciler) orc8rSubscriberDbService(cr *v1.Pmnsystem) *corev1
 		},
 	}
 }
+func (r *PmnsystemReconciler) fluentDService(cr *v1.Pmnsystem) *corev1.Service {
+	labels := map[string]string{
+		"app":                          "fluentd",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "fluentd",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Type:     corev1.ServiceTypeClusterIP,
+			Selector: labels,
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "forward",
+					Port:       443,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(24224),
+				},
+				{
+					Name:       "events",
+					Port:       24225,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(24225),
+				},
+				{
+					Name:       "http",
+					Port:       8080,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(10083),
+				},
+			},
+			SessionAffinity: corev1.ServiceAffinityNone,
+		},
+	}
+}

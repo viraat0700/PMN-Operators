@@ -116,3 +116,15 @@ func (r *PmnsystemReconciler) getEnvVarsForOrc8rNotifier(cr *v1.Pmnsystem) []cor
 	fmt.Println("FINAL ENV VARIABLES:", envVars)
 	return envVars
 }
+func (r *PmnsystemReconciler) getEnvVarsForOrc8rFluentD(cr *v1.Pmnsystem) []corev1.EnvVar {
+	var envVars []corev1.EnvVar
+
+	for _, env := range cr.Spec.EnvVariablesFluentd {
+		envVars = append(envVars, corev1.EnvVar{
+			Name:  env.Name,
+			Value: env.Value,
+		})
+	}
+	fmt.Println("FINAL ENV VARIABLES:", envVars)
+	return envVars
+}

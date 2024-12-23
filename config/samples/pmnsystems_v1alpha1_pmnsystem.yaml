@@ -10,6 +10,19 @@ metadata:
   name: pmnsystem-sample
 spec:
   # TODO(user): Add fields here
+  envVariablesFluentd:
+    - name: OUTPUT_HOST
+      value: vpc-pmn-dev-qzsnynlmunxke4aibqrji4vc4i.us-west-2.es.amazonaws.com
+    - name: OUTPUT_PORT
+      value: "443"
+    - name: OUTPUT_SCHEME
+      value: https
+    - name: OUTPUT_SSL_VERSI
+      value: TLSv1
+    - name: OUTPUT_BUFFER_CHUNK_LIMIT
+      value: 2M
+    - name: OUTPUT_BUFFER_QUEUE_LIMIT
+      value: "8"
   envVariablesOrc8rNotifier:
     - name: "PUBLISHER_PORT"
       value: "5442"
@@ -105,6 +118,9 @@ spec:
   persistent:
     pvcClaimName: "abc"
     storageClassName: "standard"
+  imageFluentd:
+    repository: "gcr.io/google-containers/fluentd-elasticsearch"
+    tag: "v2.4.0"
   image:
     repository: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/controller"
     tag: "1.8.0-6c4579b5"
