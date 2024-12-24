@@ -146,7 +146,7 @@ func (r *PmnsystemReconciler) getEnvVarsForNmsMagmaLte(cr *v1.Pmnsystem) []corev
 		},
 	}...)
 
-	for _, env := range cr.Spec.EnvVariables {
+	for _, env := range cr.Spec.EnvVariablesNMSMagmaLte {
 		envVars = append(envVars, corev1.EnvVar{
 			Name:  env.Name,
 			Value: env.Value,
