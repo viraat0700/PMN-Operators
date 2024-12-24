@@ -167,10 +167,14 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if result != nil {
 		return *result, err
 	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.fluentdDeployment(pmnsystem))
+	result, err = r.ensureDeployment(req, pmnsystem, r.nmsMagmaLteDeployment(pmnsystem))
 	if result != nil {
 		return *result, err
 	}
+	// result, err = r.ensureDeployment(req, pmnsystem, r.nginxDeployment(pmnsystem))
+	// if result != nil {
+	// 	return *result, err
+	// }
 	// result, err = r.ensureDeployment(req, pmnsystem, r.orc8rDomainProxyDeployment(pmnsystem))
 	// if result != nil {
 	// 	return *result, err
@@ -407,7 +411,7 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if result != nil {
 		return *result, err
 	}
-	svc = r.fluentDService(pmnsystem)
+	svc = r.NmsMagmaLteService(pmnsystem)
 	result, err = r.ensureService(pmnsystem, svc)
 	if result != nil {
 		return *result, err

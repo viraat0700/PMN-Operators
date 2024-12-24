@@ -10,19 +10,35 @@ metadata:
   name: pmnsystem-sample
 spec:
   # TODO(user): Add fields here
-  envVariablesFluentd:
-    - name: OUTPUT_HOST
-      value: vpc-pmn-dev-qzsnynlmunxke4aibqrji4vc4i.us-west-2.es.amazonaws.com
-    - name: OUTPUT_PORT
-      value: "443"
-    - name: OUTPUT_SCHEME
-      value: https
-    - name: OUTPUT_SSL_VERSI
-      value: TLSv1
-    - name: OUTPUT_BUFFER_CHUNK_LIMIT
-      value: 2M
-    - name: OUTPUT_BUFFER_QUEUE_LIMIT
-      value: "8"
+  envVariablesNMSMagmaLte:
+    - name: API_CERT_FILE
+      value: /run/secrets/admin_operator.pem
+    - name: API_PRIVATE_KEY_FILENAME
+      value: /run/secrets/admin_operator.key.pem
+    - name: API_HOST
+      value: api.pmn-dev.wavelabs.in
+    - name: HOST
+      value: 0.0.0.0
+    - name: PORT
+      value: "8081"
+    - name: MYSQL_DB
+      value: pmndev
+    - name: MYSQL_HOST
+      value: pmn-dev-db.cm9kunmuwhce.us-west-2.rds.amazonaws.com
+    - name: MYSQL_PORT
+      value: "5432"
+    - name: MYSQL_DIALECT
+      value: postgres
+    - name: MYSQL_PASS
+      valueFrom:
+      secretKeyRef:
+        name: magmalte-mysql-secrets
+        key: MYSQL_PASS
+    - name: MYSQL_USER
+      valueFrom:
+        secretKeyRef:
+          name: magmalte-mysql-secrets
+          key: MYSQL_USER
   envVariablesOrc8rNotifier:
     - name: "PUBLISHER_PORT"
       value: "5442"
@@ -112,15 +128,14 @@ spec:
   replicaCount: 1
   pullPolicy: IfNotPresent
   nameSpace: "pmn"
+  nginxImageDeploymentSimple: "nginx:latest"
   notifierImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/notifier:1.8.0-a914c772"
   nginxImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/nginx:1.8.0-a914c772"
+  imageMagmaLte: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/magmalte:1.8.0-a914c772"
   imagePullSecrets: "artifactory"
   persistent:
     pvcClaimName: "abc"
     storageClassName: "standard"
-  imageFluentd:
-    repository: "gcr.io/google-containers/fluentd-elasticsearch"
-    tag: "v2.4.0"
   image:
     repository: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/controller"
     tag: "1.8.0-6c4579b5"

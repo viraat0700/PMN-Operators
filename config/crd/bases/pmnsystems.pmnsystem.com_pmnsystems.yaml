@@ -53,6 +53,33 @@ spec:
                       type: string
                   type: object
                 type: array
+              envVariablesNMSMagmaLte:
+                items:
+                  properties:
+                    name:
+                      type: string
+                    value:
+                      type: string
+                  type: object
+                type: array
+              envVariablesOrc8rNginx:
+                items:
+                  properties:
+                    name:
+                      type: string
+                    value:
+                      type: string
+                  type: object
+                type: array
+              envVariablesOrc8rNotifier:
+                items:
+                  properties:
+                    name:
+                      type: string
+                    value:
+                      type: string
+                  type: object
+                type: array
               image:
                 properties:
                   repository:
@@ -60,9 +87,17 @@ spec:
                   tag:
                     type: string
                 type: object
+              imageMagmaLte:
+                type: string
               imagePullSecrets:
                 type: string
               nameSpace:
+                type: string
+              nginxImage:
+                type: string
+              nginxImageDeploymentSimple:
+                type: string
+              notifierImage:
                 type: string
               persistent:
                 properties:
