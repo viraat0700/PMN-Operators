@@ -4471,20 +4471,24 @@ func (r *PmnsystemReconciler) orc8AlertManagerDeployment(cr *v1.Pmnsystem) *apps
 	}
 
 	// Affinity
+
 	affinity := &corev1.Affinity{
 		PodAffinity: &corev1.PodAffinity{
-			RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{
+			PreferredDuringSchedulingIgnoredDuringExecution: []corev1.WeightedPodAffinityTerm{
 				{
-					LabelSelector: &metav1.LabelSelector{
-						MatchExpressions: []metav1.LabelSelectorRequirement{
-							{
-								Key:      "app.kubernetes.io/component",
-								Operator: metav1.LabelSelectorOpIn,
-								Values:   []string{"prometheus"},
+					Weight: 1, // You can set a weight between 1 and 100
+					PodAffinityTerm: corev1.PodAffinityTerm{
+						LabelSelector: &metav1.LabelSelector{
+							MatchExpressions: []metav1.LabelSelectorRequirement{
+								{
+									Key:      "app.kubernetes.io/component",
+									Operator: metav1.LabelSelectorOpIn,
+									Values:   []string{"prometheus"},
+								},
 							},
 						},
+						TopologyKey: "kubernetes.io/hostname",
 					},
-					TopologyKey: "kubernetes.io/hostname",
 				},
 			},
 		},
