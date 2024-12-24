@@ -4300,9 +4300,11 @@ func (r *PmnsystemReconciler) nmsMagmaLteDeployment(cr *v1.Pmnsystem) *appsv1.De
 	}
 
 	// If Bevo is true, add the NET_ADMIN capability
-	securityContext.Capabilities = &corev1.Capabilities{
-		Add: []corev1.Capability{"NET_ADMIN"},
-	}
+	// if cr.Spec.Bevo {
+	// 	securityContext.Capabilities = &corev1.Capabilities{
+	// 		Add: []corev1.Capability{"NET_ADMIN"},
+	// 	}
+	// }
 
 	// Define imagePullSecrets
 	imagePullSecrets := []corev1.LocalObjectReference{
@@ -4326,7 +4328,7 @@ func (r *PmnsystemReconciler) nmsMagmaLteDeployment(cr *v1.Pmnsystem) *appsv1.De
 		FailureThreshold:    3,
 		ProbeHandler: corev1.ProbeHandler{
 			HTTPGet: &corev1.HTTPGetAction{
-				Path:   "/healthz",
+				Path: "/healthz",
 				Scheme: corev1.URISchemeHTTP,
 				Port: intstr.IntOrString{
 					Type:   intstr.Int,
@@ -4344,7 +4346,7 @@ func (r *PmnsystemReconciler) nmsMagmaLteDeployment(cr *v1.Pmnsystem) *appsv1.De
 		FailureThreshold:    3,
 		ProbeHandler: corev1.ProbeHandler{
 			HTTPGet: &corev1.HTTPGetAction{
-				Path:   "/healthz",
+				Path: "/healthz",
 				Scheme: corev1.URISchemeHTTP,
 				Port: intstr.IntOrString{
 					Type:   intstr.Int,
