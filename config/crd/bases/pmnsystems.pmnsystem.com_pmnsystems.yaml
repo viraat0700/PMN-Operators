@@ -95,8 +95,6 @@ spec:
                 type: string
               nginxImage:
                 type: string
-              nginxImageDeploymentSimple:
-                type: string
               notifierImage:
                 type: string
               persistent:
