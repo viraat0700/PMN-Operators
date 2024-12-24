@@ -123,12 +123,10 @@ spec:
   notifierImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/notifier:1.8.0-a914c772"
   nginxImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/nginx:1.8.0-a914c772"
   imagePullSecrets: "artifactory"
+  imageMagmaLte: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/magmalte:1.8.0-a914c772"
   persistent:
     pvcClaimName: "abc"
     storageClassName: "standard"
-  imageFluentd:
-    repository: "gcr.io/google-containers/fluentd-elasticsearch"
-    tag: "v2.4.0"
   image:
     repository: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/controller"
     tag: "1.8.0-6c4579b5"

@@ -41,11 +41,6 @@ type EnvironmentVariablesDirectoryD struct {
 	Value string `json:"value,omitempty"`
 }
 
-type ImageFluentd struct {
-	Repository string `json:"repository,omitempty"`
-	Tag        string `json:"tag,omitempty"`
-}
-
 type Image struct {
 	Repository string `json:"repository,omitempty"`
 	Tag        string `json:"tag,omitempty"`
@@ -67,12 +62,12 @@ type PmnsystemSpec struct {
 	// Foo is an example field of Pmnsystem. Edit pmnsystem_types.go to remove/update
 	ReplicaCount              int32                               `json:"replicaCount,omitempty"`
 	NginxImage                string                              `json:"nginxImage,omitempty"`
-	NotifierImage                string                              `json:"notifierImage,omitempty"`
+	NotifierImage             string                              `json:"notifierImage,omitempty"`
 	PullPolicy                string                              `json:"pullPolicy,omitempty"`
 	Persistent                Persistent                          `json:"persistent,omitempty"`
 	NameSpace                 string                              `json:"nameSpace,omitempty"`
 	Image                     Image                               `json:"image,omitempty"`
-	ImageFluentd              ImageFluentd                         `json:"imageFluentd,omitempty"`
+	ImageMagmaLte             string                              `json:"imageMagmaLte,omitempty"`
 	EnvVariables              []EnvironmentVariables              `json:"envVariables,omitempty"`
 	EnvVariablesDirectoryD    []EnvironmentVariablesDirectoryD    `json:"envVariablesDirectoryD,omitempty"`
 	EnvVariablesOrc8rNginx    []EnvironmentVariablesOrc8rNginx    `json:"envVariablesOrc8rNginx,omitempty"`

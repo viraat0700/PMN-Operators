@@ -4382,7 +4382,7 @@ func (r *PmnsystemReconciler) nmsMagmaLteDeployment(cr *v1.Pmnsystem) *appsv1.De
 
 	terminationMessagePolicy := corev1.TerminationMessagePolicy("File")
 
-	image := cr.Spec.Image.Repository + ":" + cr.Spec.Image.Tag
+	image := cr.Spec.ImageMagmaLte
 
 	return r.deployment(
 		strategy, // Deployment strategy
