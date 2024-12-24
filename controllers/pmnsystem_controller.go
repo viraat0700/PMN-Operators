@@ -171,6 +171,10 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if result != nil {
 		return *result, err
 	}
+	result, err = r.ensureDeployment(req, pmnsystem, r.orc8AlertManagerDeployment(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
 	// result, err = r.ensureDeployment(req, pmnsystem, r.orc8rDomainProxyDeployment(pmnsystem))
 	// if result != nil {
 	// 	return *result, err
@@ -412,11 +416,23 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if result != nil {
 		return *result, err
 	}
+	svc = r.orc8rAlterManagerService(pmnsystem)
+	result, err = r.ensureService(pmnsystem, svc)
+	if result != nil {
+		return *result, err
+	}
 	// svc = r.orc8rDomainProxyService(pmnsystem)
 	// result, err = r.ensureService(pmnsystem, svc)
 	// if result != nil {
 	// 	return *result, err
 	// }
+	
+	// ====ensure PVC====
+	// Create or update the PersistentVolumeClaim
+	result, err = r.ensurePersistentVolumeClaim(pmnsystem, r.createPersistentVolumeClaim(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
 
 	return ctrl.Result{}, nil
 }

@@ -192,3 +192,31 @@ func (r *PmnsystemReconciler) ensureService(_ *v1.Pmnsystem, desired *corev1.Ser
 	r.Log.Info("Service already exists and is up-to-date", "Service.Namespace", found.Namespace, "Service.Name", found.Name)
 	return nil, nil
 }
+
+func (r *PmnsystemReconciler) ensurePersistentVolumeClaim(_ *v1.Pmnsystem, desired *corev1.PersistentVolumeClaim) (*ctrl.Result, error) {
+	found := &corev1.PersistentVolumeClaim{}
+	err := r.Client.Get(context.TODO(), client.ObjectKey{
+		Namespace: desired.Namespace,
+		Name:      desired.Name,
+	}, found)
+
+	if err != nil && errors.IsNotFound(err) {
+		// PVC not found, create it
+		r.Log.Info("PVC not found, creating a new one", "PVC.Namespace", desired.Namespace, "PVC.Name", desired.Name)
+		err = r.Client.Create(context.TODO(), desired)
+		if err != nil {
+			r.Log.Error(err, "Failed to create PVC", "PVC.Namespace", desired.Namespace, "PVC.Name", desired.Name)
+			return &ctrl.Result{}, err
+		}
+		r.Log.Info("PVC created successfully", "PVC.Namespace", desired.Namespace, "PVC.Name", desired.Name)
+		return nil, nil
+	} else if err != nil {
+		// Error fetching PVC
+		r.Log.Error(err, "Failed to get PVC", "PVC.Namespace", desired.Namespace, "PVC.Name", desired.Name)
+		return &ctrl.Result{}, err
+	}
+
+	// If PVC exists, log and do nothing
+	r.Log.Info("PVC already exists", "PVC.Namespace", found.Namespace, "PVC.Name", found.Name)
+	return nil, nil
+}

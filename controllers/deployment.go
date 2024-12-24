@@ -60,6 +60,7 @@ func (r *PmnsystemReconciler) deployment(
 	terminationMessagePath string,
 	terminationMessagePolicy corev1.TerminationMessagePolicy,
 	image string,
+	affinity *corev1.Affinity,
 ) *appsv1.Deployment {
 	finalLabels := make(map[string]string)
 	for k, v := range defaultLabels {
@@ -103,6 +104,7 @@ func (r *PmnsystemReconciler) deployment(
 					Annotations: finalLabels,
 				},
 				Spec: corev1.PodSpec{
+					Affinity: affinity,
 					Containers: []corev1.Container{
 						{
 							Name:                     name,
@@ -288,6 +290,7 @@ func (r *PmnsystemReconciler) orc8rAccessD(cr *v1.Pmnsystem) *appsv1.Deployment 
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8rAnalyticsDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -450,6 +453,7 @@ func (r *PmnsystemReconciler) orc8rAnalyticsDeployment(cr *v1.Pmnsystem) *appsv1
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8rBootStrapperDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -613,6 +617,7 @@ func (r *PmnsystemReconciler) orc8rBootStrapperDeployment(cr *v1.Pmnsystem) *app
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8rCertifierDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -781,6 +786,7 @@ func (r *PmnsystemReconciler) orc8rCertifierDeployment(cr *v1.Pmnsystem) *appsv1
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Afinity
 	)
 }
 func (r *PmnsystemReconciler) orc8rConfiguratorDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -944,6 +950,7 @@ func (r *PmnsystemReconciler) orc8rConfiguratorDeployment(cr *v1.Pmnsystem) *app
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8rDeviceDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -1106,6 +1113,7 @@ func (r *PmnsystemReconciler) orc8rDeviceDeployment(cr *v1.Pmnsystem) *appsv1.De
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8rDirectorydDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -1268,6 +1276,7 @@ func (r *PmnsystemReconciler) orc8rDirectorydDeployment(cr *v1.Pmnsystem) *appsv
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8rDispatcherDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -1431,6 +1440,7 @@ func (r *PmnsystemReconciler) orc8rDispatcherDeployment(cr *v1.Pmnsystem) *appsv
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8rEventdDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -1595,6 +1605,7 @@ func (r *PmnsystemReconciler) orc8rEventdDeployment(cr *v1.Pmnsystem) *appsv1.De
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8rmetricsdDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -1759,6 +1770,7 @@ func (r *PmnsystemReconciler) orc8rmetricsdDeployment(cr *v1.Pmnsystem) *appsv1.
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8rNginxDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -1900,6 +1912,7 @@ func (r *PmnsystemReconciler) orc8rNginxDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8rNotifierDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -2060,6 +2073,7 @@ func (r *PmnsystemReconciler) orc8rNotifierDeployment(cr *v1.Pmnsystem) *appsv1.
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8rObsidianDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -2217,6 +2231,7 @@ func (r *PmnsystemReconciler) orc8rObsidianDeployment(cr *v1.Pmnsystem) *appsv1.
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8WorkerDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -2373,6 +2388,7 @@ func (r *PmnsystemReconciler) orc8WorkerDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8orchestratorDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -2531,6 +2547,7 @@ func (r *PmnsystemReconciler) orc8orchestratorDeployment(cr *v1.Pmnsystem) *apps
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8ServiceRegistryDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -2687,6 +2704,7 @@ func (r *PmnsystemReconciler) orc8ServiceRegistryDeployment(cr *v1.Pmnsystem) *a
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8StateDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -2843,6 +2861,7 @@ func (r *PmnsystemReconciler) orc8StateDeployment(cr *v1.Pmnsystem) *appsv1.Depl
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // afinity
 	)
 }
 func (r *PmnsystemReconciler) orc8StreamerDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -2999,6 +3018,7 @@ func (r *PmnsystemReconciler) orc8StreamerDeployment(cr *v1.Pmnsystem) *appsv1.D
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8TenantsDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -3157,6 +3177,7 @@ func (r *PmnsystemReconciler) orc8TenantsDeployment(cr *v1.Pmnsystem) *appsv1.De
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8rHaDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -3318,6 +3339,7 @@ func (r *PmnsystemReconciler) orc8rHaDeployment(cr *v1.Pmnsystem) *appsv1.Deploy
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8LteDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -3476,6 +3498,7 @@ func (r *PmnsystemReconciler) orc8LteDeployment(cr *v1.Pmnsystem) *appsv1.Deploy
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,
 	)
 }
 func (r *PmnsystemReconciler) orc8NprobeDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -3634,6 +3657,7 @@ func (r *PmnsystemReconciler) orc8NprobeDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8PolicyDbDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -3792,6 +3816,7 @@ func (r *PmnsystemReconciler) orc8PolicyDbDeployment(cr *v1.Pmnsystem) *appsv1.D
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,
 	)
 }
 func (r *PmnsystemReconciler) orc8SmsdDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -3950,6 +3975,7 @@ func (r *PmnsystemReconciler) orc8SmsdDeployment(cr *v1.Pmnsystem) *appsv1.Deplo
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,
 	)
 }
 func (r *PmnsystemReconciler) orc8SubscriberDbCacheDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -4107,6 +4133,7 @@ func (r *PmnsystemReconciler) orc8SubscriberDbCacheDeployment(cr *v1.Pmnsystem) 
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Affinity
 	)
 }
 func (r *PmnsystemReconciler) orc8SubscriberDbDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -4265,6 +4292,7 @@ func (r *PmnsystemReconciler) orc8SubscriberDbDeployment(cr *v1.Pmnsystem) *apps
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,
 	)
 }
 func (r *PmnsystemReconciler) nmsMagmaLteDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -4328,7 +4356,7 @@ func (r *PmnsystemReconciler) nmsMagmaLteDeployment(cr *v1.Pmnsystem) *appsv1.De
 		FailureThreshold:    3,
 		ProbeHandler: corev1.ProbeHandler{
 			HTTPGet: &corev1.HTTPGetAction{
-				Path: "/healthz",
+				Path:   "/healthz",
 				Scheme: corev1.URISchemeHTTP,
 				Port: intstr.IntOrString{
 					Type:   intstr.Int,
@@ -4346,7 +4374,7 @@ func (r *PmnsystemReconciler) nmsMagmaLteDeployment(cr *v1.Pmnsystem) *appsv1.De
 		FailureThreshold:    3,
 		ProbeHandler: corev1.ProbeHandler{
 			HTTPGet: &corev1.HTTPGetAction{
-				Path: "/healthz",
+				Path:   "/healthz",
 				Scheme: corev1.URISchemeHTTP,
 				Port: intstr.IntOrString{
 					Type:   intstr.Int,
@@ -4410,5 +4438,170 @@ func (r *PmnsystemReconciler) nmsMagmaLteDeployment(cr *v1.Pmnsystem) *appsv1.De
 		terminationMessagePath,        // Termination message path
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
+		nil,                           // Affinity
+	)
+}
+func (r *PmnsystemReconciler) orc8AlertManagerDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
+	int64Ptr := func(i int64) *int64 { return &i }
+	// int32Ptr := func(i int32) *int32 { return &i }
+
+	labels := map[string]string{
+		"app": "orc8r-alertmanager",
+	}
+
+	// Define volumes in a separate variable
+	volumes := []corev1.Volume{
+		{
+			Name: "prometheus-config",
+			VolumeSource: corev1.VolumeSource{
+				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+					ClaimName: "promcfg",
+				},
+			},
+		},
+	}
+
+	// VolumeMounts
+	volumeMounts := []corev1.VolumeMount{
+		{
+			Name:      "prometheus-config",
+			MountPath: "/etc/alertmanager",
+			ReadOnly:  true,
+		},
+	}
+
+	// Affinity
+	affinity := &corev1.Affinity{
+		PodAffinity: &corev1.PodAffinity{
+			RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{
+				{
+					LabelSelector: &metav1.LabelSelector{
+						MatchExpressions: []metav1.LabelSelectorRequirement{
+							{
+								Key:      "app.kubernetes.io/component",
+								Operator: metav1.LabelSelectorOpIn,
+								Values:   []string{"prometheus"},
+							},
+						},
+					},
+					TopologyKey: "kubernetes.io/hostname",
+				},
+			},
+		},
+	}
+
+	// Define the securityContext for the container
+	securityContext := &corev1.SecurityContext{
+		Privileged: func(b bool) *bool { return &b }(true),
+	}
+
+	// If Bevo is true, add the NET_ADMIN capability
+	// if cr.Spec.Bevo {
+	// 	securityContext.Capabilities = &corev1.Capabilities{
+	// 		Add: []corev1.Capability{"NET_ADMIN"},
+	// 	}
+	// }
+
+	// Define imagePullSecrets
+	imagePullSecrets := []corev1.LocalObjectReference{
+		{Name: cr.Spec.ImagePullSecrets},
+	}
+
+	// Define environment variables if needed
+	// envVars := r.getEnvVarsForDirectoryD(cr)
+
+	// Define ports (use nil if not needed)
+	ports := []corev1.ContainerPort{
+		{ContainerPort: 9093, Protocol: corev1.ProtocolTCP},
+	}
+
+	// Liveness and Readiness Probes
+	livenessProbe := &corev1.Probe{
+		InitialDelaySeconds: 10,
+		PeriodSeconds:       30,
+		FailureThreshold:    3,
+		SuccessThreshold:    1,
+		TimeoutSeconds:      1,
+		ProbeHandler: corev1.ProbeHandler{
+			HTTPGet: &corev1.HTTPGetAction{
+				Path:   "/",
+				Port:   intstr.FromInt(9093),
+				Scheme: corev1.URISchemeHTTP,
+			},
+		},
+	}
+
+	readinessProbe := &corev1.Probe{
+		InitialDelaySeconds: 10,
+		PeriodSeconds:       30,
+		FailureThreshold:    3,
+		SuccessThreshold:    1,
+		TimeoutSeconds:      1,
+		ProbeHandler: corev1.ProbeHandler{
+			HTTPGet: &corev1.HTTPGetAction{
+				Path:   "/",
+				Port:   intstr.FromInt(9093),
+				Scheme: corev1.URISchemeHTTP,
+			},
+		},
+	}
+
+	// Command for the container
+	// command := []string{
+	// 	"/usr/bin/envdir",
+	// }
+
+	// args := []string{
+	// 	"/var/opt/magma/envdir",
+	// 	"/var/opt/magma/bin/subscriberdb",
+	// 	"-run_echo_server=true",
+	// 	"-logtostderr=true",
+	// 	"-v=0",
+	// }
+
+	strategy := &appsv1.DeploymentStrategy{
+		RollingUpdate: &appsv1.RollingUpdateDeployment{
+			MaxSurge:       &intstr.IntOrString{Type: intstr.String, StrVal: "25%"},
+			MaxUnavailable: &intstr.IntOrString{Type: intstr.String, StrVal: "25%"},
+		},
+	}
+
+	terminationGracePeriodSeconds := int64Ptr(30)
+
+	resources := corev1.ResourceRequirements{}
+
+	terminationMessagePath := "/dev/termination-log"
+
+	terminationMessagePolicy := corev1.TerminationMessagePolicy("File")
+
+	image := "docker.io/prom/alertmanager:v0.18.0"
+
+	return r.deployment(
+		strategy, // Deployment strategy
+		cr,
+		"orc8r-alertmanager",
+		labels,                        // Labels
+		nil,                           // Command
+		nil,                           // args (nil if not needed)
+		volumeMounts,                  // Volume mounts
+		volumes,                       // Volumes
+		ports,                         // Ports (empty if not needed)
+		nil,                           // Init containers
+		nil,                           // DNS config
+		nil,                           // Annotations
+		nil,                           // Environment variables
+		livenessProbe,                 // Liveness probe
+		readinessProbe,                // Readiness probe
+		securityContext,               // Security context
+		corev1.DNSClusterFirst,        // DNS policy
+		corev1.RestartPolicyAlways,    // Restart policy
+		imagePullSecrets,              // Image pull secrets
+		terminationGracePeriodSeconds, // terminationGracePeriodSeconds
+		corev1.PullIfNotPresent,       // Image pull policy
+		resources,                     // Resources
+		terminationMessagePath,        // Termination message path
+		terminationMessagePolicy,      // Termination message policy
+		image,                         // Image
+		affinity,                      // Affinity
 	)
 }
