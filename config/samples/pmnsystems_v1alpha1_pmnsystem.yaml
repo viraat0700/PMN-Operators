@@ -11,7 +11,7 @@ metadata:
 spec:
   # TODO(user): Add fields here
   envVariablesNMSMagmaLte:
-    - name: "API_CERT_FILE"
+    - name: "API_CERT_FILENAME"
       value: "/run/secrets/admin_operator.pem"
     - name: "API_PRIVATE_KEY_FILENAME"
       value: "/run/secrets/admin_operator.key.pem"  
