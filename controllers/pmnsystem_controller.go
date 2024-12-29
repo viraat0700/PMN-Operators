@@ -452,6 +452,11 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if result != nil {
 		return *result, err
 	}
+	svc = r.orc8rPrometheusNginxProxyService(pmnsystem)
+	result, err = r.ensureService(pmnsystem, svc)
+	if result != nil {
+		return *result, err
+	}
 	// svc = r.orc8rDomainProxyService(pmnsystem)
 	// result, err = r.ensureService(pmnsystem, svc)
 	// if result != nil {
