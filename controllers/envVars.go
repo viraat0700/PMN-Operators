@@ -155,3 +155,15 @@ func (r *PmnsystemReconciler) getEnvVarsForNmsMagmaLte(cr *v1.Pmnsystem) []corev
 	fmt.Println("FINAL ENV VARIABLES:", envVars)
 	return envVars
 }
+func (r *PmnsystemReconciler) getEnvVarsForPrometheusKafkaAdapter(cr *v1.Pmnsystem) []corev1.EnvVar {
+	var envVars []corev1.EnvVar
+
+	for _, env := range cr.Spec.EnvVariablesPrometheusKafka {
+		envVars = append(envVars, corev1.EnvVar{
+			Name:  env.Name,
+			Value: env.Value,
+		})
+	}
+	fmt.Println("FINAL ENV VARIABLES:", envVars)
+	return envVars
+}
