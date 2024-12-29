@@ -4951,8 +4951,8 @@ func (r *PmnsystemReconciler) orc8rPrometheusKafkaAdapterDeployment(cr *v1.Pmnsy
 	// VolumeMounts
 	volumeMounts := []corev1.VolumeMount{
 		{
-			Name:      "/client_cert",
-			MountPath: "ssl-client-cert",
+			Name:      "ssl-client-cert",
+			MountPath: "/client_cert",
 			ReadOnly:  true,
 		},
 	}
