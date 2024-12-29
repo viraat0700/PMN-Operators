@@ -1353,7 +1353,7 @@ func (r *PmnsystemReconciler) orc8rPrometheusNginxProxyService(cr *v1.Pmnsystem)
 			},
 		},
 		Spec: corev1.ServiceSpec{
-			Type:     corev1.ServiceTypeClusterIP,
+			Type:     corev1.ServiceTypeLoadBalancer,
 			Selector: labels,
 			Ports: []corev1.ServicePort{
 				{
