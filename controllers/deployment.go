@@ -5000,7 +5000,7 @@ func (r *PmnsystemReconciler) orc8rPrometheusKafkaAdapterDeployment(cr *v1.Pmnsy
 
 	// Define ports (use nil if not needed)
 	ports := []corev1.ContainerPort{
-		{Name: "http", ContainerPort: 9100, Protocol: corev1.ProtocolTCP},
+		{Name: "http", ContainerPort: 8080, Protocol: corev1.ProtocolTCP},
 	}
 
 	// Liveness and Readiness Probes
