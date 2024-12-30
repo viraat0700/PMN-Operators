@@ -4793,7 +4793,6 @@ func (r *PmnsystemReconciler) orc8rPrometheusConfigurerDeployment(cr *v1.Pmnsyst
 		{
 			Name:      "prometheus-config",
 			MountPath: "/etc/configs",
-			ReadOnly:  true,
 		},
 	}
 
