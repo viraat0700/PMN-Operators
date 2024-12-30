@@ -123,7 +123,7 @@ func (r *PmnsystemReconciler) getEnvVarsForNmsMagmaLte(cr *v1.Pmnsystem) []corev
 	envVars = append(envVars, []corev1.EnvVar{
 		// Add specific environment variables here if required
 		{
-			Name: "DATABASE_SOURCE",
+			Name: "DATABASE_PASSWORD",
 			ValueFrom: &corev1.EnvVarSource{
 				SecretKeyRef: &corev1.SecretKeySelector{
 					LocalObjectReference: corev1.LocalObjectReference{
@@ -134,7 +134,7 @@ func (r *PmnsystemReconciler) getEnvVarsForNmsMagmaLte(cr *v1.Pmnsystem) []corev
 			},
 		},
 		{
-			Name: "DATABASE_SOURCE",
+			Name: "DATABASE_USER",
 			ValueFrom: &corev1.EnvVarSource{
 				SecretKeyRef: &corev1.SecretKeySelector{
 					LocalObjectReference: corev1.LocalObjectReference{
