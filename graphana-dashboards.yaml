@@ -1,30 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  annotations:
-    pv.kubernetes.io/bind-completed: "yes"
-    pv.kubernetes.io/bound-by-controller: "yes"
-    volume.beta.kubernetes.io/storage-provisioner: aws-efs
-    volume.kubernetes.io/storage-provisioner: aws-efs
-  creationTimestamp: "2023-06-15T11:23:22Z"
-  finalizers:
-  - kubernetes.io/pvc-protection
   name: grafanadashboards
   namespace: pmn
-  resourceVersion: "20188"
-  uid: ff50b18e-b0c3-4499-9a03-86c05692fa9a
 spec:
   accessModes:
-  - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
-      storage: 2Gi
+      storage: 1Gi
   storageClassName: standard
-  volumeMode: Filesystem
-  volumeName: pvc-ff50b18e-b0c3-4499-9a03-86c05692fa9a
-status:
-  accessModes:
-  - ReadWriteMany
-  capacity:
-    storage: 2Gi
-  phase: Bound
