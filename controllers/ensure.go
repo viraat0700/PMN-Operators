@@ -220,3 +220,64 @@ func (r *PmnsystemReconciler) ensurePersistentVolumeClaim(_ *v1.Pmnsystem, desir
 	r.Log.Info("PVC already exists", "PVC.Namespace", found.Namespace, "PVC.Name", found.Name)
 	return nil, nil
 }
+
+func (r *PmnsystemReconciler) ensureStatefulSet(_ ctrl.Request, instance *v1.Pmnsystem, desired *appsv1.StatefulSet) (*ctrl.Result, error) {
+	// Step 1: Ensure the desired StatefulSet has the correct namespace
+	desired.Namespace = instance.Namespace
+
+	// Step 2: Check if the StatefulSet already exists
+	found := &appsv1.StatefulSet{}
+	err := r.Client.Get(context.TODO(), client.ObjectKey{
+		Namespace: instance.Namespace, // Ensure we're checking in the correct namespace
+		Name:      desired.Name,       // Name from the desired StatefulSet
+	}, found)
+
+	if err != nil && errors.IsNotFound(err) {
+		// Step 3: If the StatefulSet is not found, create it
+		r.Log.Info("StatefulSet not found, creating a new one", "StatefulSet.Namespace", desired.Namespace, "StatefulSet.Name", desired.Name)
+
+		// Set the owner reference for proper garbage collection
+		if err := ctrl.SetControllerReference(instance, desired, r.Scheme); err != nil {
+			r.Log.Error(err, "Failed to set owner reference on StatefulSet", "StatefulSet.Namespace", desired.Namespace, "StatefulSet.Name", desired.Name)
+			return &ctrl.Result{}, err
+		}
+
+		// Create the StatefulSet
+		err = r.Client.Create(context.TODO(), desired)
+		if err != nil {
+			// Log the error if creation fails
+			r.Log.Error(err, "Failed to create StatefulSet", "StatefulSet.Namespace", desired.Namespace, "StatefulSet.Name", desired.Name)
+			return &ctrl.Result{}, err
+		}
+
+		// Successfully created the StatefulSet
+		r.Log.Info("StatefulSet created successfully", "StatefulSet.Namespace", desired.Namespace, "StatefulSet.Name", desired.Name)
+		return nil, nil
+	} else if err != nil {
+		// Step 4: Handle other errors when fetching the StatefulSet
+		r.Log.Error(err, "Failed to get StatefulSet", "StatefulSet.Namespace", desired.Namespace, "StatefulSet.Name", desired.Name)
+		return &ctrl.Result{}, err
+	}
+
+	// Step 5: Compare the found StatefulSet's Spec with the desired Spec and update if necessary
+	if !equality.Semantic.DeepEqual(found.Spec, desired.Spec) {
+		r.Log.Info("Updating StatefulSet", "StatefulSet.Namespace", found.Namespace, "StatefulSet.Name", found.Name)
+		found.Spec = desired.Spec // Update the found StatefulSet spec to match the desired spec
+
+		err = r.Client.Update(context.TODO(), found)
+		if err != nil {
+			// Log the error if update fails
+			r.Log.Error(err, "Failed to update StatefulSet", "StatefulSet.Namespace", found.Namespace, "StatefulSet.Name", found.Name)
+			return &ctrl.Result{}, err
+		}
+
+		// Successfully updated the StatefulSet
+		r.Log.Info("StatefulSet updated successfully", "StatefulSet.Namespace", found.Namespace, "StatefulSet.Name", found.Name)
+	} else {
+		// No updates required, the StatefulSet is already up-to-date
+		r.Log.Info("StatefulSet is up-to-date", "StatefulSet.Namespace", found.Namespace, "StatefulSet.Name", found.Name)
+	}
+
+	// Step 6: Return nil to indicate success and no requeue
+	return nil, nil
+}

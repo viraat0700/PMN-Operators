@@ -5494,3 +5494,195 @@ func (r *PmnsystemReconciler) orc8rUserGrafanaDeployment(cr *v1.Pmnsystem) *apps
 		nil,                           // Affinity
 	)
 }
+func (r *PmnsystemReconciler) createOrc8rPrometheusStateFullSet(cr *v1.Pmnsystem) *appsv1.StatefulSet {
+	int32Ptr := func(i int32) *int32 { return &i }
+
+	labels := map[string]string{
+		"app":                          "orc8r-prometheus",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	annotations := map[string]string{
+		"app":                          "orc8r-prometheus",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	volumes := []corev1.Volume{
+		{
+			Name: "prometheus-config-file",
+			VolumeSource: corev1.VolumeSource{
+				ConfigMap: &corev1.ConfigMapVolumeSource{
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: "prometheus-config-file",
+					},
+					DefaultMode: int32Ptr(420),
+				},
+			},
+		},
+		{
+			Name: "orc8r-alert-rules",
+			VolumeSource: corev1.VolumeSource{
+				ConfigMap: &corev1.ConfigMapVolumeSource{
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: "orc8r-alert-rules",
+					},
+					DefaultMode: int32Ptr(420),
+				},
+			},
+		},
+		{
+			Name: "prometheus-config",
+			VolumeSource: corev1.VolumeSource{
+				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+					ClaimName: "promcfg",
+				},
+			},
+		},
+	}
+
+	volumeMounts := []corev1.VolumeMount{
+		{
+			Name:      "prometheus-config",
+			MountPath: "/etc/prometheus",
+			ReadOnly:  true,
+		},
+		{
+			Name:      "prometheus-data",
+			MountPath: "/data",
+		},
+		{
+			Name:      "prometheus-config-file",
+			MountPath: "/prometheus",
+		},
+		{
+			Name:      "orc8r-alert-rules",
+			MountPath: "/etc/orc8r_alerts",
+		},
+	}
+
+	livenessProbe := &corev1.Probe{
+		ProbeHandler: corev1.ProbeHandler{
+			HTTPGet: &corev1.HTTPGetAction{
+				Path:   "/graph",
+				Port:   intstr.FromInt(9090),
+				Scheme: corev1.URISchemeHTTP,
+			},
+		},
+		FailureThreshold:    3,
+		SuccessThreshold:    1,
+		InitialDelaySeconds: 10,
+		PeriodSeconds:       30,
+		TimeoutSeconds:      1,
+	}
+
+	readinessProbe := &corev1.Probe{
+		ProbeHandler: corev1.ProbeHandler{
+			HTTPGet: &corev1.HTTPGetAction{
+				Path:   "/graph",
+				Port:   intstr.FromInt(9090),
+				Scheme: corev1.URISchemeHTTP,
+			},
+		},
+		FailureThreshold:    3,
+		SuccessThreshold:    1,
+		InitialDelaySeconds: 10,
+		PeriodSeconds:       30,
+		TimeoutSeconds:      1,
+	}
+
+	resource := corev1.ResourceRequirements{}
+
+	terminationMessagePath := "/dev/termination-log"
+	terminationMessagePolicy := corev1.TerminationMessageReadFile
+	// Define imagePullSecrets
+	imagePullSecrets := []corev1.LocalObjectReference{
+		{Name: cr.Spec.ImagePullSecrets},
+	}
+	dnsPolicy := corev1.DNSClusterFirst
+	restartPolicy := corev1.RestartPolicyAlways
+
+	args := []string{
+		"--config.file=/prometheus/prometheus.yml",
+		"--storage.tsdb.path=/data",
+		"--web.enable-lifecycle",
+		"--enable-feature=remote-write-receiver",
+		"--web.enable-admin-api",
+		"--query.timeout=1m",
+		"--log.level=error",
+		"--storage.tsdb.no-lockfile",
+		"--storage.tsdb.retention.time=6h",
+	}
+
+	// Affinity
+	affinity := &corev1.Affinity{
+		PodAffinity: &corev1.PodAffinity{
+			RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{
+				{
+					LabelSelector: &metav1.LabelSelector{
+						MatchExpressions: []metav1.LabelSelectorRequirement{
+							{
+								Key:      "app",
+								Operator: metav1.LabelSelectorOpIn,
+								Values:   []string{"prometheus"},
+							},
+						},
+					},
+					TopologyKey: "kubernetes.io/hostname",
+				},
+			},
+		},
+	}
+
+	updateStrategy := appsv1.StatefulSetUpdateStrategy{
+		RollingUpdate: &appsv1.RollingUpdateStatefulSetStrategy{
+			Partition: int32Ptr(0),
+		},
+		Type: appsv1.RollingUpdateStatefulSetStrategyType,
+	}
+
+	return &appsv1.StatefulSet{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        "orc8r-prometheus",
+			Namespace:   cr.Spec.NameSpace,
+			Labels:      labels,
+			Annotations: annotations,
+		},
+		Spec: appsv1.StatefulSetSpec{
+			Replicas: &cr.Spec.ReplicaCount,
+			Selector: &metav1.LabelSelector{
+				MatchLabels: labels,
+			},
+			ServiceName: "orc8r-prometheus",
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels:      labels,
+					Annotations: annotations,
+				},
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						{
+							Name:                     "prometheus",
+							Image:                    "docker.io/prom/prometheus:v2.27.1",
+							Args:                     args,
+							Ports:                    []corev1.ContainerPort{{ContainerPort: 9090}},
+							VolumeMounts:             volumeMounts,
+							LivenessProbe:            livenessProbe,
+							ReadinessProbe:           readinessProbe,
+							TerminationMessagePath:   terminationMessagePath,
+							TerminationMessagePolicy: terminationMessagePolicy,
+							Resources:                resource,
+						},
+					},
+					ImagePullSecrets: imagePullSecrets,
+					DNSPolicy:        dnsPolicy,
+					Volumes:          volumes,
+					Affinity:         affinity,
+					RestartPolicy:    restartPolicy,
+				},
+			},
+			UpdateStrategy: updateStrategy,
+		},
+	}
+}
