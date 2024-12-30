@@ -5519,7 +5519,6 @@ func (r *PmnsystemReconciler) createOrc8rPrometheusStateFullSet(cr *v1.Pmnsystem
 		{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:   "prometheus-data",
-				Labels: labels,
 			},
 			Spec: corev1.PersistentVolumeClaimSpec{
 				AccessModes: []corev1.PersistentVolumeAccessMode{
