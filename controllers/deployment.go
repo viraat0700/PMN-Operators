@@ -5411,7 +5411,7 @@ func (r *PmnsystemReconciler) orc8rUserGrafanaDeployment(cr *v1.Pmnsystem) *apps
 			HTTPGet: &corev1.HTTPGetAction{
 				Path:   "/api/health",
 				Port:   intstr.FromInt(3000),
-				Scheme: corev1.URISchemeHTTPS,
+				Scheme: corev1.URISchemeHTTP,
 			},
 		},
 	}
