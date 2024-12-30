@@ -1358,10 +1358,45 @@ func (r *PmnsystemReconciler) orc8rPrometheusNginxProxyService(cr *v1.Pmnsystem)
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "prometheus-nginx",
-					NodePort: 32516,
+					NodePort:   32516,
 					Port:       443,
 					Protocol:   corev1.ProtocolTCP,
 					TargetPort: intstr.FromInt(443),
+				},
+			},
+			SessionAffinity: corev1.ServiceAffinityNone,
+		},
+	}
+}
+func (r *PmnsystemReconciler) orc8rUserGrafanaService(cr *v1.Pmnsystem) *corev1.Service {
+	labels := map[string]string{
+		"app":                          "orc8r-user-grafana",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "orc8r-user-grafana",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Type:     corev1.ServiceTypeClusterIP,
+			Selector: labels,
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "grafana",
+					Port:       3000,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(3000),
 				},
 			},
 			SessionAffinity: corev1.ServiceAffinityNone,

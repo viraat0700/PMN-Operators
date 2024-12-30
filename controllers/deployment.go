@@ -20,6 +20,7 @@ import (
 	v1 "github.com/viraat0700/PMN-Operator-Two/api/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -5359,7 +5360,6 @@ func (r *PmnsystemReconciler) orc8rUserGrafanaDeployment(cr *v1.Pmnsystem) *apps
 		},
 	}
 
-
 	// Define the securityContext for the container
 	securityContext := &corev1.SecurityContext{
 		Privileged: func(b bool) *bool { return &b }(true),
@@ -5373,9 +5373,9 @@ func (r *PmnsystemReconciler) orc8rUserGrafanaDeployment(cr *v1.Pmnsystem) *apps
 	// }
 
 	// Define imagePullSecrets
-	// imagePullSecrets := []corev1.LocalObjectReference{
-	// 	{Name: cr.Spec.ImagePullSecrets},
-	// }
+	imagePullSecrets := []corev1.LocalObjectReference{
+		{Name: cr.Spec.ImagePullSecrets},
+	}
 
 	// Define environment variables if needed
 	// envVars := r.getEnvVarsForPrometheusKafkaAdapter(cr)
@@ -5425,7 +5425,16 @@ func (r *PmnsystemReconciler) orc8rUserGrafanaDeployment(cr *v1.Pmnsystem) *apps
 
 	terminationGracePeriodSeconds := int64Ptr(30)
 
-	resources := corev1.ResourceRequirements{}
+	resources := corev1.ResourceRequirements{
+		Limits: corev1.ResourceList{
+			corev1.ResourceCPU:    resource.MustParse("500m"),
+			corev1.ResourceMemory: resource.MustParse("1Gi"),
+		},
+		Requests: corev1.ResourceList{
+			corev1.ResourceCPU:    resource.MustParse("100m"),
+			corev1.ResourceMemory: resource.MustParse("1Gi"),
+		},
+	}
 
 	terminationMessagePath := "/dev/termination-log"
 
@@ -5450,9 +5459,9 @@ func (r *PmnsystemReconciler) orc8rUserGrafanaDeployment(cr *v1.Pmnsystem) *apps
 					MountPath: "/grafanaData",
 				},
 			},
-			TerminationMessagePath: terminationMessagePath,
+			TerminationMessagePath:   terminationMessagePath,
 			TerminationMessagePolicy: terminationMessagePolicy,
-			Resources: resources,
+			Resources:                resources,
 		},
 	}
 
@@ -5475,7 +5484,7 @@ func (r *PmnsystemReconciler) orc8rUserGrafanaDeployment(cr *v1.Pmnsystem) *apps
 		securityContext,               // Security context
 		corev1.DNSClusterFirst,        // DNS policy
 		corev1.RestartPolicyAlways,    // Restart policy
-		nil,                           // Image pull secrets
+		imagePullSecrets,              // Image pull secrets
 		terminationGracePeriodSeconds, // terminationGracePeriodSeconds
 		corev1.PullIfNotPresent,       // Image pull policy
 		resources,                     // Resources
