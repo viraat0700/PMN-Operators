@@ -5497,6 +5497,10 @@ func (r *PmnsystemReconciler) orc8rUserGrafanaDeployment(cr *v1.Pmnsystem) *apps
 func (r *PmnsystemReconciler) createOrc8rPrometheusStateFullSet(cr *v1.Pmnsystem) *appsv1.StatefulSet {
 	int32Ptr := func(i int32) *int32 { return &i }
 
+	storageSize := "50Gi"
+
+	volumeMode := "Filesystem"
+
 	labels := map[string]string{
 		"app":                          "orc8r-prometheus",
 		"app.kubernetes.io/instance":   "orc8r",
@@ -5507,6 +5511,29 @@ func (r *PmnsystemReconciler) createOrc8rPrometheusStateFullSet(cr *v1.Pmnsystem
 		"app":                          "orc8r-prometheus",
 		"app.kubernetes.io/instance":   "orc8r",
 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+
+	// Define VolumeClaimTemplates correctly
+	volumeClaimTemplates := []corev1.PersistentVolumeClaim{
+		{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:   "prometheus-data",
+				Labels: labels,
+			},
+			Spec: corev1.PersistentVolumeClaimSpec{
+				AccessModes: []corev1.PersistentVolumeAccessMode{
+					corev1.ReadWriteOnce,
+				},
+				Resources: corev1.VolumeResourceRequirements{
+					Requests: corev1.ResourceList{
+						corev1.ResourceStorage: resource.MustParse(storageSize),
+					},
+				},
+				StorageClassName: &cr.Spec.Persistent.StorageClassName,
+				VolumeMode: (*corev1.PersistentVolumeMode)(&volumeMode),
+			},
+		},
 	}
 
 	volumes := []corev1.Volume{
@@ -5682,6 +5709,7 @@ func (r *PmnsystemReconciler) createOrc8rPrometheusStateFullSet(cr *v1.Pmnsystem
 					RestartPolicy:    restartPolicy,
 				},
 			},
+			VolumeClaimTemplates: volumeClaimTemplates,
 			UpdateStrategy: updateStrategy,
 		},
 	}
