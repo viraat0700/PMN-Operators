@@ -27,3 +27,5 @@ spec:
           value: "juniperprod1234" # Password
         ports:
         - containerPort: 5432
+
+

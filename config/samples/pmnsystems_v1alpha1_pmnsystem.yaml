@@ -55,7 +55,7 @@ spec:
     - name: "MYSQL_DB"
       value: "pmndev"
     - name: "MYSQL_HOST"
-      value: "pmn-dev-db.cm9kunmuwhce.us-west-2.rds.amazonaws.com"
+      value: "postgres.pmn.svc.cluster.local"
     - name: "MYSQL_PORT"
       value: "5432"
     - name: "MYSQL_DIALECT"
