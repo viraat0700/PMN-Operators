@@ -195,6 +195,10 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if result != nil {
 		return *result, err
 	}
+	result, err = r.ensureDeployment(req, pmnsystem, r.orc8AlertManagerConfigurerDeployment(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
 	// result, err = r.ensureDeployment(req, pmnsystem, r.orc8rDomainProxyDeployment(pmnsystem))
 	// if result != nil {
 	// 	return *result, err
@@ -473,6 +477,11 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return *result, err
 	}
 	svc = r.orc8rPrometheusService(pmnsystem)
+	result, err = r.ensureService(pmnsystem, svc)
+	if result != nil {
+		return *result, err
+	}
+	svc = r.orc8rAlertManagerConfigurerService(pmnsystem)
 	result, err = r.ensureService(pmnsystem, svc)
 	if result != nil {
 		return *result, err
