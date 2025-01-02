@@ -1406,6 +1406,7 @@ func (r *PmnsystemReconciler) orc8rUserGrafanaService(cr *v1.Pmnsystem) *corev1.
 func (r *PmnsystemReconciler) orc8rPrometheusService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
 		"app":                          "orc8r-prometheus",
+		"app.kubernetes.io/componets":  "prometheus",
 		"app.kubernetes.io/instance":   "orc8r",
 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
 	}

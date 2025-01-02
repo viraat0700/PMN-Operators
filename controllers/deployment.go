@@ -5502,6 +5502,7 @@ func (r *PmnsystemReconciler) createOrc8rPrometheusStateFullSet(cr *v1.Pmnsystem
 
 	labels := map[string]string{
 		"app":                          "orc8r-prometheus",
+		"app.kubernetes.io/componets":  "prometheus",
 		"app.kubernetes.io/instance":   "orc8r",
 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
 	}
@@ -5512,12 +5513,11 @@ func (r *PmnsystemReconciler) createOrc8rPrometheusStateFullSet(cr *v1.Pmnsystem
 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
 	}
 
-
 	// Define VolumeClaimTemplates correctly
 	volumeClaimTemplates := []corev1.PersistentVolumeClaim{
 		{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:   "prometheus-data",
+				Name: "prometheus-data",
 			},
 			Spec: corev1.PersistentVolumeClaimSpec{
 				AccessModes: []corev1.PersistentVolumeAccessMode{
@@ -5529,7 +5529,7 @@ func (r *PmnsystemReconciler) createOrc8rPrometheusStateFullSet(cr *v1.Pmnsystem
 					},
 				},
 				StorageClassName: &cr.Spec.Persistent.StorageClassName,
-				VolumeMode: (*corev1.PersistentVolumeMode)(&volumeMode),
+				VolumeMode:       (*corev1.PersistentVolumeMode)(&volumeMode),
 			},
 		},
 	}
@@ -5708,7 +5708,7 @@ func (r *PmnsystemReconciler) createOrc8rPrometheusStateFullSet(cr *v1.Pmnsystem
 				},
 			},
 			VolumeClaimTemplates: volumeClaimTemplates,
-			UpdateStrategy: updateStrategy,
+			UpdateStrategy:       updateStrategy,
 		},
 	}
 }
