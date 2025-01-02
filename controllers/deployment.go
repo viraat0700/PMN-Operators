@@ -5502,7 +5502,7 @@ func (r *PmnsystemReconciler) createOrc8rPrometheusStateFullSet(cr *v1.Pmnsystem
 
 	labels := map[string]string{
 		"app":                          "orc8r-prometheus",
-		"app.kubernetes.io/componets":  "prometheus",
+		"app.kubernetes.io/component":  "prometheus",
 		"app.kubernetes.io/instance":   "orc8r",
 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
 	}
