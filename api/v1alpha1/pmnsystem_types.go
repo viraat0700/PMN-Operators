@@ -55,6 +55,11 @@ type Persistent struct {
 	StorageClassName string `json:"storageClassName,omitempty"`
 }
 
+type PersistenForStatefulSet struct {
+	PvcClaimName     string `json:"pvcClaimName,omitempty"`
+	StorageClassName string `json:"storageClassName,omitempty"`
+}
+
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
@@ -69,6 +74,7 @@ type PmnsystemSpec struct {
 	NotifierImage               string                                `json:"notifierImage,omitempty"`
 	PullPolicy                  string                                `json:"pullPolicy,omitempty"`
 	Persistent                  Persistent                            `json:"persistent,omitempty"`
+	PersistentForStatefulSet    PersistenForStatefulSet               `json:"persistentForStatefulSet,omitempty"`
 	NameSpace                   string                                `json:"nameSpace,omitempty"`
 	Image                       Image                                 `json:"image,omitempty"`
 	ImageMagmaLte               string                                `json:"imageMagmaLte,omitempty"`

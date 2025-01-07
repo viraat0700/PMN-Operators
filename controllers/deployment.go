@@ -5528,7 +5528,7 @@ func (r *PmnsystemReconciler) createOrc8rPrometheusStateFullSet(cr *v1.Pmnsystem
 						corev1.ResourceStorage: resource.MustParse(storageSize),
 					},
 				},
-				StorageClassName: &cr.Spec.Persistent.StorageClassName,
+				StorageClassName: &cr.Spec.PersistentForStatefulSet.StorageClassName,
 				VolumeMode:       (*corev1.PersistentVolumeMode)(&volumeMode),
 			},
 		},

@@ -19,7 +19,7 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: efs
+  storageClassName: nfs
   volumeMode: Filesystem
   volumeName: pvc-07260722-fd73-4f78-bbe9-7367d0bf32a3
 status:

@@ -155,9 +155,12 @@ spec:
   nginxImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/nginx:1.8.0-a914c772"
   imagePullSecrets: "artifactory"
   imageMagmaLte: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/magmalte:1.8.0-a914c772"
+  persistentForStatefulSet:
+    pvcClaimName: "abc"
+    storageClassName: "nfs"
   persistent:
     pvcClaimName: "abc"
-    storageClassName: "standard"
+    storageClassName: "nfs
   image:
     repository: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/controller"
     tag: "1.8.0-6c4579b5"

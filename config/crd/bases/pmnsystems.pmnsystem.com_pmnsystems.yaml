@@ -117,6 +117,13 @@ spec:
                   storageClassName:
                     type: string
                 type: object
+              persistentForStatefulSet:
+                properties:
+                  pvcClaimName:
+                    type: string
+                  storageClassName:
+                    type: string
+                type: object
               pullPolicy:
                 type: string
               replicaCount:
