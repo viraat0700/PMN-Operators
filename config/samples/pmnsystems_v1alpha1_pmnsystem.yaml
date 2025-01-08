@@ -79,11 +79,11 @@ spec:
       value: "notifier-internal"
   envVariablesOrc8rNginx:
     - name: "PROXY_BACKENDS"
-      value: "pmn.svc.cluster.local"
+      value: "postgres.pmn.svc.cluster.local
     - name: "CONTROLLER_HOSTNAME"
       value: "controller.operator.wavelabs.int"
     - name: "RESOLVER"
-      value: "kube-dns.kube-system.svc.cluster.local valid=10s"
+      value: "coredns.kube-system.svc.cluster.local valid=10s"
     - name: "SERVICE_REGISTRY_MODE"
       value: "k8s "
     - name: "SSL_CERTIFICATE"
@@ -160,7 +160,7 @@ spec:
     storageClassName: "nfs"
   persistent:
     pvcClaimName: "abc"
-    storageClassName: "nfs
+    storageClassName: "nfs"
   image:
     repository: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/controller"
     tag: "1.8.0-6c4579b5"
