@@ -24,6 +24,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	ctrl "sigs.k8s.io/controller-runtime"
 )
 
 func defLabels() map[string]string {
@@ -5849,7 +5850,7 @@ func (r *PmnsystemReconciler) orc8AlertManagerConfigurerDeployment(cr *v1.Pmnsys
 		"orc8r-alertmanager-configurer",
 		labels,                        // Labels
 		nil,                           // Command
-		args,                           // args (nil if not needed)
+		args,                          // args (nil if not needed)
 		volumeMounts,                  // Volume mounts
 		volumes,                       // Volumes
 		ports,                         // Ports (empty if not needed)
@@ -5871,4 +5872,66 @@ func (r *PmnsystemReconciler) orc8AlertManagerConfigurerDeployment(cr *v1.Pmnsys
 		image,                         // Image
 		affinity,                      // Affinity
 	)
+}
+func (r *PmnsystemReconciler) deploymentPostgres(cr *v1.Pmnsystem) *appsv1.Deployment {
+	log := ctrl.Log.WithName("createPostgresResources")
+
+	log.Info("DevEnvironment is true. Creating PostgreSQL Deployment...")
+
+	// Define the PostgreSQL Deployment
+	postgresDeployment := &appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "postgres",
+			Namespace: cr.Spec.NameSpace,
+			Labels: map[string]string{
+				"app": "postgres",
+			},
+		},
+		Spec: appsv1.DeploymentSpec{
+			Replicas: &cr.Spec.ReplicaCount,
+			Selector: &metav1.LabelSelector{
+				MatchLabels: map[string]string{
+					"app": "postgres",
+				},
+			},
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: map[string]string{
+						"app": "postgres",
+					},
+				},
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						{
+							Name:  "postgres",
+							Image: "postgres:14",
+							Env: []corev1.EnvVar{
+								{
+									Name:  "POSTGRES_DB",
+									Value: "pmndev",
+								},
+								{
+									Name:  "POSTGRES_USER",
+									Value: "pmn",
+								},
+								{
+									Name:  "POSTGRES_PASSWORD",
+									Value: "juniperprod1234",
+								},
+							},
+							Ports: []corev1.ContainerPort{
+								{
+									ContainerPort: 5432,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	log.Info("PostgreSQL Deployment created successfully")
+	return postgresDeployment
+
 }

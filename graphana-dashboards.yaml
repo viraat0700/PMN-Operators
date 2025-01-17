@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: grafanadashboards
-  namespace: pmn
+  namespace: pgsql
 spec:
   accessModes:
     - ReadWriteOnce

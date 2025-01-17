@@ -15,7 +15,7 @@ metadata:
     app.kubernetes.io/part-of: orc8r
     helm.sh/chart: orc8r-1.8.0
   name: orc8r-clientcert-nginx
-  namespace: pmn
+  namespace: pgsql
   resourceVersion: "75572766"
   uid: 579e19ca-89e0-4c97-859f-7d7ea463bcf8
 spec:

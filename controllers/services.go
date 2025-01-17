@@ -6,6 +6,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	ctrl "sigs.k8s.io/controller-runtime"
 )
 
 func (r *PmnsystemReconciler) orc8rAccessDService(cr *v1.Pmnsystem) *corev1.Service {
@@ -1474,4 +1475,31 @@ func (r *PmnsystemReconciler) orc8rAlertManagerConfigurerService(cr *v1.Pmnsyste
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
 	}
+}
+func (r *PmnsystemReconciler) servicePostgres(cr *v1.Pmnsystem) *corev1.Service {
+	log := ctrl.Log.WithName("createPostgresResources")
+	log.Info("Creating PostgreSQL Service...")
+
+	postgresService := &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "postgres",
+			Namespace: cr.Spec.NameSpace,
+		},
+		Spec: corev1.ServiceSpec{
+			Type: corev1.ServiceTypeNodePort,
+			Selector: map[string]string{
+				"app": "postgres",
+			},
+			Ports: []corev1.ServicePort{
+				{
+					Port:       5432,
+					TargetPort: intstr.FromInt(5432),
+					NodePort:   30000,
+				},
+			},
+		},
+	}
+
+	log.Info("PostgreSQL Service created successfully")
+	return postgresService
 }

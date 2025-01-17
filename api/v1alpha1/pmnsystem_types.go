@@ -44,6 +44,10 @@ type EnvironmentVariablesPrometheusKafka struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
 }
+type EnvironmentVariablesNMSMagmaLteDevEnv struct {
+	Name  string `json:"name,omitempty"`
+	Value string `json:"value,omitempty"`
+}
 
 type Image struct {
 	Repository string `json:"repository,omitempty"`
@@ -69,22 +73,25 @@ type PmnsystemSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Foo is an example field of Pmnsystem. Edit pmnsystem_types.go to remove/update
-	ReplicaCount                int32                                 `json:"replicaCount,omitempty"`
-	NginxImage                  string                                `json:"nginxImage,omitempty"`
-	NotifierImage               string                                `json:"notifierImage,omitempty"`
-	PullPolicy                  string                                `json:"pullPolicy,omitempty"`
-	Persistent                  Persistent                            `json:"persistent,omitempty"`
-	PersistentForStatefulSet    PersistenForStatefulSet               `json:"persistentForStatefulSet,omitempty"`
-	NameSpace                   string                                `json:"nameSpace,omitempty"`
-	Image                       Image                                 `json:"image,omitempty"`
-	ImageMagmaLte               string                                `json:"imageMagmaLte,omitempty"`
-	EnvVariables                []EnvironmentVariables                `json:"envVariables,omitempty"`
-	EnvVariablesDirectoryD      []EnvironmentVariablesDirectoryD      `json:"envVariablesDirectoryD,omitempty"`
-	EnvVariablesOrc8rNginx      []EnvironmentVariablesOrc8rNginx      `json:"envVariablesOrc8rNginx,omitempty"`
-	EnvVariablesOrc8rNotifier   []EnvironmentVariablesOrc8rNotifier   `json:"envVariablesOrc8rNotifier,omitempty"`
-	EnvVariablesNMSMagmaLte     []EnvironmentVariablesNMSMagmaLte     `json:"envVariablesNMSMagmaLte,omitempty"`
-	EnvVariablesPrometheusKafka []EnvironmentVariablesPrometheusKafka `json:"envVariablesPrometheusKafka,omitempty"`
-	ImagePullSecrets            string                                `json:"imagePullSecrets,omitempty"`
+	ReplicaCount                  int32                                   `json:"replicaCount,omitempty"`
+	NginxImage                    string                                  `json:"nginxImage,omitempty"`
+	NotifierImage                 string                                  `json:"notifierImage,omitempty"`
+	PullPolicy                    string                                  `json:"pullPolicy,omitempty"`
+	Persistent                    Persistent                              `json:"persistent,omitempty"`
+	PersistentForStatefulSet      PersistenForStatefulSet                 `json:"persistentForStatefulSet,omitempty"`
+	NameSpace                     string                                  `json:"nameSpace,omitempty"`
+	Image                         Image                                   `json:"image,omitempty"`
+	ImageMagmaLte                 string                                  `json:"imageMagmaLte,omitempty"`
+	EnvVariables                  []EnvironmentVariables                  `json:"envVariables,omitempty"`
+	EnvVariablesDirectoryD        []EnvironmentVariablesDirectoryD        `json:"envVariablesDirectoryD,omitempty"`
+	EnvVariablesOrc8rNginx        []EnvironmentVariablesOrc8rNginx        `json:"envVariablesOrc8rNginx,omitempty"`
+	EnvVariablesOrc8rNotifier     []EnvironmentVariablesOrc8rNotifier     `json:"envVariablesOrc8rNotifier,omitempty"`
+	EnvVariablesNMSMagmaLte       []EnvironmentVariablesNMSMagmaLte       `json:"envVariablesNMSMagmaLte,omitempty"`
+	EnvVariablesNMSMagmaLteDevEnv []EnvironmentVariablesNMSMagmaLteDevEnv `json:"envVariablesNMSMagmaLteDevEnv,omitempty"`
+	EnvVariablesPrometheusKafka   []EnvironmentVariablesPrometheusKafka   `json:"envVariablesPrometheusKafka,omitempty"`
+	ImagePullSecrets              string                                  `json:"imagePullSecrets,omitempty"`
+	DevEnvironment                bool                                    `json:"devEnvironment,omitempty"`
+	CloudEnvironment              bool                                    `json:"cloudEnvironment,omitempty"`
 }
 
 // PmnsystemStatus defines the observed state of Pmnsystem

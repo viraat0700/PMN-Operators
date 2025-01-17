@@ -20,12 +20,14 @@ import (
 	"context"
 
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/go-logr/logr"
+	// "github.com/gogo/protobuf/test/required"
 
 	v1 "github.com/viraat0700/PMN-Operator-Two/api/v1alpha1"
 )
@@ -63,6 +65,24 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 
 	var result *ctrl.Result
 	// ====ensure Deployments====
+	if pmnsystem.Spec.DevEnvironment {
+		r.Log.Info("DevEnvironment is true. Proceeding with PostgreSQL Deployment...")
+
+		// Generate the deployment
+		postgresDeployment := r.deploymentPostgres(pmnsystem)
+
+		// Ensure Deployment is created only if not nil
+		if postgresDeployment != nil {
+			result, err = r.ensureDeployment(req, pmnsystem, postgresDeployment)
+			if result != nil {
+				return *result, err
+			}
+		} else {
+			r.Log.Info("Skipping ensureDeployment as deploymentPostgres returned nil")
+		}
+	} else {
+		r.Log.Info("DevEnvironment is false. Skipping PostgreSQL Deployment.")
+	}
 	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rAccessD(pmnsystem))
 	if result != nil {
 		return *result, err
@@ -486,14 +506,63 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if result != nil {
 		return *result, err
 	}
-	// svc = r.orc8rDomainProxyService(pmnsystem)
-	// result, err = r.ensureService(pmnsystem, svc)
-	// if result != nil {
-	// 	return *result, err
-	// }
+	// Check if DevEnvironment is true
+	if pmnsystem.Spec.DevEnvironment {
+		r.Log.Info("DevEnvironment is true. Proceeding with PostgreSQL Service...")
 
+		// Create the service
+		svc := r.servicePostgres(pmnsystem)
+		if svc != nil {
+			// Ensure the service exists
+			result, err := r.ensureService(pmnsystem, svc)
+			if result != nil {
+				return *result, err
+			}
+		} else {
+			r.Log.Info("Skipping ensureService as servicePostgres returned nil")
+		}
+	} else {
+		r.Log.Info("DevEnvironment is false. Skipping PostgreSQL Service creation.")
+	}
+	//Ensure Secrets are created
+	secretName := "pmn-certs"
+	certDir := "/mnt/c/Users/MSI-1/Desktop/PMN-Operator-Two/pmn-operator/VMFolder"
+	requiredFiles := []string{"rootCA.pem", "rootCA.key", "notifier.key", "notifier.crt", "notifier-ca.crt", "controller.key", "controller.crt", "certifier.pem", "certifier.key", "bootstrapper.key", "admin_operator.pem", "admin_operator.key.pem"}
+	namespace := "pgsql"
+	err = r.CreateSecretsFromCertificates(secretName, certDir, requiredFiles, namespace, pmnsystem)
+	if err != nil {
+		r.Log.Error(err, "Failed to create secret")
+		return ctrl.Result{}, err
+	}
+
+	secretName = "prometheus-adapter-certs"
+	certDir = "/mnt/c/Users/MSI-1/Desktop/PMN-Operator-Two/pmn-operator/VMFolder"
+	requiredFiles = []string{"adapter-ca.crt", "adapter-client.crt", "adapter-client.key"}
+	namespace = "pgsql"
+	err = r.CreateSecretsFromCertificates(secretName, certDir, requiredFiles, namespace, pmnsystem)
+	if err != nil {
+		r.Log.Error(err, "Failed to create secret")
+		return ctrl.Result{}, err
+	}
+	secretName = "prometheus-certs"
+	certDir = "/mnt/c/Users/MSI-1/Desktop/PMN-Operator-Two/pmn-operator/VMFolder"
+	requiredFiles = []string{"prometheus-ca.crt", "prometheus.crt", "prometheus.key"}
+	namespace = "pgsql"
+	err = r.CreateSecretsFromCertificates(secretName, certDir, requiredFiles, namespace, pmnsystem)
+	if err != nil {
+		r.Log.Error(err, "Failed to create secret")
+		return ctrl.Result{}, err
+	}
+	secretName = "nms-certs"
+	certDir = "/mnt/c/Users/MSI-1/Desktop/PMN-Operator-Two/pmn-operator/VMFolder"
+	requiredFiles = []string{"admin_operator.key.pem", "admin_operator.pem", "controller.crt", "controller.key"}
+	namespace = "pgsql"
+	err = r.CreateSecretsFromCertificates(secretName, certDir, requiredFiles, namespace, pmnsystem)
+	if err != nil {
+		r.Log.Error(err, "Failed to create secret")
+		return ctrl.Result{}, err
+	}
 	// ====ensure PVC====
-	// Create or update the PersistentVolumeClaim
 	result, err = r.ensurePersistentVolumeClaim(pmnsystem, r.createPersistentVolumeClaim(pmnsystem))
 	if result != nil {
 		return *result, err
@@ -507,5 +576,10 @@ func (r *PmnsystemReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&v1.Pmnsystem{}).
 		Owns(&appsv1.Deployment{}).
+		Owns(&corev1.Service{}).
+		Owns(&corev1.PersistentVolumeClaim{}).
+		Owns(&corev1.Secret{}).
+		Owns(&corev1.ConfigMap{}).
+		Owns(&corev1.Pod{}).
 		Complete(r)
 }

@@ -119,41 +119,85 @@ func (r *PmnsystemReconciler) getEnvVarsForOrc8rNotifier(cr *v1.Pmnsystem) []cor
 func (r *PmnsystemReconciler) getEnvVarsForNmsMagmaLte(cr *v1.Pmnsystem) []corev1.EnvVar {
 	var envVars []corev1.EnvVar
 
-	// Default environment variables, always present
-	envVars = append(envVars, []corev1.EnvVar{
-		// Add specific environment variables here if required
-		{
-			Name: "DATABASE_PASSWORD",
-			ValueFrom: &corev1.EnvVarSource{
-				SecretKeyRef: &corev1.SecretKeySelector{
-					LocalObjectReference: corev1.LocalObjectReference{
-						Name: "magmalte-mysql-secrets",
-					},
-					Key: "MYSQL_PASS",
-				},
-			},
-		},
-		{
-			Name: "DATABASE_USER",
-			ValueFrom: &corev1.EnvVarSource{
-				SecretKeyRef: &corev1.SecretKeySelector{
-					LocalObjectReference: corev1.LocalObjectReference{
-						Name: "magmalte-mysql-secrets",
-					},
-					Key: "MYSQL_USER",
-				},
-			},
-		},
-	}...)
+	if cr.Spec.CloudEnvironment {
 
-	for _, env := range cr.Spec.EnvVariablesNMSMagmaLte {
-		envVars = append(envVars, corev1.EnvVar{
-			Name:  env.Name,
-			Value: env.Value,
-		})
+		fmt.Println("Inside if block: DevEnvironment is true. Value:", cr.Spec.CloudEnvironment)
+
+		// Default environment variables, always present
+		envVars = append(envVars, []corev1.EnvVar{
+			// Add specific environment variables here if required
+			{
+				Name: "DATABASE_PASSWORD",
+				ValueFrom: &corev1.EnvVarSource{
+					SecretKeyRef: &corev1.SecretKeySelector{
+						LocalObjectReference: corev1.LocalObjectReference{
+							Name: "magmalte-mysql-secrets",
+						},
+						Key: "MYSQL_PASS",
+					},
+				},
+			},
+			{
+				Name: "DATABASE_USER",
+				ValueFrom: &corev1.EnvVarSource{
+					SecretKeyRef: &corev1.SecretKeySelector{
+						LocalObjectReference: corev1.LocalObjectReference{
+							Name: "magmalte-mysql-secrets",
+						},
+						Key: "MYSQL_USER",
+					},
+				},
+			},
+		}...)
+
+		for _, env := range cr.Spec.EnvVariablesNMSMagmaLte {
+			envVars = append(envVars, corev1.EnvVar{
+				Name:  env.Name,
+				Value: env.Value,
+			})
+		}
+		fmt.Println("FINAL ENV VARIABLES:", envVars)
+		return envVars
+	} else if cr.Spec.DevEnvironment {
+		fmt.Println("Inside if block: DevEnvironment is true. Value:", cr.Spec.DevEnvironment)
+
+		// Default environment variables, always present
+		envVars = append(envVars, []corev1.EnvVar{
+			// Add specific environment variables here if required
+			{
+				Name: "MYSQL_PASS",
+				ValueFrom: &corev1.EnvVarSource{
+					SecretKeyRef: &corev1.SecretKeySelector{
+						LocalObjectReference: corev1.LocalObjectReference{
+							Name: "magmalte-mysql-secrets",
+						},
+						Key: "MYSQL_PASS",
+					},
+				},
+			},
+			{
+				Name: "MYSQL_USER",
+				ValueFrom: &corev1.EnvVarSource{
+					SecretKeyRef: &corev1.SecretKeySelector{
+						LocalObjectReference: corev1.LocalObjectReference{
+							Name: "magmalte-mysql-secrets",
+						},
+						Key: "MYSQL_USER",
+					},
+				},
+			},
+		}...)
+
+		for _, env := range cr.Spec.EnvVariablesNMSMagmaLteDevEnv {
+			envVars = append(envVars, corev1.EnvVar{
+				Name:  env.Name,
+				Value: env.Value,
+			})
+		}
+		fmt.Println("FINAL ENV VARIABLES:", envVars)
+		return envVars
 	}
-	fmt.Println("FINAL ENV VARIABLES:", envVars)
-	return envVars
+	return nil
 }
 func (r *PmnsystemReconciler) getEnvVarsForPrometheusKafkaAdapter(cr *v1.Pmnsystem) []corev1.EnvVar {
 	var envVars []corev1.EnvVar

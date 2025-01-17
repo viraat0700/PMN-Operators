@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres
-  namespace: pmn
+  namespace: pgsql
   labels: # Move labels directly under metadata
     app: postgres
 spec:
@@ -27,5 +27,3 @@ spec:
           value: "juniperprod1234" # Password
         ports:
         - containerPort: 5432
-
-

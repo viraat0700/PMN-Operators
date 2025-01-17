@@ -25,6 +25,6 @@ metadata:
   labels:
     app.kubernetes.io/managed-by: Helm
   name: prometheus-config-file
-  namespace: pmn
+  namespace: pgsql
   resourceVersion: "123297231"
   uid: d9cccc02-dcb2-48b7-a8a3-da6d25d5004d

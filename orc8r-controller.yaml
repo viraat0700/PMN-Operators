@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: orc8r-controller
-  namespace: pmn
+  namespace: pgsql
 type: Opaque
 data:
-  postgres.connstr: ZGJuYW1lPXBtbmRldiB1c2VyPXBtbiBwYXNzd29yZD1qdW5pcGVycHJvZDEyMzQgaG9zdD1wb3N0Z3Jlcy5wbW4uc3ZjLmNsdXN0ZXIubG9jYWwgcG9ydD01NDMyIHNzbG1vZGU9ZGlzYWJsZQ==
+  postgres.connstr: ZGJuYW1lPXBtbmRldiB1c2VyPXBtbiBwYXNzd29yZD1qdW5pcGVycHJvZDEyMzQgaG9zdD1wb3N0Z3Jlcy5wZ3NxbC5zdmMuY2x1c3Rlci5sb2NhbCBwb3J0PTU0MzIgc3NsbW9kZT1kaXNhYmxl

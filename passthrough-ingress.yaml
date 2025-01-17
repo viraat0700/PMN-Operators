@@ -12,7 +12,7 @@ metadata:
   labels:
     app.kubernetes.io/managed-by: Helm
   name: orc8r-passthrough-ingress
-  namespace: pmn
+  namespace: pgsql
 spec:
   ingressClassName: nginx
   rules:

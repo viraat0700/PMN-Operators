@@ -22,6 +22,6 @@ metadata:
   labels:
     app.kubernetes.io/managed-by: Helm
   name: grafana-config-file
-  namespace: pmn
+  namespace: pgsql
   resourceVersion: "54692311"
   uid: 36cdac80-07fb-4347-8d02-7fee3635fa11

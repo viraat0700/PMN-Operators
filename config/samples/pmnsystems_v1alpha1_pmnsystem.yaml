@@ -55,13 +55,34 @@ spec:
     - name: "MYSQL_DB"
       value: "pmndev"
     - name: "MYSQL_HOST"
-      value: "postgres.pmn.svc.cluster.local"
+      value: "postgres.pgsql.svc.cluster.local"
     - name: "MYSQL_PORT"
       value: "5432"
     - name: "MYSQL_DIALECT"
       value: "postgres"
     - name: "USER_GRAFANA_ADDRESS"
       value: "orc8r-user-grafana:3000"
+  envVariablesNMSMagmaLteDevEnv:
+    - name: API_CERT_FILENAME
+      value: /run/secrets/admin_operator.pem      
+    - name: API_PRIVATE_KEY_FILENAME
+      value: /run/secrets/admin_operator.key.pem 
+    - name: API_HOST
+      value: api.operator.wavelabs.int
+    - name: HOST
+      value: "0.0.0.0"
+    - name: PORT
+      value: "8081"
+    - name: MYSQL_DB
+      value: postgres
+    - name: MYSQL_HOST
+      value: postgres.pgsql.svc.cluster.local
+    - name: MYSQL_PORT
+      value: "5432"
+    - name: MYSQL_DIALECT
+      value: postgres
+    - name: USER_GRAFANA_ADDRESS
+      value: orc8r-user-grafana:3000
   envVariablesOrc8rNotifier:
     - name: "PUBLISHER_PORT"
       value: "5442"
@@ -79,7 +100,7 @@ spec:
       value: "notifier-internal"
   envVariablesOrc8rNginx:
     - name: "PROXY_BACKENDS"
-      value: "postgres.pmn.svc.cluster.local
+      value: "postgres.pgsql.svc.cluster.local"
     - name: "CONTROLLER_HOSTNAME"
       value: "controller.operator.wavelabs.int"
     - name: "RESOLVER"
@@ -150,11 +171,13 @@ spec:
       value: "notifier.key"
   replicaCount: 1
   pullPolicy: IfNotPresent
-  nameSpace: "pmn"
+  nameSpace: "pgsql"
   notifierImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/notifier:1.8.0-a914c772"
   nginxImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/nginx:1.8.0-a914c772"
   imagePullSecrets: "artifactory"
   imageMagmaLte: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/magmalte:1.8.0-a914c772"
+  devEnvironment: true
+  cloudEnvironment: false
   persistentForStatefulSet:
     pvcClaimName: "abc"
     storageClassName: "nfs"

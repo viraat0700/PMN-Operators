@@ -39,6 +39,10 @@ spec:
           spec:
             description: PmnsystemSpec defines the desired state of Pmnsystem
             properties:
+              cloudEnvironment:
+                type: boolean
+              devEnvironment:
+                type: boolean
               envVariables:
                 items:
                   properties:
@@ -58,6 +62,15 @@ spec:
                   type: object
                 type: array
               envVariablesNMSMagmaLte:
+                items:
+                  properties:
+                    name:
+                      type: string
+                    value:
+                      type: string
+                  type: object
+                type: array
+              envVariablesNMSMagmaLteDevEnv:
                 items:
                   properties:
                     name:
