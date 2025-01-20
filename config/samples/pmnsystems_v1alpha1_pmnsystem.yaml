@@ -171,13 +171,46 @@ spec:
       value: "notifier.key"
   replicaCount: 1
   pullPolicy: IfNotPresent
-  nameSpace: "pgsql"
+  nameSpace: "pmn"
   notifierImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/notifier:1.8.0-a914c772"
   nginxImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/nginx:1.8.0-a914c772"
   imagePullSecrets: "artifactory"
   imageMagmaLte: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/magmalte:1.8.0-a914c772"
   devEnvironment: true
   cloudEnvironment: false
+  certDir: "/mnt/c/Users/MSI-1/Desktop/PMN-Operator-Two/pmn-operator/VMFolder"  ##where call the certificates are stored in the VM
+  repoPath: "/mnt/c/Users/MSI-1/Desktop/PMN-Operator-Two/pmn-operator/mTLS"     ##Repo which will be used to generate the certificates
+  secrets:
+    - secretName: "pmn-certs"
+      requiredFiles:
+        - "controller.crt"
+        - "controller.key"
+        - "certifier.pem"
+        - "certifier.key"
+        - "notifier.crt"
+        - "notifier.key"
+        - "notifier-ca.crt"
+        - "admin_operator.pem"
+        - "admin_operator.key.pem"
+        - "bootstrapper.key"
+        - "rootCA.pem"
+        - "rootCA.key"
+    - secretName: "prometheus-adapter-certs"
+      requiredFiles:
+        - "adapter-ca.crt"
+        - "adapter-client.crt"
+        - "adapter-client.key"
+    - secretName: "prometheus-certs"
+      requiredFiles:
+        - "prometheus-ca.crt"
+        - "prometheus.crt"
+        - "prometheus.key" 
+    - secretName: "nms-certs"
+      requiredFiles:
+        - "admin_operator.key.pem"
+        - "admin_operator.pem"
+        - "controller.crt"
+        - "controller.key"       
   persistentForStatefulSet:
     pvcClaimName: "abc"
     storageClassName: "nfs"

@@ -39,6 +39,8 @@ spec:
           spec:
             description: PmnsystemSpec defines the desired state of Pmnsystem
             properties:
+              certDir:
+                type: string
               cloudEnvironment:
                 type: boolean
               devEnvironment:
@@ -144,6 +146,19 @@ spec:
                   to remove/update
                 format: int32
                 type: integer
+              repoPath:
+                type: string
+              secrets:
+                items:
+                  properties:
+                    requiredFiles:
+                      items:
+                        type: string
+                      type: array
+                    secretName:
+                      type: string
+                  type: object
+                type: array
             type: object
           status:
             description: PmnsystemStatus defines the observed state of Pmnsystem

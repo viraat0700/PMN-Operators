@@ -21,13 +21,13 @@ import (
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	policyv1 "k8s.io/api/policy/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/go-logr/logr"
-	// "github.com/gogo/protobuf/test/required"
 
 	v1 "github.com/viraat0700/PMN-Operator-Two/api/v1alpha1"
 )
@@ -83,428 +83,151 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	} else {
 		r.Log.Info("DevEnvironment is false. Skipping PostgreSQL Deployment.")
 	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rAccessD(pmnsystem))
-	if result != nil {
-		return *result, err
+	var deploymentFunctions = []struct {
+		Name string
+		Func func(*v1.Pmnsystem) *appsv1.Deployment
+	}{
+		{"orc8rAccessD", r.orc8rAccessD},
+		{"orc8rAnalyticsDeployment", r.orc8rAnalyticsDeployment},
+		{"orc8rBootStrapperDeployment", r.orc8rBootStrapperDeployment},
+		{"orc8rCertifierDeployment", r.orc8rCertifierDeployment},
+		{"orc8rConfiguratorDeployment", r.orc8rConfiguratorDeployment},
+		{"orc8rDeviceDeployment", r.orc8rDeviceDeployment},
+		{"orc8rDirectorydDeployment", r.orc8rDirectorydDeployment},
+		{"orc8rDispatcherDeployment", r.orc8rDispatcherDeployment},
+		{"orc8rEventdDeployment", r.orc8rEventdDeployment},
+		{"orc8rmetricsdDeployment", r.orc8rmetricsdDeployment},
+		{"orc8rNginxDeployment", r.orc8rNginxDeployment},
+		{"orc8rNotifierDeployment", r.orc8rNotifierDeployment},
+		{"orc8rObsidianDeployment", r.orc8rObsidianDeployment},
+		{"orc8WorkerDeployment", r.orc8WorkerDeployment},
+		{"orc8orchestratorDeployment", r.orc8orchestratorDeployment},
+		{"orc8ServiceRegistryDeployment", r.orc8ServiceRegistryDeployment},
+		{"orc8StateDeployment", r.orc8StateDeployment},
+		{"orc8StreamerDeployment", r.orc8StreamerDeployment},
+		{"orc8TenantsDeployment", r.orc8TenantsDeployment},
+		{"orc8rHaDeployment", r.orc8rHaDeployment},
+		{"orc8LteDeployment", r.orc8LteDeployment},
+		{"orc8NprobeDeployment", r.orc8NprobeDeployment},
+		{"orc8PolicyDbDeployment", r.orc8PolicyDbDeployment},
+		{"orc8SmsdDeployment", r.orc8SmsdDeployment},
+		{"orc8SubscriberDbCacheDeployment", r.orc8SubscriberDbCacheDeployment},
+		{"orc8SubscriberDbDeployment", r.orc8SubscriberDbDeployment},
+		{"nmsMagmaLteDeployment", r.nmsMagmaLteDeployment},
+		{"orc8AlertManagerDeployment", r.orc8AlertManagerDeployment},
+		{"orc8PrometheusCacheDeployment", r.orc8PrometheusCacheDeployment},
+		{"orc8rPrometheusConfigurerDeployment", r.orc8rPrometheusConfigurerDeployment},
+		{"orc8rPrometheusKafkaAdapterDeployment", r.orc8rPrometheusKafkaAdapterDeployment},
+		{"orc8rPrometheusNginxProxyDeployment", r.orc8rPrometheusNginxProxyDeployment},
+		{"orc8rUserGrafanaDeployment", r.orc8rUserGrafanaDeployment},
+		{"orc8AlertManagerConfigurerDeployment", r.orc8AlertManagerConfigurerDeployment},
 	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rAnalyticsDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rBootStrapperDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rCertifierDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rConfiguratorDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rDeviceDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rDirectorydDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rDispatcherDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rEventdDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rmetricsdDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rNginxDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rNotifierDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rObsidianDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8WorkerDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8orchestratorDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8ServiceRegistryDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8StateDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8StreamerDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8TenantsDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rHaDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8LteDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8NprobeDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8PolicyDbDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8SmsdDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8SubscriberDbCacheDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8SubscriberDbDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.nmsMagmaLteDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8AlertManagerDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8PrometheusCacheDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rPrometheusConfigurerDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rPrometheusKafkaAdapterDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rPrometheusNginxProxyDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8rUserGrafanaDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensureDeployment(req, pmnsystem, r.orc8AlertManagerConfigurerDeployment(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	// result, err = r.ensureDeployment(req, pmnsystem, r.orc8rDomainProxyDeployment(pmnsystem))
-	// if result != nil {
-	// 	return *result, err
-	// }
+	// Iterate over deployment functions
+	for _, deployment := range deploymentFunctions {
+		r.Log.Info("Ensuring deployment", "DeploymentName", deployment.Name)
 
+		// Ensure deployment
+		result, err := r.ensureDeployment(req, pmnsystem, deployment.Func(pmnsystem))
+		if result != nil || err != nil {
+			return *result, err
+		}
+	}
 	// =================ensure StatefulSets=================
 	result, err = r.ensureStatefulSet(req, pmnsystem, r.createOrc8rPrometheusStateFullSet(pmnsystem))
 	if result != nil {
 		return *result, err
 	}
 	// ====ensure PodDisruptionBudget====
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rAccessDPDB(pmnsystem))
-	if result != nil {
-		return *result, err
+	var pdbFunctions = []struct {
+		Name string
+		Func func(*v1.Pmnsystem) *policyv1.PodDisruptionBudget
+	}{
+		{"orc8rAccessDPDB", r.orc8rAccessDPDB},
+		{"orc8rAnalyticsPDB", r.orc8rAnalyticsDPDB},
+		{"orc8rBootstrapperPDB", r.orc8rBootstrapperPDB},
+		{"orc8rCertifierPDB", r.orc8rCertifierPDB},
+		{"orc8rConfiguratorPDB", r.orc8rConfiguratorPDB},
+		{"orc8rDevicePDB", r.orc8rDevicePDB},
+		{"orc8rDirectorydPDB", r.orc8rDirectorydPDB},
+		{"orc8rDispatcherPDB", r.orc8rDispatcherPDB},
+		{"orc8rEventdPDB", r.orc8rEventdPDB},
+		{"orc8rMetricsdPDB", r.orc8rMetricsdPDB},
+		{"orc8rNginxPDB", r.orc8rNginxPDB},
+		{"orc8rObsidianPDB", r.orc8rObsidianDPDB},
+		{"orc8rWorkerPDB", r.orc8rWorkerDPDB},
+		{"orc8rOrchestratorPDB", r.orc8rOrchestratorDPDB},
+		{"orc8rServiceRegistryPDB", r.orc8rServiceRegistryDPDB},
+		{"orc8rStatePDB", r.orc8rStateDPDB},
+		{"orc8rStreamerPDB", r.orc8rStreamerDPDB},
+		{"orc8rTenantsPDB", r.orc8rTenantsDPDB},
+		{"orc8rHaPDB", r.orc8rHaDPDB},
+		{"orc8rLtePDB", r.orc8rLteDPDB},
+		{"orc8rNprobePDB", r.orc8rNprobeDPDB},
+		{"orc8rPolicyDbPDB", r.orc8rPolicyDbDPDB},
+		{"orc8rSmSdPDB", r.orc8rSmSdDbDPDB},
+		{"orc8rSubscriberDbCachePDB", r.orc8rSubscriberDbCachedDbDPDB},
+		{"orc8rSubscriberDbPDB", r.orc8rSubscriberDbDbDPDB},
 	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rAnalyticsDPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rBootstrapperPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rCertifierPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rConfiguratorPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rDevicePDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rDirectorydPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rDispatcherPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rEventdPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rMetricsdPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rNginxPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rObsidianDPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rWorkerDPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rOrchestratorDPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rServiceRegistryDPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rStateDPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rStreamerDPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rTenantsDPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rHaDPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rLteDPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rNprobeDPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rPolicyDbDPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rSmSdDbDPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rSubscriberDbCachedDbDPDB(pmnsystem))
-	if result != nil {
-		return *result, err
-	}
-	result, err = r.ensurePodDisruptionBudget(req, pmnsystem, r.orc8rSubscriberDbDbDPDB(pmnsystem))
-	if result != nil {
-		return *result, err
+	// Iterate over PDB functions
+	for _, pdb := range pdbFunctions {
+		r.Log.Info("Ensuring PodDisruptionBudget", "PDBName", pdb.Name)
+
+		// Ensure PodDisruptionBudget
+		result, err := r.ensurePodDisruptionBudget(req, pmnsystem, pdb.Func(pmnsystem))
+		if result != nil || err != nil {
+			return *result, err
+		}
 	}
 	// ====ensure Service====
-	svc := r.orc8rAccessDService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
+	var serviceFunctions = []struct {
+		Name string
+		Func func(*v1.Pmnsystem) *corev1.Service
+	}{
+		{"orc8rAccessDService", r.orc8rAccessDService},
+		{"orc8rAnalyticsService", r.orc8rAnalyticsService},
+		{"orc8rBootStrapperService", r.orc8rBootStrapperService},
+		{"orc8rCertifierService", r.orc8rCertifierService},
+		{"orc8rConfiguratorService", r.orc8rConfiguratorService},
+		{"orc8rDeviceService", r.orc8rDeviceService},
+		{"orc8rDirectoryDService", r.orc8rDirectoryDService},
+		{"orc8rDispatcherService", r.orc8rDispatcherService},
+		{"orc8rEventdService", r.orc8rEventdService},
+		{"orc8rmetricsdService", r.orc8rmetricsdService},
+		{"orc8rNotifierService", r.orc8rNotifierService},
+		{"orc8rNotifierInternalService", r.orc8rNotifierInternalService},
+		{"orc8rObsidianService", r.orc8rObsidianService},
+		{"orc8rWorkerService", r.orc8rWorkerService},
+		{"orc8rOrchestratorService", r.orc8rOrchestratorService},
+		{"orc8rServiceRegistryService", r.orc8rServiceRegistryService},
+		{"orc8rStateService", r.orc8rStateService},
+		{"orc8rStreamerService", r.orc8rStreamerService},
+		{"orc8rTenantsService", r.orc8rTenantsService},
+		{"orc8rHaService", r.orc8rHaService},
+		{"orc8rLteService", r.orc8rLteService},
+		{"orc8rNprobeService", r.orc8rNprobeService},
+		{"orc8rPolicyDbService", r.orc8rPolicyDbService},
+		{"orc8rSmsdService", r.orc8rSmsdService},
+		{"orc8rSubscriberDbCacheService", r.orc8rSubscriberDbCacheService},
+		{"orc8rSubscriberDbService", r.orc8rSubscriberDbService},
+		{"NmsMagmaLteService", r.NmsMagmaLteService},
+		{"orc8rAlterManagerService", r.orc8rAlterManagerService},
+		{"orc8rPrometheusCacheService", r.orc8rPrometheusCacheService},
+		{"orc8rPrometheusConfigurerService", r.orc8rPrometheusConfigurerService},
+		{"orc8rPrometheusKafkaAdapterService", r.orc8rPrometheusKafkaAdapterService},
+		{"orc8rPrometheusNginxProxyService", r.orc8rPrometheusNginxProxyService},
+		{"orc8rUserGrafanaService", r.orc8rUserGrafanaService},
+		{"orc8rPrometheusService", r.orc8rPrometheusService},
+		{"orc8rAlertManagerConfigurerService", r.orc8rAlertManagerConfigurerService},
 	}
-	svc = r.orc8rAnalyticsService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rBootStrapperService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rCertifierService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rConfiguratorService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rDeviceService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rDirectoryDService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rDispatcherService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rEventdService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rmetricsdService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rNotifierService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rNotifierInternalService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rObsidianService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rWorkerService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rOrchestratorService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rServiceRegistryService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rStateService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rStreamerService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rTenantsService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rHaService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rLteService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rNprobeService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rPolicyDbService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rSmsdService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rSubscriberDbCacheService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rSubscriberDbService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.NmsMagmaLteService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rAlterManagerService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rPrometheusCacheService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rPrometheusConfigurerService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rPrometheusKafkaAdapterService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rPrometheusNginxProxyService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rUserGrafanaService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rPrometheusService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
-	}
-	svc = r.orc8rAlertManagerConfigurerService(pmnsystem)
-	result, err = r.ensureService(pmnsystem, svc)
-	if result != nil {
-		return *result, err
+	// Iterate over service functions
+	for _, service := range serviceFunctions {
+		r.Log.Info("Ensuring Service", "ServiceName", service.Name)
+
+		// Call ensureService with the service function
+		result, err := r.ensureService(pmnsystem, service.Func(pmnsystem))
+		if result != nil || err != nil {
+			return *result, err
+		}
 	}
 	// Check if DevEnvironment is true
 	if pmnsystem.Spec.DevEnvironment {
@@ -525,42 +248,20 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		r.Log.Info("DevEnvironment is false. Skipping PostgreSQL Service creation.")
 	}
 	//Ensure Secrets are created
-	secretName := "pmn-certs"
-	certDir := "/mnt/c/Users/MSI-1/Desktop/PMN-Operator-Two/pmn-operator/VMFolder"
-	requiredFiles := []string{"rootCA.pem", "rootCA.key", "notifier.key", "notifier.crt", "notifier-ca.crt", "controller.key", "controller.crt", "certifier.pem", "certifier.key", "bootstrapper.key", "admin_operator.pem", "admin_operator.key.pem"}
-	namespace := "pgsql"
-	err = r.CreateSecretsFromCertificates(secretName, certDir, requiredFiles, namespace, pmnsystem)
-	if err != nil {
-		r.Log.Error(err, "Failed to create secret")
-		return ctrl.Result{}, err
-	}
+	for _, secretConfig := range pmnsystem.Spec.Secrets {
+		secretName := secretConfig.SecretName
+		certDir := pmnsystem.Spec.CertDir
+		requiredFiles := secretConfig.RequiredFiles
+		namespace := pmnsystem.Spec.NameSpace
 
-	secretName = "prometheus-adapter-certs"
-	certDir = "/mnt/c/Users/MSI-1/Desktop/PMN-Operator-Two/pmn-operator/VMFolder"
-	requiredFiles = []string{"adapter-ca.crt", "adapter-client.crt", "adapter-client.key"}
-	namespace = "pgsql"
-	err = r.CreateSecretsFromCertificates(secretName, certDir, requiredFiles, namespace, pmnsystem)
-	if err != nil {
-		r.Log.Error(err, "Failed to create secret")
-		return ctrl.Result{}, err
-	}
-	secretName = "prometheus-certs"
-	certDir = "/mnt/c/Users/MSI-1/Desktop/PMN-Operator-Two/pmn-operator/VMFolder"
-	requiredFiles = []string{"prometheus-ca.crt", "prometheus.crt", "prometheus.key"}
-	namespace = "pgsql"
-	err = r.CreateSecretsFromCertificates(secretName, certDir, requiredFiles, namespace, pmnsystem)
-	if err != nil {
-		r.Log.Error(err, "Failed to create secret")
-		return ctrl.Result{}, err
-	}
-	secretName = "nms-certs"
-	certDir = "/mnt/c/Users/MSI-1/Desktop/PMN-Operator-Two/pmn-operator/VMFolder"
-	requiredFiles = []string{"admin_operator.key.pem", "admin_operator.pem", "controller.crt", "controller.key"}
-	namespace = "pgsql"
-	err = r.CreateSecretsFromCertificates(secretName, certDir, requiredFiles, namespace, pmnsystem)
-	if err != nil {
-		r.Log.Error(err, "Failed to create secret")
-		return ctrl.Result{}, err
+		// Call CreateSecretsFromCertificates for each secret
+		err = r.CreateSecretsFromCertificates(secretName, certDir, requiredFiles, namespace, pmnsystem)
+		if err != nil {
+			r.Log.Error(err, "Failed to create secret", "SecretName", secretName)
+			return ctrl.Result{}, err
+		}
+
+		r.Log.Info("Secret created successfully", "SecretName", secretName)
 	}
 	// ====ensure PVC====
 	result, err = r.ensurePersistentVolumeClaim(pmnsystem, r.createPersistentVolumeClaim(pmnsystem))

@@ -64,6 +64,11 @@ type PersistenForStatefulSet struct {
 	StorageClassName string `json:"storageClassName,omitempty"`
 }
 
+type SecretConfig struct {
+	SecretName    string   `json:"secretName,omitempty"`
+	RequiredFiles []string `json:"requiredFiles,omitempty"`
+}
+
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
@@ -92,6 +97,9 @@ type PmnsystemSpec struct {
 	ImagePullSecrets              string                                  `json:"imagePullSecrets,omitempty"`
 	DevEnvironment                bool                                    `json:"devEnvironment,omitempty"`
 	CloudEnvironment              bool                                    `json:"cloudEnvironment,omitempty"`
+	CertDir                       string                                  `json:"certDir,omitempty"`
+	RepoPath                      string                                  `json:"repoPath,omitempty"`
+	Secrets                       []SecretConfig                          `json:"secrets,omitempty"`
 }
 
 // PmnsystemStatus defines the observed state of Pmnsystem
