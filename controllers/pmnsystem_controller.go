@@ -268,6 +268,26 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if result != nil {
 		return *result, err
 	}
+	result, err = r.ensurePersistentVolumeClaim(pmnsystem, r.createPersistentVolumeClaimPromData(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensurePersistentVolumeClaim(pmnsystem, r.createPersistentVolumeClaimGrafanaProviders(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensurePersistentVolumeClaim(pmnsystem, r.createPersistentVolumeClaimGrafanaData(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensurePersistentVolumeClaim(pmnsystem, r.createPersistentVolumeClaimGrafanaDatasources(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
+	result, err = r.ensurePersistentVolumeClaim(pmnsystem, r.createPersistentVolumeClaimGrafanaDashboards(pmnsystem))
+	if result != nil {
+		return *result, err
+	}
 
 	return ctrl.Result{}, nil
 }

@@ -31,11 +31,191 @@ func (r *PmnsystemReconciler) createPersistentVolumeClaim(cr *v1.Pmnsystem) *cor
 		"app.kubernetes.io/component": "promcfg",
 	}
 
-	storageclassname := "standard"
+	storageclassname := cr.Spec.Persistent.StorageClassName
 
 	pvc := &corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      cr.Spec.Persistent.PvcClaimName,
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.PersistentVolumeClaimSpec{
+			AccessModes: []corev1.PersistentVolumeAccessMode{
+				corev1.ReadWriteMany,
+			},
+			Resources: corev1.VolumeResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse("1Gi"),
+				},
+			},
+			StorageClassName: &storageclassname,
+		},
+	}
+
+	controllerutil.SetControllerReference(cr, pvc, r.Scheme)
+	return pvc
+}
+func (r *PmnsystemReconciler) createPersistentVolumeClaimPromData(cr *v1.Pmnsystem) *corev1.PersistentVolumeClaim {
+	labels := map[string]string{
+		"app.kubernetes.io/component": "promdata",
+	}
+
+	storageclassname := cr.Spec.Persistent.StorageClassName
+
+	pvc := &corev1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "promdata",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.PersistentVolumeClaimSpec{
+			AccessModes: []corev1.PersistentVolumeAccessMode{
+				corev1.ReadWriteMany,
+			},
+			Resources: corev1.VolumeResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse("1Gi"),
+				},
+			},
+			StorageClassName: &storageclassname,
+		},
+	}
+
+	controllerutil.SetControllerReference(cr, pvc, r.Scheme)
+	return pvc
+}
+func (r *PmnsystemReconciler) createPersistentVolumeClaimGrafanaProviders(cr *v1.Pmnsystem) *corev1.PersistentVolumeClaim {
+	labels := map[string]string{
+		"app.kubernetes.io/component": "grafanaproviders",
+	}
+
+	storageclassname := cr.Spec.Persistent.StorageClassName
+
+	pvc := &corev1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "grafanaproviders",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.PersistentVolumeClaimSpec{
+			AccessModes: []corev1.PersistentVolumeAccessMode{
+				corev1.ReadWriteMany,
+			},
+			Resources: corev1.VolumeResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse("1Gi"),
+				},
+			},
+			StorageClassName: &storageclassname,
+		},
+	}
+
+	controllerutil.SetControllerReference(cr, pvc, r.Scheme)
+	return pvc
+}
+func (r *PmnsystemReconciler) createPersistentVolumeClaimGrafanaDatasources(cr *v1.Pmnsystem) *corev1.PersistentVolumeClaim {
+	labels := map[string]string{
+		"app.kubernetes.io/component": "grafanadatasources",
+	}
+
+	storageclassname := cr.Spec.Persistent.StorageClassName
+
+	pvc := &corev1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "grafanadatasources",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.PersistentVolumeClaimSpec{
+			AccessModes: []corev1.PersistentVolumeAccessMode{
+				corev1.ReadWriteMany,
+			},
+			Resources: corev1.VolumeResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse("1Gi"),
+				},
+			},
+			StorageClassName: &storageclassname,
+		},
+	}
+
+	controllerutil.SetControllerReference(cr, pvc, r.Scheme)
+	return pvc
+}
+func (r *PmnsystemReconciler) createPersistentVolumeClaimGrafanaData(cr *v1.Pmnsystem) *corev1.PersistentVolumeClaim {
+	labels := map[string]string{
+		"app.kubernetes.io/component": "grafanadata",
+	}
+
+	storageclassname := cr.Spec.Persistent.StorageClassName
+
+	pvc := &corev1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "grafanadata",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.PersistentVolumeClaimSpec{
+			AccessModes: []corev1.PersistentVolumeAccessMode{
+				corev1.ReadWriteMany,
+			},
+			Resources: corev1.VolumeResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: resource.MustParse("1Gi"),
+				},
+			},
+			StorageClassName: &storageclassname,
+		},
+	}
+
+	controllerutil.SetControllerReference(cr, pvc, r.Scheme)
+	return pvc
+}
+func (r *PmnsystemReconciler) createPersistentVolumeClaimGrafanaDashboards(cr *v1.Pmnsystem) *corev1.PersistentVolumeClaim {
+	labels := map[string]string{
+		"app.kubernetes.io/component": "grafanadashboards",
+	}
+
+	storageclassname := cr.Spec.Persistent.StorageClassName
+
+	pvc := &corev1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "grafanadashboards",
 			Namespace: cr.Spec.NameSpace,
 			Labels:    labels,
 			OwnerReferences: []metav1.OwnerReference{
