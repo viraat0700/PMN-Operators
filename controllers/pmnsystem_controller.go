@@ -289,6 +289,23 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return *result, err
 	}
 
+	// Create the Job
+	job := r.createOrc8rMetricsStoreConfigJob(pmnsystem)
+	r.Log.Info("Creating Job", "Job.Name", job.Name)
+
+	// Check if the Job already exists
+	err = r.Client.Create(ctx, job)
+	if err != nil {
+		if errors.IsAlreadyExists(err) {
+			r.Log.Info("Job already exists, skipping creation", "Job.Name", job.Name)
+		} else {
+			r.Log.Error(err, "Failed to create Job", "Job.Name", job.Name)
+			return ctrl.Result{}, err
+		}
+	} else {
+		r.Log.Info("Job created successfully", "Job.Name", job.Name)
+	}
+
 	return ctrl.Result{}, nil
 }
 
