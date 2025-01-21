@@ -20,6 +20,7 @@ import (
 	"context"
 
 	appsv1 "k8s.io/api/apps/v1"
+	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	policyv1 "k8s.io/api/policy/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -319,5 +320,6 @@ func (r *PmnsystemReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Owns(&corev1.Secret{}).
 		Owns(&corev1.ConfigMap{}).
 		Owns(&corev1.Pod{}).
+		Owns(&batchv1.Job{}).
 		Complete(r)
 }

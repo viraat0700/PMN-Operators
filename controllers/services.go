@@ -1484,6 +1484,13 @@ func (r *PmnsystemReconciler) servicePostgres(cr *v1.Pmnsystem) *corev1.Service 
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "postgres",
 			Namespace: cr.Spec.NameSpace,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
 		},
 		Spec: corev1.ServiceSpec{
 			Type: corev1.ServiceTypeNodePort,

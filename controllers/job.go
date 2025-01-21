@@ -23,6 +23,7 @@ import (
 
 	batchv1 "k8s.io/api/batch/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
 func (r *PmnsystemReconciler) createOrc8rMetricsStoreConfigJob(cr *v1.Pmnsystem) *batchv1.Job {
@@ -32,6 +33,13 @@ func (r *PmnsystemReconciler) createOrc8rMetricsStoreConfigJob(cr *v1.Pmnsystem)
 			Namespace: cr.Spec.NameSpace,
 			Labels: map[string]string{
 				"app": "orc8r-metrics",
+			},
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
 			},
 		},
 		Spec: batchv1.JobSpec{
