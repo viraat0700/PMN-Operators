@@ -455,6 +455,16 @@ func (r *PmnsystemReconciler) orc8rNotifierService(cr *v1.Pmnsystem) *corev1.Ser
 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
 	}
 
+	var servicePorts []corev1.ServicePort
+	for _, port := range cr.Spec.Orc8rNotifier.ServiceSpec.PortSpec {
+		servicePorts = append(servicePorts, corev1.ServicePort{
+			Name:       port.Name,
+			Port:       port.Port,
+			Protocol:   corev1.Protocol(port.Protocol),
+			TargetPort: intstr.FromInt(int(port.TargetPort)),
+		})
+	}
+
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "orc8r-notifier",
@@ -469,16 +479,9 @@ func (r *PmnsystemReconciler) orc8rNotifierService(cr *v1.Pmnsystem) *corev1.Ser
 			},
 		},
 		Spec: corev1.ServiceSpec{
-			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
-			Ports: []corev1.ServicePort{
-				{
-					Name:       "notifier-internal",
-					Port:       5442,
-					Protocol:   corev1.ProtocolTCP,
-					TargetPort: intstr.FromInt(5442),
-				},
-			},
+			Type:            corev1.ServiceType(cr.Spec.Orc8rNotifier.ServiceSpec.Type),
+			Selector:        labels,
+			Ports:           servicePorts,
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
 	}
@@ -1159,6 +1162,16 @@ func (r *PmnsystemReconciler) NmsMagmaLteService(cr *v1.Pmnsystem) *corev1.Servi
 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
 	}
 
+	var servicePorts []corev1.ServicePort
+	for _, port := range cr.Spec.NmsMagmaLte.ServiceSpec.PortSpec {
+		servicePorts = append(servicePorts, corev1.ServicePort{
+			Name:       port.Name,
+			Port:       port.Port,
+			Protocol:   corev1.Protocol(port.Protocol),
+			TargetPort: intstr.FromInt(int(port.TargetPort)),
+		})
+	}
+
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "nms-magmalte",
@@ -1173,51 +1186,9 @@ func (r *PmnsystemReconciler) NmsMagmaLteService(cr *v1.Pmnsystem) *corev1.Servi
 			},
 		},
 		Spec: corev1.ServiceSpec{
-			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
-			Ports: []corev1.ServicePort{
-				{
-					Name:       "http",
-					Port:       8081,
-					Protocol:   corev1.ProtocolTCP,
-					TargetPort: intstr.FromInt(8081),
-				},
-			},
-			SessionAffinity: corev1.ServiceAffinityNone,
-		},
-	}
-}
-func (r *PmnsystemReconciler) orc8rAlterManagerService(cr *v1.Pmnsystem) *corev1.Service {
-	labels := map[string]string{
-		"app":                          "orc8r-alertmanager",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
-	}
-
-	return &corev1.Service{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      "orc8r-alertmanager",
-			Namespace: cr.Spec.NameSpace,
-			Labels:    labels,
-			OwnerReferences: []metav1.OwnerReference{
-				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
-					Group:   v1.GroupVersion.Group,
-					Version: v1.GroupVersion.Version,
-					Kind:    "Pmnsystem",
-				}),
-			},
-		},
-		Spec: corev1.ServiceSpec{
-			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
-			Ports: []corev1.ServicePort{
-				{
-					Name:       "alertmanager",
-					Port:       9093,
-					Protocol:   corev1.ProtocolTCP,
-					TargetPort: intstr.FromInt(9093),
-				},
-			},
+			Type:            corev1.ServiceType(cr.Spec.NmsMagmaLte.ServiceSpec.Type),
+			Selector:        labels,
+			Ports:           servicePorts,
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
 	}
@@ -1227,6 +1198,16 @@ func (r *PmnsystemReconciler) orc8rPrometheusCacheService(cr *v1.Pmnsystem) *cor
 		"app":                          "orc8r-prometheus-cache",
 		"app.kubernetes.io/instance":   "orc8r",
 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	var servicePorts []corev1.ServicePort
+	for _, port := range cr.Spec.PrometheusCache.ServiceSpec.PortSpec {
+		servicePorts = append(servicePorts, corev1.ServicePort{
+			Name:       port.Name,
+			Port:       port.Port,
+			Protocol:   corev1.Protocol(port.Protocol),
+			TargetPort: intstr.FromInt(int(port.TargetPort)),
+		})
 	}
 
 	return &corev1.Service{
@@ -1243,22 +1224,9 @@ func (r *PmnsystemReconciler) orc8rPrometheusCacheService(cr *v1.Pmnsystem) *cor
 			},
 		},
 		Spec: corev1.ServiceSpec{
-			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
-			Ports: []corev1.ServicePort{
-				{
-					Name:       "prometheus-cache",
-					Port:       9091,
-					Protocol:   corev1.ProtocolTCP,
-					TargetPort: intstr.FromInt(9091),
-				},
-				{
-					Name:       "prometheus-cache-grpc",
-					Port:       9092,
-					Protocol:   corev1.ProtocolTCP,
-					TargetPort: intstr.FromInt(9092),
-				},
-			},
+			Type:            corev1.ServiceType(cr.Spec.PrometheusCache.ServiceSpec.Type),
+			Selector:        labels,
+			Ports:           servicePorts,
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
 	}
@@ -1268,6 +1236,16 @@ func (r *PmnsystemReconciler) orc8rPrometheusConfigurerService(cr *v1.Pmnsystem)
 		"app":                          "orc8r-prometheus-configurer",
 		"app.kubernetes.io/instance":   "orc8r",
 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	var servicePorts []corev1.ServicePort
+	for _, port := range cr.Spec.PrometheusConfigurer.ServiceSpec.PortSpec {
+		servicePorts = append(servicePorts, corev1.ServicePort{
+			Name:       port.Name,
+			Port:       port.Port,
+			Protocol:   corev1.Protocol(port.Protocol),
+			TargetPort: intstr.FromInt(int(port.TargetPort)),
+		})
 	}
 
 	return &corev1.Service{
@@ -1284,16 +1262,9 @@ func (r *PmnsystemReconciler) orc8rPrometheusConfigurerService(cr *v1.Pmnsystem)
 			},
 		},
 		Spec: corev1.ServiceSpec{
-			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
-			Ports: []corev1.ServicePort{
-				{
-					Name:       "prom-configmanager",
-					Port:       9100,
-					Protocol:   corev1.ProtocolTCP,
-					TargetPort: intstr.FromInt(9100),
-				},
-			},
+			Type:            corev1.ServiceType(cr.Spec.PrometheusConfigurer.ServiceSpec.Type),
+			Selector:        labels,
+			Ports:           servicePorts,
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
 	}
@@ -1303,6 +1274,17 @@ func (r *PmnsystemReconciler) orc8rPrometheusKafkaAdapterService(cr *v1.Pmnsyste
 		"app":                          "orc8r-prometheus-kafka-adapter",
 		"app.kubernetes.io/instance":   "orc8r",
 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	var servicePorts []corev1.ServicePort
+	for _, port := range cr.Spec.PrometheusKafkaAdapter.ServiceSpecPrometheusKafkaAdapter.PortSpecPrometheusKafkaAdapter {
+		targetPort := intstr.FromString(port.TargetPort)
+		servicePorts = append(servicePorts, corev1.ServicePort{
+			Name:       port.Name,
+			Port:       port.Port,
+			Protocol:   corev1.Protocol(port.Protocol),
+			TargetPort: targetPort,
+		})
 	}
 
 	return &corev1.Service{
@@ -1319,16 +1301,9 @@ func (r *PmnsystemReconciler) orc8rPrometheusKafkaAdapterService(cr *v1.Pmnsyste
 			},
 		},
 		Spec: corev1.ServiceSpec{
-			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
-			Ports: []corev1.ServicePort{
-				{
-					Name:       "http",
-					Port:       80,
-					Protocol:   corev1.ProtocolTCP,
-					TargetPort: intstr.FromString("http"),
-				},
-			},
+			Type:            corev1.ServiceType(cr.Spec.PrometheusKafkaAdapter.ServiceSpecPrometheusKafkaAdapter.Type),
+			Selector:        labels,
+			Ports:           servicePorts,
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
 	}
@@ -1338,6 +1313,17 @@ func (r *PmnsystemReconciler) orc8rPrometheusNginxProxyService(cr *v1.Pmnsystem)
 		"app":                          "orc8r-prometheus-nginx-proxy",
 		"app.kubernetes.io/instance":   "orc8r",
 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	var servicePorts []corev1.ServicePort
+	for _, port := range cr.Spec.PrometheusNginxProxy.Nginx.ServiceOrc8rSpec.PortOrc8rSpec {
+		servicePorts = append(servicePorts, corev1.ServicePort{
+			Name:       port.Name,
+			Port:       port.Port,
+			Protocol:   corev1.Protocol(port.Protocol),
+			TargetPort: intstr.FromInt(int(port.TargetPort)),
+			NodePort:   port.NodePort,
+		})
 	}
 
 	return &corev1.Service{
@@ -1354,17 +1340,9 @@ func (r *PmnsystemReconciler) orc8rPrometheusNginxProxyService(cr *v1.Pmnsystem)
 			},
 		},
 		Spec: corev1.ServiceSpec{
-			Type:     corev1.ServiceTypeLoadBalancer,
-			Selector: labels,
-			Ports: []corev1.ServicePort{
-				{
-					Name:       "prometheus-nginx",
-					NodePort:   32516,
-					Port:       443,
-					Protocol:   corev1.ProtocolTCP,
-					TargetPort: intstr.FromInt(443),
-				},
-			},
+			Type:            corev1.ServiceType(cr.Spec.PrometheusNginxProxy.Nginx.ServiceOrc8rSpec.Type),
+			Selector:        labels,
+			Ports:           servicePorts,
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
 	}
@@ -1374,6 +1352,16 @@ func (r *PmnsystemReconciler) orc8rUserGrafanaService(cr *v1.Pmnsystem) *corev1.
 		"app":                          "orc8r-user-grafana",
 		"app.kubernetes.io/instance":   "orc8r",
 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	var servicePorts []corev1.ServicePort
+	for _, port := range cr.Spec.UserGrafana.ServiceSpec.PortSpec {
+		servicePorts = append(servicePorts, corev1.ServicePort{
+			Name:       port.Name,
+			Port:       port.Port,
+			Protocol:   corev1.Protocol(port.Protocol),
+			TargetPort: intstr.FromInt(int(port.TargetPort)),
+		})
 	}
 
 	return &corev1.Service{
@@ -1390,57 +1378,13 @@ func (r *PmnsystemReconciler) orc8rUserGrafanaService(cr *v1.Pmnsystem) *corev1.
 			},
 		},
 		Spec: corev1.ServiceSpec{
-			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
-			Ports: []corev1.ServicePort{
-				{
-					Name:       "grafana",
-					Port:       3000,
-					Protocol:   corev1.ProtocolTCP,
-					TargetPort: intstr.FromInt(3000),
-				},
-			},
+			Type:            corev1.ServiceType(cr.Spec.UserGrafana.ServiceSpec.Type),
+			Selector:        labels,
+			Ports:           servicePorts,
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
 	}
 }
-func (r *PmnsystemReconciler) orc8rPrometheusService(cr *v1.Pmnsystem) *corev1.Service {
-	labels := map[string]string{
-		"app":                          "orc8r-prometheus",
-		"app.kubernetes.io/component":  "prometheus",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
-	}
-
-	return &corev1.Service{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      "orc8r-prometheus",
-			Namespace: cr.Spec.NameSpace,
-			Labels:    labels,
-			OwnerReferences: []metav1.OwnerReference{
-				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
-					Group:   v1.GroupVersion.Group,
-					Version: v1.GroupVersion.Version,
-					Kind:    "Pmnsystem",
-				}),
-			},
-		},
-		Spec: corev1.ServiceSpec{
-			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
-			Ports: []corev1.ServicePort{
-				{
-					Name:       "prometheus",
-					Port:       9090,
-					Protocol:   corev1.ProtocolTCP,
-					TargetPort: intstr.FromInt(9090),
-				},
-			},
-			SessionAffinity: corev1.ServiceAffinityNone,
-		},
-	}
-}
-
 func (r *PmnsystemReconciler) orc8rAlertManagerConfigurerService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
 		"app":                          "orc8r-alertmanager-configurer",
@@ -1448,6 +1392,15 @@ func (r *PmnsystemReconciler) orc8rAlertManagerConfigurerService(cr *v1.Pmnsyste
 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
 	}
 
+	var servicePorts []corev1.ServicePort
+	for _, port := range cr.Spec.AlertmanagerConfigurer.ServiceSpec.PortSpec {
+		servicePorts = append(servicePorts, corev1.ServicePort{
+			Name:       port.Name,
+			Port:       port.Port,
+			Protocol:   corev1.Protocol(port.Protocol),
+			TargetPort: intstr.FromInt(int(port.TargetPort)),
+		})
+	}
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "orc8r-alertmanager-configurer",
@@ -1462,16 +1415,47 @@ func (r *PmnsystemReconciler) orc8rAlertManagerConfigurerService(cr *v1.Pmnsyste
 			},
 		},
 		Spec: corev1.ServiceSpec{
-			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
-			Ports: []corev1.ServicePort{
-				{
-					Name:       "alertmanager-config",
-					Port:       9101,
-					Protocol:   corev1.ProtocolTCP,
-					TargetPort: intstr.FromInt(9101),
-				},
+			Type:            corev1.ServiceType(cr.Spec.AlertmanagerConfigurer.ServiceSpec.Type),
+			Selector:        labels,
+			Ports:           servicePorts,
+			SessionAffinity: corev1.ServiceAffinityNone,
+		},
+	}
+}
+func (r *PmnsystemReconciler) orc8rAlterManagerService(cr *v1.Pmnsystem) *corev1.Service {
+	labels := map[string]string{
+		"app":                          "orc8r-alertmanager",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	var servicePorts []corev1.ServicePort
+	for _, port := range cr.Spec.AlertManager.ServiceSpec.PortSpec {
+		servicePorts = append(servicePorts, corev1.ServicePort{
+			Name:       port.Name,
+			Port:       port.Port,
+			Protocol:   corev1.Protocol(port.Protocol),
+			TargetPort: intstr.FromInt(int(port.TargetPort)),
+		})
+	}
+
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "orc8r-alertmanager",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
 			},
+		},
+		Spec: corev1.ServiceSpec{
+			Type:            corev1.ServiceType(cr.Spec.AlertManager.ServiceSpec.Type),
+			Selector:        labels,
+			Ports:           servicePorts,
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
 	}
@@ -1510,3 +1494,39 @@ func (r *PmnsystemReconciler) servicePostgres(cr *v1.Pmnsystem) *corev1.Service 
 	log.Info("PostgreSQL Service created successfully")
 	return postgresService
 }
+func (r *PmnsystemReconciler) orc8rPrometheusService(cr *v1.Pmnsystem) *corev1.Service {
+	labels := map[string]string{
+		"app":                          "orc8r-prometheus",
+		"app.kubernetes.io/component":  "prometheus",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	}
+
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "orc8r-prometheus",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Type:     corev1.ServiceTypeClusterIP,
+			Selector: labels,
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "prometheus",
+					Port:       9090,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(9090),
+				},
+			},
+			SessionAffinity: corev1.ServiceAffinityNone,
+		},
+	}
+} // service for statefulset

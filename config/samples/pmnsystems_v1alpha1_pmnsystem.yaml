@@ -64,9 +64,9 @@ spec:
       value: "orc8r-user-grafana:3000"
   envVariablesNMSMagmaLteDevEnv:
     - name: API_CERT_FILENAME
-      value: /run/secrets/admin_operator.pem      
+      value: /run/secrets/admin_operator.pem
     - name: API_PRIVATE_KEY_FILENAME
-      value: /run/secrets/admin_operator.key.pem 
+      value: /run/secrets/admin_operator.key.pem
     - name: API_HOST
       value: api.operator.wavelabs.int
     - name: HOST
@@ -175,11 +175,10 @@ spec:
   notifierImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/notifier:1.8.0-a914c772"
   nginxImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/nginx:1.8.0-a914c772"
   imagePullSecrets: "artifactory"
-  imageMagmaLte: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/magmalte:1.8.0-a914c772"
   devEnvironment: true
   cloudEnvironment: false
-  certDir: "/home/ubuntu/pmn-operator/VMFolder"  ##where call the certificates are stored in the VM
-  repoPath: "/home/ubuntu/pmn-operator/mTLS"     ##Repo which will be used to generate the certificates
+  certDir: "/mnt/c/Users/MSI-1/Desktop/PMN-Operator-Two/pmn-operator/VMFolder" ##where call the certificates are stored in the VM
+  repoPath: "/mnt/c/Users/MSI-1/Desktop/PMN-Operator-Two/pmn-operator/mTLS" ##Repo which will be used to generate the certificates
   secrets:
     - secretName: "pmn-certs"
       requiredFiles:
@@ -204,13 +203,13 @@ spec:
       requiredFiles:
         - "prometheus-ca.crt"
         - "prometheus.crt"
-        - "prometheus.key" 
+        - "prometheus.key"
     - secretName: "nms-certs"
       requiredFiles:
         - "admin_operator.key.pem"
         - "admin_operator.pem"
         - "controller.crt"
-        - "controller.key"       
+        - "controller.key"
   persistentForStatefulSet:
     pvcClaimName: "abc"
     storageClassName: "nfs"
@@ -220,3 +219,223 @@ spec:
   image:
     repository: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/controller"
     tag: "1.8.0-6c4579b5"
+  alertmanagerConfigurer:
+    replica: 1
+    # nodeSelector: ""
+    # toleration: ""
+    imageAlertManagerConfigurer:
+      repository: "docker.io/facebookincubator/alertmanager-configurer"
+      tag: "1.0.4"
+      imagePullPolicy: IfNotPresent
+    alertManagerConfigPort: 9101
+    alertManagerConfPath: "/etc/configs/alertmanager.yml"
+    alertmanagerURL: "orc8r-alertmanager:9093"
+    serviceSpec:
+      type: "ClusterIP"
+      portSpec:
+        - name: "alertmanager-config"
+          port: 9101
+          protocol: TCP
+          targetPort: 9101
+  metrics:
+    volumes:
+      prometheusConfig:
+        volumeSpec: ""
+  prometheus:
+    replicas: 1
+  alertManager:
+    serviceSpec:
+      type: "ClusterIP"
+      portSpec:
+        - name: "alertmanager"
+          port: 9093
+          protocol: TCP
+          targetPort: 9093
+    # nodeSelector: ""
+    # toleration: ""
+    imageAlertmanager:
+      repository: "docker.io/prom/alertmanager"
+      tag: "v0.18.0"
+      imagePullPolicy: "IfNotPresent"
+  userGrafana:
+    serviceSpec:
+      type: "ClusterIP"
+      portSpec:
+        - name: "grafana"
+          port: 3000
+          protocol: TCP
+          targetPort: 3000
+    replicas: 1
+    # nodeSelector: ""
+    # toleration: ""
+    imageUserGrafana:
+      repository: "docker.io/grafana/grafana"
+      tag: "6.6.2"
+      imagePullPolicy: "IfNotPresent"
+    volumesUserGrafana:
+      - name: "grafanadatasources"
+        path: "/etc/grafana/provisioning/datasources/"
+      - name: "grafanaproviders"
+        path: "/etc/grafana/provisioning/dashboards/"
+      - name: "grafanadashboards"
+        path: "/var/lib/grafana/dashboards"
+      - name: "grafanadata"
+        path: "/var/lib/grafana"
+  prometheusNginxProxy:
+    nginx:
+      serviceOrc8rSpec:
+        type: "LoadBalancer"
+        portOrc8rSpec:
+          - name: "prometheus-nginx"
+            port: 443
+            protocol: TCP
+            targetPort: 443
+            nodePort: 32516
+      replicas: 1
+      imagePrometheusNginxProxy:
+        repository: "nginx"
+        tag: "latest"
+        imagePullPolicy:
+      volumeMountPath:
+        mountPath:
+          - "/etc/nginx/conf.d/nginx_prometheus_ssl.conf"
+          - "/etc/nginx/conf.d/prometheus.crt"
+          - "/etc/nginx/conf.d/prometheus.key"
+          - "/etc/nginx/conf.d/prometheus-ca.crt"
+        subPath:
+          - "nginx_prometheus_ssl.conf"
+          - "prometheus.crt"
+          - "prometheus.key"
+          - "prometheus-ca.crt"
+      secretName: "prometheus-certs"
+  prometheusKafkaAdapter:
+    replicas: 1
+    # toleration: ""
+    # nodeSelector: ""
+    imagePrometheusKafkaAdapter:
+      repository: "telefonica/prometheus-kafka-adapter"
+      tag: "1.9.1"
+      imagePullPolicy: "IfNotPresent"
+    serviceSpecPrometheusKafkaAdapter:
+      type: "ClusterIP"
+      portSpecPrometheusKafkaAdapter:
+        - name: "http"
+          port: 80
+          protocol: TCP
+          targetPort: "http"
+    volumeMountPathPrometheusKafkaAdapter:
+      mountPath:
+        - "/client_cert"
+      secretName: "prometheus-adapter-certs"
+  prometheusConfigurer:
+    replicas: 1
+    # toleration: ""
+    # nodeSelector: ""
+    imagePrometheusConfigurer:
+      repository: "docker.io/facebookincubator/prometheus-configurer"
+      tag: "1.0.4"
+      imagePullPolicy: "IfNotPresent"
+    volume:
+      volumeClaimName: "promcfg"
+      volumeMountPath: "/etc/configs"
+    args:
+      - "-port=9100"
+      - "-rules-dir=/etc/configs/alert_rules/"
+      - "-prometheusURL=orc8r-prometheus:9090"
+      - "-multitenant-label=networkID"
+      - "-restrict-queries"
+    serviceSpec:
+      type: "ClusterIP"
+      portSpec:
+        - name: "prom-configmanager"
+          port: 9100
+          protocol: TCP
+          targetPort: 9100
+  prometheusCache:
+    replicas: 1
+    # toleration: ""
+    # nodeSelector: ""
+    imagePrometheusCache:
+      repository: "docker.io/facebookincubator/prometheus-edge-hub"
+      tag: "1.1.0"
+      imagePullPolicy: "IfNotPresent"
+    args:
+      - "-limit=500000"
+      - "-grpc-port=9092"
+    serviceSpec:
+      type: "ClusterIP"
+      portSpec:
+        - name: "prometheus-cache"
+          port: 9091
+          protocol: TCP
+          targetPort: 9091
+        - name: "prometheus-cache-grpc"
+          port: 9092
+          protocol: TCP
+          targetPort: 9092
+  nmsMagmaLte:
+    serviceSpec:
+      type: "ClusterIP"
+      portSpec:
+        - name: "http"
+          port: 8081
+          protocol: TCP
+          targetPort: 8081
+    replicas: 1
+    # toleration: ""
+    # nodeSelector: ""
+    imageMagmaLte:
+      repository: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/magmalte"
+      tag: "1.8.0-a914c772"
+      imagePullPolicy: "IfNotPresent"
+    volumeMountNmsMagmaLte:
+      volumeMountPath:
+        - "/run/secrets/admin_operator.pem"
+        - "/run/secrets/admin_operator.key.pem"
+      volumeSubPath:
+        - "admin_operator.pem"
+        - "admin_operator.key.pem"
+    volumesNmsMagmaLte:
+      secretName:
+        - "nms-certs"
+  orc8rNotifier:
+    args:
+      - "sh"
+      - "-c"
+      - 'java -jar Orc8rNotificationService-1.0-SNAPSHOT.jar "5442" "443"'
+    livenessProbe: 5442
+    readinessProbe: 5442
+    portDeployment: 443
+    serviceSpec:
+      type: "ClusterIP"
+      portSpec:
+        - name: "notifier-internal"
+          port: 5442
+          protocol: TCP
+          targetPort: 5442
+    imageOrc8rNotifier:
+      repository: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/notifier"
+      tag: "1.8.0-a914c772"
+      imagePullPolicy: "IfNotPresent"
+  orc8rNginxDeployment:
+    replicas: 1
+    # toleration: ""
+    # nodeSelector: ""
+    imageOrc8rNginx:
+      repository: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/nginx"
+      tag: "1.8.0-a914c772"
+      imagePullPolicy: "IfNotPresent"
+    volumesOrc8rNginx:
+      secretName:
+        - "pmn-certs"
+        - "pmn-envdir"
+    volumesMountPathOrc8rNginx:
+      mountPath:
+        - "/var/opt/magma/certs"
+        - "/var/opt/magma/envdir"
+    portOrc8rNginx:
+      port:
+        - 8443
+        - 8444
+        - 9443
+        - 80

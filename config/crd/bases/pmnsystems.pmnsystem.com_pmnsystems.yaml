@@ -39,6 +39,88 @@ spec:
           spec:
             description: PmnsystemSpec defines the desired state of Pmnsystem
             properties:
+              alertManager:
+                properties:
+                  imageAlertmanager:
+                    description: |-
+                      NodeSelector      string            `json:"nodeSelector,omitempty"`
+                      Toleration        string            `json:"toleration,omitempty"`
+                    properties:
+                      imagePullPolicy:
+                        type: string
+                      repository:
+                        type: string
+                      tag:
+                        type: string
+                    type: object
+                  serviceSpec:
+                    properties:
+                      portSpec:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            port:
+                              format: int32
+                              type: integer
+                            protocol:
+                              type: string
+                            targetPort:
+                              format: int32
+                              type: integer
+                          type: object
+                        type: array
+                      type:
+                        type: string
+                    type: object
+                type: object
+              alertmanagerConfigurer:
+                properties:
+                  affinity:
+                    description: |-
+                      NodeSelector                string                      `json:"nodeSelector,omitempty"`
+                      Toleration                  string                      `json:"toleration,omitempty"`
+                    type: string
+                  alertManagerConfPath:
+                    type: string
+                  alertManagerConfigPort:
+                    format: int32
+                    type: integer
+                  alertmanagerURL:
+                    type: string
+                  imageAlertManagerConfigurer:
+                    properties:
+                      imagePullPolicy:
+                        type: string
+                      repository:
+                        type: string
+                      tag:
+                        type: string
+                    type: object
+                  replica:
+                    format: int32
+                    type: integer
+                  serviceSpec:
+                    properties:
+                      portSpec:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            port:
+                              format: int32
+                              type: integer
+                            protocol:
+                              type: string
+                            targetPort:
+                              format: int32
+                              type: integer
+                          type: object
+                        type: array
+                      type:
+                        type: string
+                    type: object
+                type: object
               certDir:
                 type: string
               cloudEnvironment:
@@ -115,16 +197,169 @@ spec:
                   tag:
                     type: string
                 type: object
-              imageMagmaLte:
-                type: string
               imagePullSecrets:
                 type: string
+              metrics:
+                properties:
+                  volumes:
+                    properties:
+                      prometheusConfig:
+                        properties:
+                          volumeSpec:
+                            type: string
+                        type: object
+                    type: object
+                type: object
               nameSpace:
                 type: string
               nginxImage:
                 type: string
+              nmsMagmaLte:
+                description: ====================NMS-MagmaLte ========================
+                properties:
+                  imageMagmaLte:
+                    description: |-
+                      Toleration             string                 `json:"toleration,omitempty"`
+                      NodeSelector           string                 `json:"nodeSelector,omitempty"`
+                    properties:
+                      imagePullPolicy:
+                        type: string
+                      repository:
+                        type: string
+                      tag:
+                        type: string
+                    type: object
+                  replicas:
+                    format: int32
+                    type: integer
+                  serviceSpec:
+                    properties:
+                      portSpec:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            port:
+                              format: int32
+                              type: integer
+                            protocol:
+                              type: string
+                            targetPort:
+                              format: int32
+                              type: integer
+                          type: object
+                        type: array
+                      type:
+                        type: string
+                    type: object
+                  volumeMountNmsMagmaLte:
+                    properties:
+                      volumeMountPath:
+                        items:
+                          type: string
+                        type: array
+                      volumeSubPath:
+                        items:
+                          type: string
+                        type: array
+                    type: object
+                  volumesNmsMagmaLte:
+                    properties:
+                      secretName:
+                        items:
+                          type: string
+                        type: array
+                    type: object
+                type: object
               notifierImage:
                 type: string
+              orc8rNginxDeployment:
+                description: ============orc8r Nginx Deployment ======================
+                properties:
+                  imageOrc8rNginx:
+                    properties:
+                      imagePullPolicy:
+                        type: string
+                      repository:
+                        type: string
+                      tag:
+                        type: string
+                    type: object
+                  portOrc8rNginx:
+                    properties:
+                      port:
+                        items:
+                          format: int32
+                          type: integer
+                        type: array
+                    type: object
+                  replicas:
+                    format: int32
+                    type: integer
+                  volumesMountPathOrc8rNginx:
+                    properties:
+                      mountPath:
+                        items:
+                          type: string
+                        type: array
+                    type: object
+                  volumesOrc8rNginx:
+                    description: |-
+                      Toleration                 string                     `json:"toleration,omitempty"`
+                      NodeSelector               string                     `json:"nodeSelector,omitempty"`
+                    properties:
+                      secretName:
+                        items:
+                          type: string
+                        type: array
+                    type: object
+                type: object
+              orc8rNotifier:
+                description: =======================Orc8r Notifier Deployment ======================
+                properties:
+                  args:
+                    items:
+                      type: string
+                    type: array
+                  imageOrc8rNotifier:
+                    properties:
+                      imagePullPolicy:
+                        type: string
+                      repository:
+                        type: string
+                      tag:
+                        type: string
+                    type: object
+                  livenessProbe:
+                    format: int32
+                    type: integer
+                  portDeployment:
+                    format: int32
+                    type: integer
+                  readinessProbe:
+                    format: int32
+                    type: integer
+                  serviceSpec:
+                    properties:
+                      portSpec:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            port:
+                              format: int32
+                              type: integer
+                            protocol:
+                              type: string
+                            targetPort:
+                              format: int32
+                              type: integer
+                          type: object
+                        type: array
+                      type:
+                        type: string
+                    type: object
+                type: object
               persistent:
                 properties:
                   pvcClaimName:
@@ -138,6 +373,207 @@ spec:
                     type: string
                   storageClassName:
                     type: string
+                type: object
+              prometheus:
+                properties:
+                  replicas:
+                    format: int32
+                    type: integer
+                type: object
+              prometheusCache:
+                description: =================== Prometheus Cache ====================
+                properties:
+                  args:
+                    items:
+                      type: string
+                    type: array
+                  imagePrometheusCache:
+                    description: |-
+                      Toleration           string               `json:"toleration,omitempty"`
+                      NodeSelector         string               `json:"nodeSelector,omitempty"`
+                    properties:
+                      imagePullPolicy:
+                        type: string
+                      repository:
+                        type: string
+                      tag:
+                        type: string
+                    type: object
+                  replicas:
+                    format: int32
+                    type: integer
+                  serviceSpec:
+                    properties:
+                      portSpec:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            port:
+                              format: int32
+                              type: integer
+                            protocol:
+                              type: string
+                            targetPort:
+                              format: int32
+                              type: integer
+                          type: object
+                        type: array
+                      type:
+                        type: string
+                    type: object
+                type: object
+              prometheusConfigurer:
+                description: ==================== Prometheus Configurer ====================
+                properties:
+                  args:
+                    items:
+                      type: string
+                    type: array
+                  imagePrometheusConfigurer:
+                    description: |-
+                      Toleration                string                    `json:"toleration,omitempty"`
+                      NodeSelector              string                    `json:"nodeSelector,omitempty"`
+                    properties:
+                      imagePullPolicy:
+                        type: string
+                      repository:
+                        type: string
+                      tag:
+                        type: string
+                    type: object
+                  replicas:
+                    format: int32
+                    type: integer
+                  serviceSpec:
+                    properties:
+                      portSpec:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            port:
+                              format: int32
+                              type: integer
+                            protocol:
+                              type: string
+                            targetPort:
+                              format: int32
+                              type: integer
+                          type: object
+                        type: array
+                      type:
+                        type: string
+                    type: object
+                  volume:
+                    properties:
+                      volumeClaimName:
+                        type: string
+                      volumeMountPath:
+                        type: string
+                    type: object
+                type: object
+              prometheusKafkaAdapter:
+                description: ========================== Prometheus Kafka Adapter===============
+                properties:
+                  imagePrometheusKafkaAdapter:
+                    properties:
+                      imagePullPolicy:
+                        type: string
+                      repository:
+                        type: string
+                      tag:
+                        type: string
+                    type: object
+                  replicas:
+                    format: int32
+                    type: integer
+                  serviceSpecPrometheusKafkaAdapter:
+                    description: |-
+                      Toleration                            string                                `json:"toleration,omitempty"`
+                      NodeSelector                          string                                `json:"nodeSelector,omitempty"`
+                    properties:
+                      portSpecPrometheusKafkaAdapter:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            port:
+                              format: int32
+                              type: integer
+                            protocol:
+                              type: string
+                            targetPort:
+                              type: string
+                          type: object
+                        type: array
+                      type:
+                        type: string
+                    type: object
+                  volumeMountPathPrometheusKafkaAdapter:
+                    properties:
+                      mountPath:
+                        items:
+                          type: string
+                        type: array
+                      secretName:
+                        type: string
+                    type: object
+                type: object
+              prometheusNginxProxy:
+                properties:
+                  nginx:
+                    properties:
+                      imagePrometheusNginxProxy:
+                        properties:
+                          imagePullPolicy:
+                            type: string
+                          repository:
+                            type: string
+                          tag:
+                            type: string
+                        type: object
+                      replicas:
+                        format: int32
+                        type: integer
+                      secretName:
+                        type: string
+                      serviceOrc8rSpec:
+                        description: ====================orc8r-prometheus-nginx-prox=========================
+                        properties:
+                          portOrc8rSpec:
+                            items:
+                              properties:
+                                name:
+                                  type: string
+                                nodePort:
+                                  format: int32
+                                  type: integer
+                                port:
+                                  format: int32
+                                  type: integer
+                                protocol:
+                                  type: string
+                                targetPort:
+                                  format: int32
+                                  type: integer
+                              type: object
+                            type: array
+                          type:
+                            type: string
+                        type: object
+                      volumeMountPath:
+                        properties:
+                          mountPath:
+                            items:
+                              type: string
+                            type: array
+                          subPath:
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                    type: object
                 type: object
               pullPolicy:
                 type: string
@@ -159,6 +595,53 @@ spec:
                       type: string
                   type: object
                 type: array
+              userGrafana:
+                properties:
+                  imageUserGrafana:
+                    description: |-
+                      NodeSelector       string               `json:"nodeSelector,omitempty"`
+                      Toleration         string               `json:"toleration,omitempty"`
+                    properties:
+                      imagePullPolicy:
+                        type: string
+                      repository:
+                        type: string
+                      tag:
+                        type: string
+                    type: object
+                  replicas:
+                    format: int32
+                    type: integer
+                  serviceSpec:
+                    properties:
+                      portSpec:
+                        items:
+                          properties:
+                            name:
+                              type: string
+                            port:
+                              format: int32
+                              type: integer
+                            protocol:
+                              type: string
+                            targetPort:
+                              format: int32
+                              type: integer
+                          type: object
+                        type: array
+                      type:
+                        type: string
+                    type: object
+                  volumesUserGrafana:
+                    items:
+                      properties:
+                        name:
+                          type: string
+                        path:
+                          type: string
+                      type: object
+                    type: array
+                type: object
             type: object
           status:
             description: PmnsystemStatus defines the observed state of Pmnsystem
