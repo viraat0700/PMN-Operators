@@ -17,6 +17,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -70,9 +71,9 @@ type SecretConfig struct {
 }
 
 type AlertmanagerConfigurer struct {
-	Replica int32 `json:"replica,omitempty"`
-	// NodeSelector                string                      `json:"nodeSelector,omitempty"`
-	// Toleration                  string                      `json:"toleration,omitempty"`
+	Replica                     int32                       `json:"replica,omitempty"`
+	NodeSelector                map[string]string           `json:"nodeSelector,omitempty"`
+	Tolerations                 []corev1.Toleration         `json:"tolerations,omitempty"`
 	Affinity                    string                      `json:"affinity,omitempty"`
 	ImageAlertmanagerConfigurer ImageAlertmanagerConfigurer `json:"imageAlertManagerConfigurer,omitempty"`
 	AlertManagerConfigPort      int32                       `json:"alertManagerConfigPort,omitempty"`
@@ -119,10 +120,10 @@ type ImageAlertmanager struct {
 	ImagePullPolicy string `json:"imagePullPolicy,omitempty"`
 }
 type AlertManager struct {
-	// NodeSelector      string            `json:"nodeSelector,omitempty"`
-	// Toleration        string            `json:"toleration,omitempty"`
-	ImageAlertmanager ImageAlertmanager `json:"imageAlertmanager,omitempty"`
-	ServiceSpec       ServiceSpec       `json:"serviceSpec,omitempty"`
+	NodeSelector      map[string]string   `json:"nodeSelector,omitempty"`
+	Tolerations       []corev1.Toleration `json:"tolerations,omitempty"`
+	ImageAlertmanager ImageAlertmanager   `json:"imageAlertmanager,omitempty"`
+	ServiceSpec       ServiceSpec         `json:"serviceSpec,omitempty"`
 }
 
 // ===================User Grafana ====================
@@ -132,9 +133,9 @@ type ImageUserGrafana struct {
 	ImagePullPolicy string `json:"imagePullPolicy,omitempty"`
 }
 type UserGrafana struct {
-	Replica int32 `json:"replicas,omitempty"`
-	// NodeSelector       string               `json:"nodeSelector,omitempty"`
-	// Toleration         string               `json:"toleration,omitempty"`
+	Replica            int32                `json:"replicas,omitempty"`
+	NodeSelector       map[string]string    `json:"nodeSelector,omitempty"`
+	Tolerations        []corev1.Toleration  `json:"tolerations,omitempty"`
 	ImageUserGrafana   ImageUserGrafana     `json:"imageUserGrafana,omitempty"`
 	VolumesUserGrafana []VolumesUserGrafana `json:"volumesUserGrafana,omitempty"`
 	ServiceSpec        ServiceSpec          `json:"serviceSpec,omitempty"`
@@ -181,9 +182,9 @@ type PrometheusKafkaAdapter struct {
 	Replicas                              int32                                 `json:"replicas,omitempty"`
 	ImagePrometheusKafkaAdapter           ImagePrometheusKafkaAdapter           `json:"imagePrometheusKafkaAdapter,omitempty"`
 	VolumeMountPathPrometheusKafkaAdapter VolumeMountPathPrometheusKafkaAdapter `json:"volumeMountPathPrometheusKafkaAdapter,omitempty"`
-	// Toleration                            string                                `json:"toleration,omitempty"`
-	// NodeSelector                          string                                `json:"nodeSelector,omitempty"`
-	ServiceSpecPrometheusKafkaAdapter ServiceSpecPrometheusKafkaAdapter `json:"serviceSpecPrometheusKafkaAdapter,omitempty"`
+	Tolerations                           []corev1.Toleration                   `json:"tolerations,omitempty"`
+	NodeSelector                          map[string]string                     `json:"nodeSelector,omitempty"`
+	ServiceSpecPrometheusKafkaAdapter     ServiceSpecPrometheusKafkaAdapter     `json:"serviceSpecPrometheusKafkaAdapter,omitempty"`
 }
 type ImagePrometheusKafkaAdapter struct {
 	Repository      string `json:"repository,omitempty"`
@@ -208,9 +209,9 @@ type VolumeMountPathPrometheusKafkaAdapter struct {
 
 // ==================== Prometheus Configurer ====================
 type PrometheusConfigurer struct {
-	Replicas int32 `json:"replicas,omitempty"`
-	// Toleration                string                    `json:"toleration,omitempty"`
-	// NodeSelector              string                    `json:"nodeSelector,omitempty"`
+	Replicas                  int32                     `json:"replicas,omitempty"`
+	Tolerations               []corev1.Toleration       `json:"tolerations,omitempty"`
+	NodeSelector              map[string]string         `json:"nodeSelector,omitempty"`
 	ImagePrometheusConfigurer ImagePrometheusConfigurer `json:"imagePrometheusConfigurer,omitempty"`
 	Volume                    Volume                    `json:"volume,omitempty"`
 	Args                      []string                  `json:"args,omitempty"`
@@ -230,9 +231,9 @@ type Volume struct {
 
 // =================== Prometheus Cache ====================
 type PrometheusCache struct {
-	Replicas int32 `json:"replicas,omitempty"`
-	// Toleration           string               `json:"toleration,omitempty"`
-	// NodeSelector         string               `json:"nodeSelector,omitempty"`
+	Replicas             int32                `json:"replicas,omitempty"`
+	Tolerations          []corev1.Toleration  `json:"tolerations,omitempty"`
+	NodeSelector         map[string]string    `json:"nodeSelector,omitempty"`
 	ImagePrometheusCache ImagePrometheusCache `json:"imagePrometheusCache,omitempty"`
 	Args                 []string             `json:"args,omitempty"`
 	ServiceSpec          ServiceSpec          `json:"serviceSpec,omitempty"`
@@ -246,9 +247,9 @@ type ImagePrometheusCache struct {
 
 // ====================NMS-MagmaLte ========================
 type NmsMagmaLte struct {
-	Replicas int32 `json:"replicas,omitempty"`
-	// Toleration             string                 `json:"toleration,omitempty"`
-	// NodeSelector           string                 `json:"nodeSelector,omitempty"`
+	Replicas               int32                  `json:"replicas,omitempty"`
+	Tolerations            []corev1.Toleration    `json:"tolerations,omitempty"`
+	NodeSelector           map[string]string      `json:"nodeSelector,omitempty"`
 	ImageMagmaLte          ImageMagmaLte          `json:"imageMagmaLte,omitempty"`
 	VolumeMountNmsMagmaLte VolumeMountNmsMagmaLte `json:"volumeMountNmsMagmaLte,omitempty"`
 	VolumesNmsMagmaLte     VolumesNmsMagmaLte     `json:"volumesNmsMagmaLte,omitempty"`
@@ -285,10 +286,10 @@ type ImageOrc8rNotifier struct {
 
 // ============orc8r Nginx Deployment ======================
 type Orc8rNginxDeployment struct {
-	Replicas        int32           `json:"replicas,omitempty"`
-	ImageOrc8rNginx ImageOrc8rNginx `json:"imageOrc8rNginx,omitempty"`
-	// Toleration                 string                     `json:"toleration,omitempty"`
-	// NodeSelector               string                     `json:"nodeSelector,omitempty"`
+	Replicas                   int32                      `json:"replicas,omitempty"`
+	ImageOrc8rNginx            ImageOrc8rNginx            `json:"imageOrc8rNginx,omitempty"`
+	Tolerations                []corev1.Toleration        `json:"tolerations,omitempty"`
+	NodeSelector               map[string]string          `json:"nodeSelector,omitempty"`
 	VolumesOrc8rNginx          VolumesOrc8rNginx          `json:"volumesOrc8rNginx,omitempty"`
 	PortOrc8rNginx             PortOrc8rNginx             `json:"portOrc8rNginx,omitempty"`
 	VolumesMountPathOrc8rNginx VolumesMountPathOrc8rNginx `json:"volumesMountPathOrc8rNginx,omitempty"`

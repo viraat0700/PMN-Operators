@@ -221,8 +221,12 @@ spec:
     tag: "1.8.0-6c4579b5"
   alertmanagerConfigurer:
     replica: 1
-    # nodeSelector: ""
-    # toleration: ""
+    nodeSelector: {}
+    tolerations:
+      - key: "key1"
+        operator: "Equal"
+        value: "value1"
+        effect: "NoSchedule"
     imageAlertManagerConfigurer:
       repository: "docker.io/facebookincubator/alertmanager-configurer"
       tag: "1.0.4"
@@ -251,8 +255,12 @@ spec:
           port: 9093
           protocol: TCP
           targetPort: 9093
-    # nodeSelector: ""
-    # toleration: ""
+    nodeSelector: {}
+    tolerations:
+      - key: "key1"
+        operator: "Equal"
+        value: "value1"
+        effect: "NoSchedule"
     imageAlertmanager:
       repository: "docker.io/prom/alertmanager"
       tag: "v0.18.0"
@@ -266,8 +274,12 @@ spec:
           protocol: TCP
           targetPort: 3000
     replicas: 1
-    # nodeSelector: ""
-    # toleration: ""
+    nodeSelector: {}
+    tolerations:
+      - key: "key1"
+        operator: "Equal"
+        value: "value1"
+        effect: "NoSchedule"
     imageUserGrafana:
       repository: "docker.io/grafana/grafana"
       tag: "6.6.2"
@@ -310,8 +322,12 @@ spec:
       secretName: "prometheus-certs"
   prometheusKafkaAdapter:
     replicas: 1
-    # toleration: ""
-    # nodeSelector: ""
+    tolerations:
+      - key: "key1"
+        operator: "Equal"
+        value: "value1"
+        effect: "NoSchedule"
+    nodeSelector: {}
     imagePrometheusKafkaAdapter:
       repository: "telefonica/prometheus-kafka-adapter"
       tag: "1.9.1"
@@ -329,8 +345,12 @@ spec:
       secretName: "prometheus-adapter-certs"
   prometheusConfigurer:
     replicas: 1
-    # toleration: ""
-    # nodeSelector: ""
+    tolerations:
+      - key: "key1"
+        operator: "Equal"
+        value: "value1"
+        effect: "NoSchedule"
+    nodeSelector: {}
     imagePrometheusConfigurer:
       repository: "docker.io/facebookincubator/prometheus-configurer"
       tag: "1.0.4"
@@ -353,8 +373,12 @@ spec:
           targetPort: 9100
   prometheusCache:
     replicas: 1
-    # toleration: ""
-    # nodeSelector: ""
+    tolerations:
+      - key: "key1"
+        operator: "Equal"
+        value: "value1"
+        effect: "NoSchedule"
+    nodeSelector: {}
     imagePrometheusCache:
       repository: "docker.io/facebookincubator/prometheus-edge-hub"
       tag: "1.1.0"
@@ -382,8 +406,12 @@ spec:
           protocol: TCP
           targetPort: 8081
     replicas: 1
-    # toleration: ""
-    # nodeSelector: ""
+    tolerations:
+      - key: "key1"
+        operator: "Equal"
+        value: "value1"
+        effect: "NoSchedule"
+    nodeSelector: {}
     imageMagmaLte:
       repository: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/magmalte"
       tag: "1.8.0-a914c772"
@@ -419,8 +447,12 @@ spec:
       imagePullPolicy: "IfNotPresent"
   orc8rNginxDeployment:
     replicas: 1
-    # toleration: ""
-    # nodeSelector: ""
+    tolerations:
+      - key: "key1"
+        operator: "Equal"
+        value: "value1"
+        effect: "NoSchedule"
+    nodeSelector: {}
     imageOrc8rNginx:
       repository: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/nginx"
       tag: "1.8.0-a914c772"

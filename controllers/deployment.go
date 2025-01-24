@@ -17,17 +17,19 @@ limitations under the License.
 package controllers
 
 import (
-	// "encoding/json"
 	"fmt"
 
 	v1 "github.com/viraat0700/PMN-Operator-Two/api/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	ctrl "sigs.k8s.io/controller-runtime"
+
+	// "k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/intstr"
-	ctrl "sigs.k8s.io/controller-runtime"
+	// ctrl "sigs.k8s.io/controller-runtime"
 )
 
 func defLabels() map[string]string {
@@ -67,8 +69,8 @@ func (r *PmnsystemReconciler) deployment(
 	image string,
 	affinity *corev1.Affinity,
 	replica *int32,
-	// nodeSelector map[string]string,
-	// toleration string,
+	nodeSelector map[string]string,
+	tolerations []corev1.Toleration,
 ) *appsv1.Deployment {
 	finalLabels := make(map[string]string)
 	for k, v := range defaultLabels {
@@ -119,9 +121,9 @@ func (r *PmnsystemReconciler) deployment(
 					Annotations: finalLabels,
 				},
 				Spec: corev1.PodSpec{
-					// Tolerations:  tolerations,
-					// NodeSelector: nodeSelector,
-					Affinity: affinity,
+					Tolerations:  tolerations,
+					NodeSelector: nodeSelector,
+					Affinity:     affinity,
 					Containers: []corev1.Container{
 						{
 							Name:                     name,
@@ -276,7 +278,7 @@ func (r *PmnsystemReconciler) orc8rAccessD(cr *v1.Pmnsystem) *appsv1.Deployment 
 
 	replicas := cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -306,8 +308,8 @@ func (r *PmnsystemReconciler) orc8rAccessD(cr *v1.Pmnsystem) *appsv1.Deployment 
 		image,                         // Image
 		nil,                           // Affinity
 		&replicas,                     // Replica
-		// nil,                           // Node selector
-		// toleration,                    // Tolerations
+		nil,                           // Node selector
+		tolerations,                   // Tolerations
 	)
 }
 func (r *PmnsystemReconciler) orc8rAnalyticsDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -439,7 +441,7 @@ func (r *PmnsystemReconciler) orc8rAnalyticsDeployment(cr *v1.Pmnsystem) *appsv1
 
 	replicas := cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -469,10 +471,11 @@ func (r *PmnsystemReconciler) orc8rAnalyticsDeployment(cr *v1.Pmnsystem) *appsv1
 		image,                         // Image
 		nil,                           // Affinity
 		&replicas,                     // Replicas
-		// nil,                           // Node selector
-		// toleration,                    // Tolerations
+		nil,                           // Node selector
+		tolerations,                   // Tolerations
 	)
 }
+
 func (r *PmnsystemReconciler) orc8rBootStrapperDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
@@ -603,7 +606,7 @@ func (r *PmnsystemReconciler) orc8rBootStrapperDeployment(cr *v1.Pmnsystem) *app
 
 	replicas := cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -633,8 +636,8 @@ func (r *PmnsystemReconciler) orc8rBootStrapperDeployment(cr *v1.Pmnsystem) *app
 		image,                         // Image
 		nil,                           // Affinity
 		&replicas,                     // Replicas
-		// nil,                           // Node selector
-		// toleration,                    // Tolerations
+		nil,                           // Node selector
+		tolerations,                   // Tolerations
 	)
 }
 func (r *PmnsystemReconciler) orc8rCertifierDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -772,7 +775,7 @@ func (r *PmnsystemReconciler) orc8rCertifierDeployment(cr *v1.Pmnsystem) *appsv1
 
 	replicas := cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -802,8 +805,8 @@ func (r *PmnsystemReconciler) orc8rCertifierDeployment(cr *v1.Pmnsystem) *appsv1
 		image,                         // Image
 		nil,                           // Afinity
 		&replicas,                     // Replica
-		// nil,                           // NodeSelector
-		// toleration,                    // Tolerations
+		nil,                           // NodeSelector
+		tolerations,                   // Tolerations
 	)
 }
 func (r *PmnsystemReconciler) orc8rConfiguratorDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -936,7 +939,7 @@ func (r *PmnsystemReconciler) orc8rConfiguratorDeployment(cr *v1.Pmnsystem) *app
 
 	replicas := &cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -966,8 +969,8 @@ func (r *PmnsystemReconciler) orc8rConfiguratorDeployment(cr *v1.Pmnsystem) *app
 		image,                         // Image
 		nil,                           // Affinity
 		replicas,                      // Replicas
-		// nil,                           // Node selector
-		// toleration,                    // Tolerations
+		nil,                           // Node selector
+		tolerations,                   // Tolerations
 	)
 }
 func (r *PmnsystemReconciler) orc8rDeviceDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -1099,7 +1102,7 @@ func (r *PmnsystemReconciler) orc8rDeviceDeployment(cr *v1.Pmnsystem) *appsv1.De
 
 	replicas := cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -1129,8 +1132,8 @@ func (r *PmnsystemReconciler) orc8rDeviceDeployment(cr *v1.Pmnsystem) *appsv1.De
 		image,                         // Image
 		nil,                           // Affinity
 		&replicas,                     // Replicas
-		// nil,                           // Node selector
-		// toleration,                    // Tolerations
+		nil,                           // Node selector
+		tolerations,                   // Tolerations
 	)
 }
 func (r *PmnsystemReconciler) orc8rDirectorydDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -1262,7 +1265,7 @@ func (r *PmnsystemReconciler) orc8rDirectorydDeployment(cr *v1.Pmnsystem) *appsv
 
 	replicas := cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -1292,8 +1295,8 @@ func (r *PmnsystemReconciler) orc8rDirectorydDeployment(cr *v1.Pmnsystem) *appsv
 		image,                         // Image
 		nil,                           // Affinity
 		&replicas,                     // Replica
-		// nil,                           // NodeSelector
-		// toleration,                    // Tolerations
+		nil,                           // NodeSelector
+		tolerations,                   // Tolerations
 	)
 }
 func (r *PmnsystemReconciler) orc8rDispatcherDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -1426,7 +1429,7 @@ func (r *PmnsystemReconciler) orc8rDispatcherDeployment(cr *v1.Pmnsystem) *appsv
 
 	replicas := cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -1456,8 +1459,8 @@ func (r *PmnsystemReconciler) orc8rDispatcherDeployment(cr *v1.Pmnsystem) *appsv
 		image,                         // Image
 		nil,                           // Affinity
 		&replicas,                     // Replicas
-		// nil,                           // NodeSelector
-		// toleration,                    // Tolerations
+		nil,                           // NodeSelector
+		tolerations,                   // Tolerations
 	)
 }
 func (r *PmnsystemReconciler) orc8rEventdDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -1591,7 +1594,7 @@ func (r *PmnsystemReconciler) orc8rEventdDeployment(cr *v1.Pmnsystem) *appsv1.De
 
 	replicas := cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -1621,8 +1624,8 @@ func (r *PmnsystemReconciler) orc8rEventdDeployment(cr *v1.Pmnsystem) *appsv1.De
 		image,                         // Image
 		nil,                           // Affinity
 		&replicas,                     // Replicas
-		// nil,                           // Node selector
-		// toleration,                    // Tolerations
+		nil,                           // Node selector
+		tolerations,                   // Tolerations
 	)
 }
 func (r *PmnsystemReconciler) orc8rmetricsdDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -1756,7 +1759,7 @@ func (r *PmnsystemReconciler) orc8rmetricsdDeployment(cr *v1.Pmnsystem) *appsv1.
 
 	replicas := cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -1786,8 +1789,8 @@ func (r *PmnsystemReconciler) orc8rmetricsdDeployment(cr *v1.Pmnsystem) *appsv1.
 		image,                         // Image
 		nil,                           // Affinity
 		&replicas,                     // Replicas
-		// nil,                           // Node selector
-		// toleration,                    // Tolerations
+		nil,                           // Node selector
+		tolerations,                   // Tolerations
 	)
 }
 func (r *PmnsystemReconciler) orc8rNginxDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -1898,14 +1901,12 @@ func (r *PmnsystemReconciler) orc8rNginxDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 
 	replicas := &cr.Spec.Orc8rNginxDeployment.Replicas
 
-	// toleration := cr.Spec.Orc8rNginxDeployment.Toleration
+	tolerations := cr.Spec.Orc8rNginxDeployment.Tolerations
 
-	// var nodeSelectorMap map[string]string
-	// err := json.Unmarshal([]byte(cr.Spec.Orc8rNginxDeployment.NodeSelector), &nodeSelectorMap)
-	// if err != nil {
-	// 	r.Log.Error(err, "Failed to parse nodeSelector")
-	// 	return nil
-	// }
+	nodeSelector := cr.Spec.Orc8rNginxDeployment.NodeSelector
+	if nodeSelector == nil {
+		nodeSelector = map[string]string{} // Default to an empty map
+	}
 
 	// Fetch and validate ImagePullPolicy
 	imagePullPolicy := corev1.PullIfNotPresent // Default value
@@ -1948,10 +1949,11 @@ func (r *PmnsystemReconciler) orc8rNginxDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 		image,                         // Image
 		nil,                           // Affinity
 		replicas,                      // Replicas
-		// nodeSelectorMap,               // Node selector
-		// toleration,                    // Tolerations
+		nodeSelector,                  // Node selector
+		tolerations,                   // Tolerations
 	)
 }
+
 func (r *PmnsystemReconciler) orc8rNotifierDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
@@ -2083,7 +2085,7 @@ func (r *PmnsystemReconciler) orc8rNotifierDeployment(cr *v1.Pmnsystem) *appsv1.
 
 	replicas := cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -2113,8 +2115,8 @@ func (r *PmnsystemReconciler) orc8rNotifierDeployment(cr *v1.Pmnsystem) *appsv1.
 		image,                         // Image
 		nil,                           // Affinity
 		&replicas,                     // Replicas
-		// nil,                           // Node selector
-		// toleration,                    // Tolerations
+		nil,                           // Node selector
+		tolerations,                   // Tolerations
 	)
 }
 func (r *PmnsystemReconciler) orc8rObsidianDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -2241,7 +2243,7 @@ func (r *PmnsystemReconciler) orc8rObsidianDeployment(cr *v1.Pmnsystem) *appsv1.
 
 	replicas := &cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -2271,8 +2273,8 @@ func (r *PmnsystemReconciler) orc8rObsidianDeployment(cr *v1.Pmnsystem) *appsv1.
 		image,                         // Image
 		nil,                           // Affinity
 		replicas,                      // replicas
-		// nil,                           // nodeSelector
-		// toleration,                    // toleration
+		nil,                           // nodeSelector
+		tolerations,                   // toleration
 	)
 }
 func (r *PmnsystemReconciler) orc8WorkerDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -2398,7 +2400,7 @@ func (r *PmnsystemReconciler) orc8WorkerDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 
 	replicas := &cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -2428,8 +2430,8 @@ func (r *PmnsystemReconciler) orc8WorkerDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 		image,                         // Image
 		nil,                           // Affinity
 		replicas,                      // replicas
-		// nil,                           // nodeSelector
-		// toleration,                    // toleration
+		nil,                           // nodeSelector
+		tolerations,                   // toleration
 	)
 }
 func (r *PmnsystemReconciler) orc8orchestratorDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -2557,7 +2559,7 @@ func (r *PmnsystemReconciler) orc8orchestratorDeployment(cr *v1.Pmnsystem) *apps
 
 	replicas := &cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -2587,8 +2589,8 @@ func (r *PmnsystemReconciler) orc8orchestratorDeployment(cr *v1.Pmnsystem) *apps
 		image,                         // Image
 		nil,                           // Affinity
 		replicas,                      // replicas
-		// nil,                           // nodeSelector
-		// toleration,                    // toleration
+		nil,                           // nodeSelector
+		tolerations,                   // toleration
 	)
 }
 func (r *PmnsystemReconciler) orc8ServiceRegistryDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -2714,8 +2716,7 @@ func (r *PmnsystemReconciler) orc8ServiceRegistryDeployment(cr *v1.Pmnsystem) *a
 
 	replicas := &cr.Spec.ReplicaCount
 
-	// toleration := ""
-
+	tolerations := []corev1.Toleration{}
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -2744,8 +2745,8 @@ func (r *PmnsystemReconciler) orc8ServiceRegistryDeployment(cr *v1.Pmnsystem) *a
 		image,                         // Image
 		nil,                           // affinity
 		replicas,                      // replicas
-		// nil,                           // nodeSelector
-		// toleration,                    // toleration
+		nil,                           // nodeSelector
+		tolerations,                   // toleration
 	)
 }
 func (r *PmnsystemReconciler) orc8StateDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -2871,7 +2872,7 @@ func (r *PmnsystemReconciler) orc8StateDeployment(cr *v1.Pmnsystem) *appsv1.Depl
 
 	replicas := &cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -2901,8 +2902,8 @@ func (r *PmnsystemReconciler) orc8StateDeployment(cr *v1.Pmnsystem) *appsv1.Depl
 		image,                         // Image
 		nil,                           // afinity
 		replicas,                      // replicas
-		// nil,                           // nodeSelector
-		// toleration,                    // toleration
+		nil,                           // nodeSelector
+		tolerations,                   // toleration
 
 	)
 }
@@ -3029,7 +3030,7 @@ func (r *PmnsystemReconciler) orc8StreamerDeployment(cr *v1.Pmnsystem) *appsv1.D
 
 	replicas := &cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -3059,8 +3060,8 @@ func (r *PmnsystemReconciler) orc8StreamerDeployment(cr *v1.Pmnsystem) *appsv1.D
 		image,                         // Image
 		nil,                           // affinity
 		replicas,                      // replicas
-		// nil,                           // nodeSelector
-		// toleration,                    // toleration
+		nil,                           // nodeSelector
+		tolerations,                   // toleration
 	)
 }
 func (r *PmnsystemReconciler) orc8TenantsDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -3188,7 +3189,7 @@ func (r *PmnsystemReconciler) orc8TenantsDeployment(cr *v1.Pmnsystem) *appsv1.De
 
 	replicas := &cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -3218,8 +3219,8 @@ func (r *PmnsystemReconciler) orc8TenantsDeployment(cr *v1.Pmnsystem) *appsv1.De
 		image,                         // Image
 		nil,                           // Affinity
 		replicas,                      // replicas
-		// nil,                           // nodeSelector
-		// toleration,                    // toleration
+		nil,                           // nodeSelector
+		tolerations,                   // toleration
 	)
 }
 func (r *PmnsystemReconciler) orc8rHaDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -3350,7 +3351,7 @@ func (r *PmnsystemReconciler) orc8rHaDeployment(cr *v1.Pmnsystem) *appsv1.Deploy
 
 	replicas := &cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -3380,10 +3381,11 @@ func (r *PmnsystemReconciler) orc8rHaDeployment(cr *v1.Pmnsystem) *appsv1.Deploy
 		image,                         // Image
 		nil,                           // Affinity
 		replicas,                      // replicas
-		// nil,                           // nodeSelector
-		// toleration,                    // toleration
+		nil,                           // nodeSelector
+		tolerations,                   // toleration
 	)
 }
+
 func (r *PmnsystemReconciler) orc8LteDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
@@ -3509,7 +3511,7 @@ func (r *PmnsystemReconciler) orc8LteDeployment(cr *v1.Pmnsystem) *appsv1.Deploy
 
 	replicas := &cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -3539,8 +3541,8 @@ func (r *PmnsystemReconciler) orc8LteDeployment(cr *v1.Pmnsystem) *appsv1.Deploy
 		image,                         // Image
 		nil,                           // affinity
 		replicas,                      // replicas
-		// nil,                           // nodeSelector
-		// toleration,                    // toleration
+		nil,                           // nodeSelector
+		tolerations,                   // toleration
 	)
 }
 func (r *PmnsystemReconciler) orc8NprobeDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -3668,7 +3670,7 @@ func (r *PmnsystemReconciler) orc8NprobeDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 
 	replicas := &cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -3698,10 +3700,11 @@ func (r *PmnsystemReconciler) orc8NprobeDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 		image,                         // Image
 		nil,                           // Affinity
 		replicas,                      // replicas
-		// nil,                           // nodeSelector
-		// toleration,                    // toleration
+		nil,                           // nodeSelector
+		tolerations,                   // toleration
 	)
 }
+
 func (r *PmnsystemReconciler) orc8PolicyDbDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
@@ -3827,7 +3830,7 @@ func (r *PmnsystemReconciler) orc8PolicyDbDeployment(cr *v1.Pmnsystem) *appsv1.D
 
 	replicas := &cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -3857,8 +3860,8 @@ func (r *PmnsystemReconciler) orc8PolicyDbDeployment(cr *v1.Pmnsystem) *appsv1.D
 		image,                         // Image
 		nil,                           // affinity
 		replicas,                      // replicas
-		// nil,                           // nodSelector
-		// toleration,                    // toleration
+		nil,                           // nodSelector
+		tolerations,                   // toleration
 	)
 }
 func (r *PmnsystemReconciler) orc8SmsdDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -3986,7 +3989,7 @@ func (r *PmnsystemReconciler) orc8SmsdDeployment(cr *v1.Pmnsystem) *appsv1.Deplo
 
 	replicas := &cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -4015,8 +4018,8 @@ func (r *PmnsystemReconciler) orc8SmsdDeployment(cr *v1.Pmnsystem) *appsv1.Deplo
 		image,                         // Image
 		nil,                           // affinity
 		replicas,                      // replicas
-		// nil,                           // nodeSelector
-		// toleration,                    // toleration
+		nil,                           // nodeSelector
+		tolerations,                   // toleration
 	)
 }
 func (r *PmnsystemReconciler) orc8SubscriberDbCacheDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -4143,7 +4146,7 @@ func (r *PmnsystemReconciler) orc8SubscriberDbCacheDeployment(cr *v1.Pmnsystem) 
 
 	replicas := &cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -4172,8 +4175,8 @@ func (r *PmnsystemReconciler) orc8SubscriberDbCacheDeployment(cr *v1.Pmnsystem) 
 		image,                         // Image
 		nil,                           // Affinity
 		replicas,                      // replicas
-		// nil,                           // nodeSelector
-		// toleration,                    // toleration
+		nil,                           // nodeSelector
+		tolerations,                   // toleration
 	)
 }
 func (r *PmnsystemReconciler) orc8SubscriberDbDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -4301,7 +4304,7 @@ func (r *PmnsystemReconciler) orc8SubscriberDbDeployment(cr *v1.Pmnsystem) *apps
 
 	replicas := &cr.Spec.ReplicaCount
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -4331,8 +4334,8 @@ func (r *PmnsystemReconciler) orc8SubscriberDbDeployment(cr *v1.Pmnsystem) *apps
 		image,                         // Image
 		nil,                           // Affinity
 		replicas,                      // Replicas
-		// nil,                           // NodeSelector
-		// toleration,                    // Tolerations
+		nil,                           // NodeSelector
+		tolerations,                   // Tolerations
 	)
 }
 func (r *PmnsystemReconciler) nmsMagmaLteDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -4442,14 +4445,12 @@ func (r *PmnsystemReconciler) nmsMagmaLteDeployment(cr *v1.Pmnsystem) *appsv1.De
 
 	replicas := &cr.Spec.NmsMagmaLte.Replicas
 
-	// toleration := cr.Spec.NmsMagmaLte.Toleration
+	tolerations := cr.Spec.NmsMagmaLte.Tolerations
 
-	// var nodeSelectorMap map[string]string
-	// err := json.Unmarshal([]byte(cr.Spec.NmsMagmaLte.NodeSelector), &nodeSelectorMap)
-	// if err != nil {
-	// 	r.Log.Error(err, "Failed to parse nodeSelector")
-	// 	return nil
-	// }
+	nodeSelector := cr.Spec.NmsMagmaLte.NodeSelector
+	if nodeSelector == nil {
+		nodeSelector = map[string]string{} // Default to an empty map
+	}
 
 	// Fetch and validate ImagePullPolicy
 	imagePullPolicy := corev1.PullIfNotPresent // Default value
@@ -4492,8 +4493,8 @@ func (r *PmnsystemReconciler) nmsMagmaLteDeployment(cr *v1.Pmnsystem) *appsv1.De
 		image,                         // Image
 		nil,                           // Affinity
 		replicas,                      // replicas
-		// nodeSelectorMap,               // nodeSelector
-		// toleration,                    // toleration
+		nodeSelector,                  // nodeSelector
+		tolerations,                   // toleration
 	)
 }
 func (r *PmnsystemReconciler) orc8PrometheusCacheDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -4572,14 +4573,10 @@ func (r *PmnsystemReconciler) orc8PrometheusCacheDeployment(cr *v1.Pmnsystem) *a
 
 	replicas := &cr.Spec.PrometheusCache.Replicas
 
-	// var nodeSelectorMap map[string]string
-	// err := json.Unmarshal([]byte(cr.Spec.PrometheusCache.NodeSelector), &nodeSelectorMap)
-	// if err != nil {
-	// 	r.Log.Error(err, "Failed to parse nodeSelector")
-	// 	return nil
-	// }
-
-	// toleration := cr.Spec.PrometheusCache.Toleration
+	nodeSelector := cr.Spec.PrometheusCache.NodeSelector
+	if nodeSelector == nil {
+		nodeSelector = map[string]string{} // Default to an empty map
+	}
 
 	// Fetch and validate ImagePullPolicy
 	imagePullPolicy := corev1.PullIfNotPresent // Default value
@@ -4593,6 +4590,9 @@ func (r *PmnsystemReconciler) orc8PrometheusCacheDeployment(cr *v1.Pmnsystem) *a
 	default:
 		r.Log.Info("Invalid imagePullPolicy in CR, defaulting to IfNotPresent", "imagePullPolicy", cr.Spec.PrometheusCache.ImagePrometheusCache.ImagePullPolicy)
 	}
+
+	tolerations := cr.Spec.PrometheusCache.Tolerations
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -4621,8 +4621,8 @@ func (r *PmnsystemReconciler) orc8PrometheusCacheDeployment(cr *v1.Pmnsystem) *a
 		image,                         // Image
 		nil,                           // Affinity
 		replicas,                      // Replica
-		// nodeSelectorMap,               // NodeSelector
-		// toleration,                    // Tolerations
+		nodeSelector,                  // NodeSelector
+		tolerations,                   // Tolerations
 	)
 }
 func (r *PmnsystemReconciler) orc8rPrometheusConfigurerDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -4736,14 +4736,10 @@ func (r *PmnsystemReconciler) orc8rPrometheusConfigurerDeployment(cr *v1.Pmnsyst
 
 	replicas := &cr.Spec.PrometheusConfigurer.Replicas
 
-	// toleration := cr.Spec.PrometheusConfigurer.Toleration
-
-	// var nodeSelectorMap map[string]string
-	// err := json.Unmarshal([]byte(cr.Spec.PrometheusConfigurer.NodeSelector), &nodeSelectorMap)
-	// if err != nil {
-	// 	r.Log.Error(err, "Failed to parse nodeSelector")
-	// 	return nil
-	// }
+	nodeSelector := cr.Spec.PrometheusConfigurer.NodeSelector
+	if nodeSelector == nil {
+		nodeSelector = map[string]string{} // Default to an empty map
+	}
 
 	// Fetch and validate ImagePullPolicy
 	imagePullPolicy := corev1.PullIfNotPresent // Default value
@@ -4757,6 +4753,8 @@ func (r *PmnsystemReconciler) orc8rPrometheusConfigurerDeployment(cr *v1.Pmnsyst
 	default:
 		r.Log.Info("Invalid imagePullPolicy in CR, defaulting to IfNotPresent", "imagePullPolicy", cr.Spec.PrometheusConfigurer.ImagePrometheusConfigurer.ImagePullPolicy)
 	}
+
+	tolerations := cr.Spec.PrometheusConfigurer.Tolerations
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -4786,8 +4784,8 @@ func (r *PmnsystemReconciler) orc8rPrometheusConfigurerDeployment(cr *v1.Pmnsyst
 		image,                         // Image
 		affinity,                      // Affinity
 		replicas,                      // replicas
-		// nodeSelectorMap,               // nodeSelector
-		// toleration,                    // toleration
+		nodeSelector,                  // nodeSelector
+		tolerations,                   // toleration
 	)
 }
 func (r *PmnsystemReconciler) orc8rPrometheusKafkaAdapterDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -4881,14 +4879,10 @@ func (r *PmnsystemReconciler) orc8rPrometheusKafkaAdapterDeployment(cr *v1.Pmnsy
 
 	image := cr.Spec.PrometheusKafkaAdapter.ImagePrometheusKafkaAdapter.Repository + ":" + cr.Spec.PrometheusKafkaAdapter.ImagePrometheusKafkaAdapter.Tag
 
-	// toleration := cr.Spec.PrometheusKafkaAdapter.Toleration
-
-	// var nodeSelectorMap map[string]string
-	// err := json.Unmarshal([]byte(cr.Spec.PrometheusKafkaAdapter.NodeSelector), &nodeSelectorMap)
-	// if err != nil {
-	// 	r.Log.Error(err, "Failed to parse nodeSelector")
-	// 	return nil
-	// }
+	nodeSelector := cr.Spec.PrometheusKafkaAdapter.NodeSelector
+	if nodeSelector == nil {
+		nodeSelector = map[string]string{} // Default to an empty map
+	}
 
 	// Fetch and validate ImagePullPolicy
 	imagePullPolicy := corev1.PullIfNotPresent // Default value
@@ -4904,6 +4898,8 @@ func (r *PmnsystemReconciler) orc8rPrometheusKafkaAdapterDeployment(cr *v1.Pmnsy
 	}
 
 	replicas := &cr.Spec.PrometheusKafkaAdapter.Replicas
+
+	tolerations := cr.Spec.PrometheusKafkaAdapter.Tolerations
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -4933,10 +4929,11 @@ func (r *PmnsystemReconciler) orc8rPrometheusKafkaAdapterDeployment(cr *v1.Pmnsy
 		image,                         // Image
 		nil,                           // Affinity
 		replicas,                      // Replica
-		// nodeSelectorMap,               // Node selector
-		// toleration,                    // Tolerations
+		nodeSelector,                  // Node selector
+		tolerations,                   // Tolerations
 	)
 }
+
 func (r *PmnsystemReconciler) orc8rPrometheusNginxProxyDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
@@ -5050,7 +5047,7 @@ func (r *PmnsystemReconciler) orc8rPrometheusNginxProxyDeployment(cr *v1.Pmnsyst
 
 	image := cr.Spec.PrometheusNginxProxy.Nginx.ImagePrometheusNginxProxy.Repository + ":" + cr.Spec.PrometheusNginxProxy.Nginx.ImagePrometheusNginxProxy.Tag
 
-	// toleration := ""
+	tolerations := []corev1.Toleration{}
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -5080,8 +5077,8 @@ func (r *PmnsystemReconciler) orc8rPrometheusNginxProxyDeployment(cr *v1.Pmnsyst
 		image,                          // Image
 		nil,                            // Affinity
 		replicas,                       // replicas
-		// nil,                            // Nodeselector
-		// toleration,                     // toleration
+		nil,                            // Nodeselector
+		tolerations,                    // toleration
 	)
 }
 func (r *PmnsystemReconciler) orc8rUserGrafanaDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -5275,6 +5272,8 @@ func (r *PmnsystemReconciler) orc8rUserGrafanaDeployment(cr *v1.Pmnsystem) *apps
 	// 	return nil
 	// }
 
+	tolerations := cr.Spec.UserGrafana.Tolerations
+
 	// Fetch and validate ImagePullPolicy
 	imagePullPolicy := corev1.PullIfNotPresent // Default value
 	switch cr.Spec.UserGrafana.ImageUserGrafana.ImagePullPolicy {
@@ -5286,6 +5285,11 @@ func (r *PmnsystemReconciler) orc8rUserGrafanaDeployment(cr *v1.Pmnsystem) *apps
 		imagePullPolicy = corev1.PullIfNotPresent
 	default:
 		r.Log.Info("Invalid imagePullPolicy in CR, defaulting to IfNotPresent", "imagePullPolicy", cr.Spec.UserGrafana.ImageUserGrafana.ImagePullPolicy)
+	}
+
+	nodeSelector := cr.Spec.UserGrafana.NodeSelector
+	if nodeSelector == nil {
+		nodeSelector = map[string]string{} // Default to an empty map
 	}
 
 	return r.deployment(
@@ -5316,8 +5320,8 @@ func (r *PmnsystemReconciler) orc8rUserGrafanaDeployment(cr *v1.Pmnsystem) *apps
 		image,                         // Image
 		nil,                           // Affinity
 		replicas,                      // replicas
-		// nodeSelectorMap,                // nodeSelector
-		// cr.Spec.UserGrafana.Toleration, // tolerations
+		nodeSelector,                  // nodeSelector
+		tolerations,                   // tolerations
 	)
 }
 func (r *PmnsystemReconciler) orc8AlertManagerConfigurerDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -5411,8 +5415,6 @@ func (r *PmnsystemReconciler) orc8AlertManagerConfigurerDeployment(cr *v1.Pmnsys
 		},
 	}
 
-	// command:=
-
 	args := []string{
 		fmt.Sprintf("-port=%d", cr.Spec.AlertmanagerConfigurer.AlertManagerConfigPort),
 		fmt.Sprintf("-alertmanager-conf=%s", cr.Spec.AlertmanagerConfigurer.AlertManagerConfPath),
@@ -5438,13 +5440,6 @@ func (r *PmnsystemReconciler) orc8AlertManagerConfigurerDeployment(cr *v1.Pmnsys
 
 	image := cr.Spec.AlertmanagerConfigurer.ImageAlertmanagerConfigurer.Repository + ":" + cr.Spec.AlertmanagerConfigurer.ImageAlertmanagerConfigurer.Tag
 
-	// var nodeSelectorMap map[string]string
-	// err := json.Unmarshal([]byte(cr.Spec.AlertmanagerConfigurer.NodeSelector), &nodeSelectorMap)
-	// if err != nil {
-	// 	r.Log.Error(err, "Failed to parse nodeSelector")
-	// 	return nil
-	// }
-
 	// Fetch and validate ImagePullPolicy
 	imagePullPolicy := corev1.PullIfNotPresent // Default value
 	switch cr.Spec.AlertmanagerConfigurer.ImageAlertmanagerConfigurer.ImagePullPolicy {
@@ -5456,6 +5451,13 @@ func (r *PmnsystemReconciler) orc8AlertManagerConfigurerDeployment(cr *v1.Pmnsys
 		imagePullPolicy = corev1.PullIfNotPresent
 	default:
 		r.Log.Info("Invalid imagePullPolicy in CR, defaulting to IfNotPresent", "imagePullPolicy", cr.Spec.AlertmanagerConfigurer.ImageAlertmanagerConfigurer.ImagePullPolicy)
+	}
+
+	tolerations := cr.Spec.AlertmanagerConfigurer.Tolerations
+
+	nodeSelector := cr.Spec.AlertmanagerConfigurer.NodeSelector
+	if nodeSelector == nil {
+		nodeSelector = map[string]string{} // Default to an empty map
 	}
 
 	return r.deployment(
@@ -5485,11 +5487,12 @@ func (r *PmnsystemReconciler) orc8AlertManagerConfigurerDeployment(cr *v1.Pmnsys
 		terminationMessagePolicy,      // Termination message policy
 		image,                         // Image
 		affinity,                      // Affinity
-		replica,                       // replicas for AlertManagerConfigurer
-		// nodeSelectorMap,               // Node Selector for AlertManagerConfigurer
-		// cr.Spec.AlertmanagerConfigurer.Toleration,
+		replica,                       // replicas
+		nodeSelector,                  // Node Selector for AlertManagerConfigurer
+		tolerations,                   // tolerations
 	)
 }
+
 func (r *PmnsystemReconciler) orc8AlertManagerDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 
@@ -5604,6 +5607,13 @@ func (r *PmnsystemReconciler) orc8AlertManagerDeployment(cr *v1.Pmnsystem) *apps
 
 	replica := &cr.Spec.Prometheus.Replicas
 
+	tolerations := cr.Spec.AlertManager.Tolerations
+
+	nodeSelector := cr.Spec.AlertManager.NodeSelector
+	if nodeSelector == nil {
+		nodeSelector = map[string]string{} // Default to an empty map
+	}
+
 	// Fetch and validate ImagePullPolicy
 	imagePullPolicy := corev1.PullIfNotPresent // Default value
 	switch cr.Spec.AlertManager.ImageAlertmanager.ImagePullPolicy {
@@ -5617,12 +5627,6 @@ func (r *PmnsystemReconciler) orc8AlertManagerDeployment(cr *v1.Pmnsystem) *apps
 		r.Log.Info("Invalid imagePullPolicy in CR, defaulting to IfNotPresent", "imagePullPolicy", cr.Spec.AlertManager.ImageAlertmanager.ImagePullPolicy)
 	}
 
-	// var nodeSelectorMap map[string]string
-	// err := json.Unmarshal([]byte(cr.Spec.AlertManager.NodeSelector), &nodeSelectorMap)
-	// if err != nil {
-	// 	r.Log.Error(err, "Failed to parse nodeSelector")
-	// 	return nil
-	// }
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -5651,10 +5655,11 @@ func (r *PmnsystemReconciler) orc8AlertManagerDeployment(cr *v1.Pmnsystem) *apps
 		image,                         // Image
 		affinity,                      // Affinity
 		replica,                       // replicas
-		// nodeSelectorMap,               //nodeSelector
-		// cr.Spec.AlertmanagerConfigurer.Toleration, // toleration
+		nodeSelector,                  // nodeSelector
+		tolerations,                   // toleration
 	)
 }
+
 func (r *PmnsystemReconciler) createOrc8rPrometheusStateFullSet(cr *v1.Pmnsystem) *appsv1.StatefulSet {
 	int32Ptr := func(i int32) *int32 { return &i }
 
