@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: promdata
-  namespace: pgsql
+  namespace: pmn
 spec:
   accessModes:
     - ReadWriteOnce

@@ -55,7 +55,7 @@ spec:
     - name: "MYSQL_DB"
       value: "pmndev"
     - name: "MYSQL_HOST"
-      value: "postgres.pgsql.svc.cluster.local"
+      value: "postgres.pmn.svc.cluster.local"
     - name: "MYSQL_PORT"
       value: "5432"
     - name: "MYSQL_DIALECT"
@@ -76,7 +76,7 @@ spec:
     - name: MYSQL_DB
       value: postgres
     - name: MYSQL_HOST
-      value: postgres.pgsql.svc.cluster.local
+      value: postgres.pmn.svc.cluster.local
     - name: MYSQL_PORT
       value: "5432"
     - name: MYSQL_DIALECT
@@ -100,7 +100,7 @@ spec:
       value: "notifier-internal"
   envVariablesOrc8rNginx:
     - name: "PROXY_BACKENDS"
-      value: "postgres.pgsql.svc.cluster.local"
+      value: "postgres.pmn.svc.cluster.local"
     - name: "CONTROLLER_HOSTNAME"
       value: "controller.operator.wavelabs.int"
     - name: "RESOLVER"

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: pmn-configs
-  namespace: pgsql
+  namespace: pmn
   labels:
     app: pmn-configs
 type: Opaque

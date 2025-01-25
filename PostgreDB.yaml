@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres
-  namespace: pgsql
+  namespace: pmn
   labels: # Move labels directly under metadata
     app: postgres
 spec:

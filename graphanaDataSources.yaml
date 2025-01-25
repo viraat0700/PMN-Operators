@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: grafanadatasources
-  namespace: pgsql
+  namespace: pmn
 spec:
   accessModes:
     - ReadWriteOnce

@@ -158,6 +158,6 @@ metadata:
   labels:
     app.kubernetes.io/managed-by: Helm
   name: orc8r-alert-rules
-  namespace: pgsql
+  namespace: pmn
   resourceVersion: "54692312"
   uid: b4d1a638-e867-49f5-bd18-93f9d09746d1

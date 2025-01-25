@@ -18,6 +18,6 @@ metadata:
     app.kubernetes.io/version: "1.0"
     helm.sh/chart: metrics-1.4.24
   name: prometheus-nginx-proxy
-  namespace: pgsql
+  namespace: pmn
   resourceVersion: "75572548"
   uid: 07468b31-d9eb-4bb5-bafd-4894a54043d2

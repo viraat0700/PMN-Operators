@@ -1,23 +1,8 @@
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: postgres
-#   namespace: pmn
-#   labels: # Matching the labels in Deployment
-#     app: postgres
-# spec:
-#   selector: # Matching the labels of the Deployment's template
-#     app: postgres
-#   ports:
-#   - protocol: TCP
-#     port: 5432 # Service port
-#     targetPort: 5432 # Target container port
-#   type: ClusterIP # Default type for internal cluster communication
 apiVersion: v1
 kind: Service
 metadata:
   name: postgres
-  namespace: pgsql
+  namespace: pmn
 spec:
   type: NodePort
   selector:
