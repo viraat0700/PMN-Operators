@@ -171,7 +171,7 @@ spec:
       value: "notifier.key"
   replicaCount: 1
   pullPolicy: IfNotPresent
-  nameSpace: "pgsql"
+  nameSpace: "pmn"
   notifierImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/notifier:1.8.0-a914c772"
   nginxImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/nginx:1.8.0-a914c772"
   imagePullSecrets: "artifactory"
