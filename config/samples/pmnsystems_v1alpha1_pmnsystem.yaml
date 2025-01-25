@@ -120,8 +120,16 @@ spec:
       value: "psql"
     - name: "SERVICE_REGISTRY_MODE"
       value: "k8s"
+    - name: "HELM_RELEASE_NAME"
+      value: "orc8r"
+    - name: "SERVICE_REGISTRY_NAMESPACE"
+      value: "pmn"
+    - name: "HELM_VERSION_TAG"
+      value: "1.8.0"
+    - name: "VERSION_TAG"
+      value: "1.8.0-6c4579b5"
     - name: "ORC8R_DOMAIN_NAME"
-      value: "operator.wavelabs.int"
+      value: "magma.test"
     - name: "PUBLISHER_PORT"
       value: "5442"
     - name: "SUBSCRIBER_PORT"
@@ -137,8 +145,16 @@ spec:
       value: "psql"
     - name: "SERVICE_REGISTRY_MODE"
       value: "k8s"
+    - name: "HELM_RELEASE_NAME"
+      value: "orc8r"
+    - name: "SERVICE_REGISTRY_NAMESPACE"
+      value: "pmn"
+    - name: "HELM_VERSION_TAG"
+      value: "1.8.0"
+    - name: "VERSION_TAG"
+      value: "1.8.0-6c4579b5"
     - name: "ORC8R_DOMAIN_NAME"
-      value: "operator.wavelabs.int"
+      value: "magma.test"
     - name: "PUBLISHER_PORT"
       value: "5442"
     - name: "SUBSCRIBER_PORT"
@@ -161,8 +177,8 @@ spec:
   imagePullSecrets: "artifactory"
   devEnvironment: true
   cloudEnvironment: false
-  certDir: "/mnt/c/Users/MSI-1/Desktop/PMN-Operator-Two/pmn-operator/VMFolder" ##where call the certificates are stored in the VM
-  repoPath: "/mnt/c/Users/MSI-1/Desktop/PMN-Operator-Two/pmn-operator/mTLS" ##Repo which will be used to generate the certificates
+  certDir: "/home/ubuntu/pmn-operator/VMFolder" ##where call the certificates are stored in the VM
+  repoPath: "/home/ubuntu/pmn-operator/mTLS" ##Repo which will be used to generate the certificates
   secrets:
     - secretName: "pmn-certs"
       requiredFiles:

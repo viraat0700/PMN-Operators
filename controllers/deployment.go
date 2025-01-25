@@ -2656,7 +2656,7 @@ func (r *PmnsystemReconciler) orc8ServiceRegistryDeployment(cr *v1.Pmnsystem) *a
 	ports := []corev1.ContainerPort{
 		{Name: "grpc", ContainerPort: 9180, Protocol: corev1.ProtocolTCP},
 		{Name: "grpc-internal", ContainerPort: 9190, Protocol: corev1.ProtocolTCP},
-	}
+	} 
 
 	// Liveness and Readiness Probes
 	livenessProbe := &corev1.Probe{
