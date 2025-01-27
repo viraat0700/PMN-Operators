@@ -270,12 +270,23 @@ type VolumesNmsMagmaLte struct {
 
 // =======================Orc8r Notifier Deployment ======================
 type Orc8rNotifier struct {
-	ImageOrc8rNotifier ImageOrc8rNotifier `json:"imageOrc8rNotifier,omitempty"`
-	Args               []string           `json:"args,omitempty"`
-	LivenessProbePort  int32              `json:"livenessProbe,omitempty"`
-	ServiceSpec        ServiceSpec        `json:"serviceSpec,omitempty"`
-	ReadinessProbePort int32              `json:"readinessProbe,omitempty"`
-	PortDeployment     int32              `json:"portDeployment,omitempty"`
+	ImageOrc8rNotifier       ImageOrc8rNotifier       `json:"imageOrc8rNotifier,omitempty"`
+	Args                     []string                 `json:"args,omitempty"`
+	LivenessProbePort        int32                    `json:"livenessProbe,omitempty"`
+	ServiceSpecOrc8rNotifier ServiceSpecOrc8rNotifier `json:"serviceSpecOrc8rNotifier,omitempty"`
+	ReadinessProbePort       int32                    `json:"readinessProbe,omitempty"`
+	PortDeployment           int32                    `json:"portDeployment,omitempty"`
+}
+type ServiceSpecOrc8rNotifier struct {
+	Type                  string                  `json:"type,omitempty"`
+	PortSpecOrc8rNotifier []PortSpecOrc8rNotifier `json:"portSpecOrc8rNotifier,omitempty"`
+}
+type PortSpecOrc8rNotifier struct {
+	Name       string `json:"name,omitempty"`
+	Port       int32  `json:"port,omitempty"`
+	Protocol   string `json:"protocol,omitempty"`
+	TargetPort int32  `json:"targetPort,omitempty"`
+	NodePort   int32  `json:"nodePort,omitempty"`
 }
 
 type ImageOrc8rNotifier struct {

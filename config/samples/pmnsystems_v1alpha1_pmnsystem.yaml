@@ -434,13 +434,14 @@ spec:
     livenessProbe: 5442
     readinessProbe: 5442
     portDeployment: 443
-    serviceSpec:
-      type: "ClusterIP"
-      portSpec:
-        - name: "notifier-internal"
-          port: 5442
+    serviceSpecOrc8rNotifier:
+      type: "LoadBalancer"
+      portSpecOrc8rNotifier:
+        - name: "notifier"
+          port: 4443
           protocol: TCP
-          targetPort: 5442
+          targetPort: 443
+          nodePort: 32001
     imageOrc8rNotifier:
       repository: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/notifier"
       tag: "1.8.0-a914c772"

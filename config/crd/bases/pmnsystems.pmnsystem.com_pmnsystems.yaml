@@ -496,13 +496,16 @@ spec:
                   readinessProbe:
                     format: int32
                     type: integer
-                  serviceSpec:
+                  serviceSpecOrc8rNotifier:
                     properties:
-                      portSpec:
+                      portSpecOrc8rNotifier:
                         items:
                           properties:
                             name:
                               type: string
+                            nodePort:
+                              format: int32
+                              type: integer
                             port:
                               format: int32
                               type: integer
