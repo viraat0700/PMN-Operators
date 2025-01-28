@@ -814,7 +814,7 @@ func (r *PmnsystemReconciler) orc8rConfiguratorDeployment(cr *v1.Pmnsystem) *app
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "configurator",
+		"app": "orc8r-configurator",
 	}
 
 	// Define volumes in a separate variable

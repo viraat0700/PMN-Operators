@@ -181,7 +181,7 @@ func (r *PmnsystemReconciler) orc8rCertifierService(cr *v1.Pmnsystem) *corev1.Se
 }
 func (r *PmnsystemReconciler) orc8rConfiguratorService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "configurator",
+		"app":                          "orc8r-configurator",
 		"app.kubernetes.io/instance":   "orc8r",
 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
 	}
@@ -489,7 +489,7 @@ func (r *PmnsystemReconciler) orc8rNotifierService(cr *v1.Pmnsystem) *corev1.Ser
 }
 func (r *PmnsystemReconciler) orc8rNotifierInternalService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-notifier-internal",
+		"app":                          "orc8r-notifier",
 		"app.kubernetes.io/instance":   "orc8r",
 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
 	}
