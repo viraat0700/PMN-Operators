@@ -494,10 +494,10 @@ func (r *PmnsystemReconciler) orc8rBootStrapperDeployment(cr *v1.Pmnsystem) *app
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app.kubernetes.io / component": "bootstrapper",
-		"app.kubernetes.io / instance":  "orc8r",
-		"app.kubernetes.io / name":      "orc8r",
-		"app.kubernetes.io/part - of":   "orc8r - app",
+		"app.kubernetes.io/component": "bootstrapper",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -1547,10 +1547,10 @@ func (r *PmnsystemReconciler) orc8rEventdDeployment(cr *v1.Pmnsystem) *appsv1.De
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app.kubernetes.io / component": "eventd",
-		"app.kubernetes.io / instance":  "orc8r",
-		"app.kubernetes.io / name":      "orc8r",
-		"app.kubernetes.io/part - of":   "orc8r - app",
+		"app.kubernetes.io/component": "eventd",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -5102,9 +5102,9 @@ func (r *PmnsystemReconciler) orc8rPrometheusKafkaAdapterDeployment(cr *v1.Pmnsy
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app.kubernetes.io / instance": "orc8r",
-		"app.kubernetes.io / name":     "prometheus-kafka-adapter",
-		"app.kubernetes.io / version":  "1.0",
+		"app.kubernetes.io/instance": "orc8r",
+		"app.kubernetes.io/name":     "prometheus-kafka-adapter",
+		"app.kubernetes.io/version":  "1.0",
 	}
 
 	// Define volumes in a separate variable
