@@ -533,7 +533,7 @@ func (r *PmnsystemReconciler) orc8rNginxProxyService(cr *v1.Pmnsystem) *corev1.S
 
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "orc8r-metricsd",
+			Name:      "orc8r-nginx-proxy",
 			Namespace: cr.Spec.NameSpace,
 			Labels:    labels,
 			OwnerReferences: []metav1.OwnerReference{
