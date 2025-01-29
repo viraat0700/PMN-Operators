@@ -580,7 +580,6 @@ func (r *PmnsystemReconciler) orc8rNginxProxyService(cr *v1.Pmnsystem) *corev1.S
 func (r *PmnsystemReconciler) orc8rNotifierService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
 		"app.kubernetes.io/component":  "notifier",
-		"app.kubernetes.io/managed-by": "Helm",
 	}
 
 	selectorLabels := map[string]string{
