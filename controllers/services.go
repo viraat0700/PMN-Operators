@@ -1532,9 +1532,9 @@ func (r *PmnsystemReconciler) orc8rPrometheusConfigurerService(cr *v1.Pmnsystem)
 }
 func (r *PmnsystemReconciler) orc8rPrometheusKafkaAdapterService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app.kubernetes.io / instance": "orc8r",
-		"app.kubernetes.io / name":     "prometheus-kafka-adapter",
-		"app.kubernetes.io / version":  "1.0",
+		"app.kubernetes.io/instance": "orc8r",
+		"app.kubernetes.io/name":     "prometheus-kafka-adapter",
+		"app.kubernetes.io/version":  "1.0",
 	}
 
 	selectorLabels := map[string]string{
