@@ -115,13 +115,13 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		{"orc8SubscriberDbCacheDeployment", r.orc8SubscriberDbCacheDeployment},
 		{"orc8SubscriberDbDeployment", r.orc8SubscriberDbDeployment},
 		{"nmsMagmaLteDeployment", r.nmsMagmaLteDeployment},
-		{"orc8AlertManagerDeployment", r.orc8AlertManagerDeployment},
 		{"orc8PrometheusCacheDeployment", r.orc8PrometheusCacheDeployment},
 		{"orc8rPrometheusConfigurerDeployment", r.orc8rPrometheusConfigurerDeployment},
 		{"orc8rPrometheusKafkaAdapterDeployment", r.orc8rPrometheusKafkaAdapterDeployment},
 		{"orc8rPrometheusNginxProxyDeployment", r.orc8rPrometheusNginxProxyDeployment},
 		{"orc8rUserGrafanaDeployment", r.orc8rUserGrafanaDeployment},
 		{"orc8AlertManagerConfigurerDeployment", r.orc8AlertManagerConfigurerDeployment},
+		{"orc8AlertManagerDeployment", r.orc8AlertManagerDeployment},
 	}
 	// Iterate over deployment functions
 	for _, deployment := range deploymentFunctions {
@@ -194,6 +194,7 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		{"orc8rDispatcherService", r.orc8rDispatcherService},
 		{"orc8rEventdService", r.orc8rEventdService},
 		{"orc8rmetricsdService", r.orc8rmetricsdService},
+		{"orc8rNginxProxyService", r.orc8rNginxProxyService},
 		{"orc8rNotifierService", r.orc8rNotifierService},
 		{"orc8rNotifierInternalService", r.orc8rNotifierInternalService},
 		{"orc8rObsidianService", r.orc8rObsidianService},

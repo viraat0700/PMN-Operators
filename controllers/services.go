@@ -11,9 +11,16 @@ import (
 
 func (r *PmnsystemReconciler) orc8rAccessDService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-accessd",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "orc8r",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+	}
+
+	selectorLabel := map[string]string{
+		"app.kubernetes.io/component": "accessd",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
 	}
 
 	return &corev1.Service{
@@ -31,7 +38,7 @@ func (r *PmnsystemReconciler) orc8rAccessDService(cr *v1.Pmnsystem) *corev1.Serv
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabel,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -52,9 +59,16 @@ func (r *PmnsystemReconciler) orc8rAccessDService(cr *v1.Pmnsystem) *corev1.Serv
 }
 func (r *PmnsystemReconciler) orc8rAnalyticsService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-analytics",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "orc8r",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "analytics",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
 	}
 
 	return &corev1.Service{
@@ -72,7 +86,7 @@ func (r *PmnsystemReconciler) orc8rAnalyticsService(cr *v1.Pmnsystem) *corev1.Se
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -93,11 +107,17 @@ func (r *PmnsystemReconciler) orc8rAnalyticsService(cr *v1.Pmnsystem) *corev1.Se
 }
 func (r *PmnsystemReconciler) orc8rBootStrapperService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-bootstrapper",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "orc8r",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "bootstrapper",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "orc8r-bootstrapper",
@@ -113,7 +133,7 @@ func (r *PmnsystemReconciler) orc8rBootStrapperService(cr *v1.Pmnsystem) *corev1
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -134,9 +154,17 @@ func (r *PmnsystemReconciler) orc8rBootStrapperService(cr *v1.Pmnsystem) *corev1
 }
 func (r *PmnsystemReconciler) orc8rCertifierService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-certifier",
+		"app.kubernetes.io/component":  "orc8r",
 		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/name":       "orc8r",
+		"app.kubernetes.io/part-of":    "orc8r-app",
+		"orc8r.io/analytics_collector": "true",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "certifier",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
 	}
 
 	return &corev1.Service{
@@ -154,7 +182,7 @@ func (r *PmnsystemReconciler) orc8rCertifierService(cr *v1.Pmnsystem) *corev1.Se
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -181,9 +209,16 @@ func (r *PmnsystemReconciler) orc8rCertifierService(cr *v1.Pmnsystem) *corev1.Se
 }
 func (r *PmnsystemReconciler) orc8rConfiguratorService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-configurator",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "orc8r",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "configurator",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
 	}
 
 	return &corev1.Service{
@@ -201,7 +236,7 @@ func (r *PmnsystemReconciler) orc8rConfiguratorService(cr *v1.Pmnsystem) *corev1
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -228,9 +263,16 @@ func (r *PmnsystemReconciler) orc8rConfiguratorService(cr *v1.Pmnsystem) *corev1
 }
 func (r *PmnsystemReconciler) orc8rDeviceService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-device",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "orc8r",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "device",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
 	}
 
 	return &corev1.Service{
@@ -248,7 +290,7 @@ func (r *PmnsystemReconciler) orc8rDeviceService(cr *v1.Pmnsystem) *corev1.Servi
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -269,9 +311,16 @@ func (r *PmnsystemReconciler) orc8rDeviceService(cr *v1.Pmnsystem) *corev1.Servi
 }
 func (r *PmnsystemReconciler) orc8rDirectoryDService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-directoryd",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "orc8r",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "directoryd",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
 	}
 
 	return &corev1.Service{
@@ -289,7 +338,7 @@ func (r *PmnsystemReconciler) orc8rDirectoryDService(cr *v1.Pmnsystem) *corev1.S
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -310,9 +359,16 @@ func (r *PmnsystemReconciler) orc8rDirectoryDService(cr *v1.Pmnsystem) *corev1.S
 }
 func (r *PmnsystemReconciler) orc8rDispatcherService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-dispatcher",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "orc8r",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "dispatcher",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
 	}
 
 	return &corev1.Service{
@@ -330,7 +386,7 @@ func (r *PmnsystemReconciler) orc8rDispatcherService(cr *v1.Pmnsystem) *corev1.S
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -351,9 +407,18 @@ func (r *PmnsystemReconciler) orc8rDispatcherService(cr *v1.Pmnsystem) *corev1.S
 }
 func (r *PmnsystemReconciler) orc8rEventdService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-eventd",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "orc8r",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+		"orc8r.io/obsidian_handlers":  "true",
+		"orc8r.io/swagger_spec":       "true",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "eventd",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
 	}
 
 	return &corev1.Service{
@@ -371,7 +436,7 @@ func (r *PmnsystemReconciler) orc8rEventdService(cr *v1.Pmnsystem) *corev1.Servi
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -398,9 +463,18 @@ func (r *PmnsystemReconciler) orc8rEventdService(cr *v1.Pmnsystem) *corev1.Servi
 }
 func (r *PmnsystemReconciler) orc8rmetricsdService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-metricsd",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "orc8r",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+		"orc8r.io/obsidian_handlers":  "true",
+		"orc8r.io/swagger_spec":       "true",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "metricsd",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
 	}
 
 	return &corev1.Service{
@@ -408,11 +482,6 @@ func (r *PmnsystemReconciler) orc8rmetricsdService(cr *v1.Pmnsystem) *corev1.Ser
 			Name:      "orc8r-metricsd",
 			Namespace: cr.Spec.NameSpace,
 			Labels:    labels,
-			Annotations: map[string]string{
-				"app":                          "orc8r-metricsd",
-				"app.kubernetes.io/instance":   "orc8r",
-				"app.kubernetes.io/managed-by": "Orc8r-Operator",
-			},
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
 					Group:   v1.GroupVersion.Group,
@@ -423,7 +492,7 @@ func (r *PmnsystemReconciler) orc8rmetricsdService(cr *v1.Pmnsystem) *corev1.Ser
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -448,11 +517,74 @@ func (r *PmnsystemReconciler) orc8rmetricsdService(cr *v1.Pmnsystem) *corev1.Ser
 		},
 	}
 }
+func (r *PmnsystemReconciler) orc8rNginxProxyService(cr *v1.Pmnsystem) *corev1.Service {
+	labels := map[string]string{
+		"app.kubernetes.io/component": "nginx-proxy",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "nginx-proxy",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "orc8r-metricsd",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Type:     corev1.ServiceTypeClusterIP,
+			Selector: selectorLabels,
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "health",
+					Port:       80,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(80),
+				},
+				{
+					Name:       "clientcert",
+					Port:       8443,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(8443),
+				},
+				{
+					Name:       "open",
+					Port:       8444,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(8444),
+				},
+				{
+					Name:       "api",
+					Port:       443,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(9443),
+				},
+			},
+			SessionAffinity: corev1.ServiceAffinityNone,
+		},
+	}
+}
 func (r *PmnsystemReconciler) orc8rNotifierService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-notifier",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component":  "notifier",
+		"app.kubernetes.io/managed-by": "Helm",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "notifier",
 	}
 
 	var servicePorts []corev1.ServicePort
@@ -470,7 +602,7 @@ func (r *PmnsystemReconciler) orc8rNotifierService(cr *v1.Pmnsystem) *corev1.Ser
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "orc8r-notifier",
 			Namespace: cr.Spec.NameSpace,
-			Labels:    labels,
+			Labels:    selectorLabels,
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
 					Group:   v1.GroupVersion.Group,
@@ -489,11 +621,12 @@ func (r *PmnsystemReconciler) orc8rNotifierService(cr *v1.Pmnsystem) *corev1.Ser
 }
 func (r *PmnsystemReconciler) orc8rNotifierInternalService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-notifier",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "notifier",
 	}
 
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "notifier",
+	}
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "orc8r-notifier-internal",
@@ -509,7 +642,7 @@ func (r *PmnsystemReconciler) orc8rNotifierInternalService(cr *v1.Pmnsystem) *co
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "notifier-internal",
@@ -524,9 +657,16 @@ func (r *PmnsystemReconciler) orc8rNotifierInternalService(cr *v1.Pmnsystem) *co
 }
 func (r *PmnsystemReconciler) orc8rObsidianService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-obsidian",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "orc8r",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "obsidian",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
 	}
 
 	return &corev1.Service{
@@ -544,7 +684,7 @@ func (r *PmnsystemReconciler) orc8rObsidianService(cr *v1.Pmnsystem) *corev1.Ser
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -571,9 +711,16 @@ func (r *PmnsystemReconciler) orc8rObsidianService(cr *v1.Pmnsystem) *corev1.Ser
 }
 func (r *PmnsystemReconciler) orc8rWorkerService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-orc8r-worker",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "orc8r",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "orc8r-worker",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
 	}
 
 	return &corev1.Service{
@@ -591,7 +738,7 @@ func (r *PmnsystemReconciler) orc8rWorkerService(cr *v1.Pmnsystem) *corev1.Servi
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -612,9 +759,23 @@ func (r *PmnsystemReconciler) orc8rWorkerService(cr *v1.Pmnsystem) *corev1.Servi
 }
 func (r *PmnsystemReconciler) orc8rOrchestratorService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-orchestrator",
+		"app.kubernetes.io/component":  "orc8r",
 		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/name":       "orc8r",
+		"app.kubernetes.io/part-of":    "orc8r-app",
+		"orc8r.io/analytics_collector": "true",
+		"orc8r.io/mconfig_builder":     "true",
+		"orc8r.io/metrics_exporter":    "true",
+		"orc8r.io/obsidian_handlers":   "true",
+		"orc8r.io/state_indexer":       "true",
+		"orc8r.io/stream_provider":     "true",
+		"orc8r.io/swagger_spec":        "true",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "orchestrator",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
 	}
 
 	return &corev1.Service{
@@ -632,7 +793,7 @@ func (r *PmnsystemReconciler) orc8rOrchestratorService(cr *v1.Pmnsystem) *corev1
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -659,9 +820,16 @@ func (r *PmnsystemReconciler) orc8rOrchestratorService(cr *v1.Pmnsystem) *corev1
 }
 func (r *PmnsystemReconciler) orc8rServiceRegistryService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-service-registry",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "orc8r",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "service_registry",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
 	}
 
 	return &corev1.Service{
@@ -679,7 +847,7 @@ func (r *PmnsystemReconciler) orc8rServiceRegistryService(cr *v1.Pmnsystem) *cor
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -700,9 +868,16 @@ func (r *PmnsystemReconciler) orc8rServiceRegistryService(cr *v1.Pmnsystem) *cor
 }
 func (r *PmnsystemReconciler) orc8rStateService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-state",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "orc8r",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+	}
+
+	matchlabels := map[string]string{
+		"app.kubernetes.io/component": "state",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
 	}
 
 	return &corev1.Service{
@@ -720,7 +895,7 @@ func (r *PmnsystemReconciler) orc8rStateService(cr *v1.Pmnsystem) *corev1.Servic
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: matchlabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -741,9 +916,16 @@ func (r *PmnsystemReconciler) orc8rStateService(cr *v1.Pmnsystem) *corev1.Servic
 }
 func (r *PmnsystemReconciler) orc8rStreamerService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-streamer",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "orc8r",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "streamer",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
 	}
 
 	return &corev1.Service{
@@ -761,7 +943,7 @@ func (r *PmnsystemReconciler) orc8rStreamerService(cr *v1.Pmnsystem) *corev1.Ser
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -782,9 +964,18 @@ func (r *PmnsystemReconciler) orc8rStreamerService(cr *v1.Pmnsystem) *corev1.Ser
 }
 func (r *PmnsystemReconciler) orc8rTenantsService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-tenants",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "orc8r",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+		"orc8r.io/obsidian_handlers":  "true",
+		"orc8r.io/swagger_spec":       "true",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "tenants",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
 	}
 
 	return &corev1.Service{
@@ -802,7 +993,7 @@ func (r *PmnsystemReconciler) orc8rTenantsService(cr *v1.Pmnsystem) *corev1.Serv
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -829,9 +1020,16 @@ func (r *PmnsystemReconciler) orc8rTenantsService(cr *v1.Pmnsystem) *corev1.Serv
 }
 func (r *PmnsystemReconciler) orc8rHaService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-ha",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "lte-orc8r",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "ha",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
 	}
 
 	return &corev1.Service{
@@ -849,7 +1047,7 @@ func (r *PmnsystemReconciler) orc8rHaService(cr *v1.Pmnsystem) *corev1.Service {
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -864,9 +1062,22 @@ func (r *PmnsystemReconciler) orc8rHaService(cr *v1.Pmnsystem) *corev1.Service {
 }
 func (r *PmnsystemReconciler) orc8rLteService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-lte",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component":  "lte-orc8r",
+		"app.kubernetes.io/instance":   "lte-pmn",
+		"app.kubernetes.io/name":       "lte-orc8r",
+		"app.kubernetes.io/part-of":    "orc8r-app",
+		"orc8r.io/analytics_collector": "true",
+		"orc8r.io/mconfig_builder":     "true",
+		"orc8r.io/obsidian_handlers":   "true",
+		"orc8r.io/state_indexer":       "true",
+		"orc8r.io/stream_provider":     "true",
+		"orc8r.io/swagger_spec":        "true",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "lte",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
 	}
 
 	return &corev1.Service{
@@ -884,7 +1095,7 @@ func (r *PmnsystemReconciler) orc8rLteService(cr *v1.Pmnsystem) *corev1.Service 
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -911,9 +1122,18 @@ func (r *PmnsystemReconciler) orc8rLteService(cr *v1.Pmnsystem) *corev1.Service 
 }
 func (r *PmnsystemReconciler) orc8rNprobeService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-nprobe",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "lte-orc8r",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+		"orc8r.io/obsidian_handlers":  "true",
+		"orc8r.io/swagger_spec":       "true",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "nprobe",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
 	}
 
 	return &corev1.Service{
@@ -931,7 +1151,7 @@ func (r *PmnsystemReconciler) orc8rNprobeService(cr *v1.Pmnsystem) *corev1.Servi
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -958,9 +1178,18 @@ func (r *PmnsystemReconciler) orc8rNprobeService(cr *v1.Pmnsystem) *corev1.Servi
 }
 func (r *PmnsystemReconciler) orc8rPolicyDbService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-policydb",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "lte-orc8r",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+		"orc8r.io/obsidian_handlers":  "true",
+		"orc8r.io/swagger_spec":       "true",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "policydb",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
 	}
 
 	return &corev1.Service{
@@ -978,7 +1207,7 @@ func (r *PmnsystemReconciler) orc8rPolicyDbService(cr *v1.Pmnsystem) *corev1.Ser
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -1005,9 +1234,18 @@ func (r *PmnsystemReconciler) orc8rPolicyDbService(cr *v1.Pmnsystem) *corev1.Ser
 }
 func (r *PmnsystemReconciler) orc8rSmsdService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-smsd",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "lte-orc8r",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+		"orc8r.io/obsidian_handlers":  "true",
+		"orc8r.io/swagger_spec":       "true",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "smsd",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
 	}
 
 	return &corev1.Service{
@@ -1025,7 +1263,7 @@ func (r *PmnsystemReconciler) orc8rSmsdService(cr *v1.Pmnsystem) *corev1.Service
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -1052,9 +1290,16 @@ func (r *PmnsystemReconciler) orc8rSmsdService(cr *v1.Pmnsystem) *corev1.Service
 }
 func (r *PmnsystemReconciler) orc8rSubscriberDbCacheService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-subscriberdb-cache",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "lte-orc8r",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "subscriberdb-cache",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
 	}
 
 	return &corev1.Service{
@@ -1072,7 +1317,7 @@ func (r *PmnsystemReconciler) orc8rSubscriberDbCacheService(cr *v1.Pmnsystem) *c
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -1093,9 +1338,19 @@ func (r *PmnsystemReconciler) orc8rSubscriberDbCacheService(cr *v1.Pmnsystem) *c
 }
 func (r *PmnsystemReconciler) orc8rSubscriberDbService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-subscriberdb",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "lte-orc8r",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
+		"orc8r.io/obsidian_handlers":  "true",
+		"orc8r.io/state_indexer":      "true",
+		"orc8r.io/swagger_spec":       "true",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "subscriberdb",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
 	}
 
 	return &corev1.Service{
@@ -1113,7 +1368,7 @@ func (r *PmnsystemReconciler) orc8rSubscriberDbService(cr *v1.Pmnsystem) *corev1
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "grpc",
@@ -1140,9 +1395,18 @@ func (r *PmnsystemReconciler) orc8rSubscriberDbService(cr *v1.Pmnsystem) *corev1
 }
 func (r *PmnsystemReconciler) NmsMagmaLteService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "nms-magmalte",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "magmalte",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "nms",
+		"app.kubernetes.io/part-of":   "magma",
+		"release_group":               "orc8r",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "magmalte",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "nms",
+		"release_group":               "orc8r",
 	}
 
 	var servicePorts []corev1.ServicePort
@@ -1170,7 +1434,7 @@ func (r *PmnsystemReconciler) NmsMagmaLteService(cr *v1.Pmnsystem) *corev1.Servi
 		},
 		Spec: corev1.ServiceSpec{
 			Type:            corev1.ServiceType(cr.Spec.NmsMagmaLte.ServiceSpec.Type),
-			Selector:        labels,
+			Selector:        selectorLabels,
 			Ports:           servicePorts,
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
@@ -1178,9 +1442,16 @@ func (r *PmnsystemReconciler) NmsMagmaLteService(cr *v1.Pmnsystem) *corev1.Servi
 }
 func (r *PmnsystemReconciler) orc8rPrometheusCacheService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-prometheus-cache",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "prometheus-cache",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
+		"app.kubernetes.io/version":   "1.0",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "prometheus-cache",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
 	}
 
 	var servicePorts []corev1.ServicePort
@@ -1208,7 +1479,7 @@ func (r *PmnsystemReconciler) orc8rPrometheusCacheService(cr *v1.Pmnsystem) *cor
 		},
 		Spec: corev1.ServiceSpec{
 			Type:            corev1.ServiceType(cr.Spec.PrometheusCache.ServiceSpec.Type),
-			Selector:        labels,
+			Selector:        selectorLabels,
 			Ports:           servicePorts,
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
@@ -1216,9 +1487,16 @@ func (r *PmnsystemReconciler) orc8rPrometheusCacheService(cr *v1.Pmnsystem) *cor
 }
 func (r *PmnsystemReconciler) orc8rPrometheusConfigurerService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-prometheus-configurer",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "prometheus-configurer",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
+		"app.kubernetes.io/version":   "1.0",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "prometheus-configurer",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
 	}
 
 	var servicePorts []corev1.ServicePort
@@ -1246,7 +1524,7 @@ func (r *PmnsystemReconciler) orc8rPrometheusConfigurerService(cr *v1.Pmnsystem)
 		},
 		Spec: corev1.ServiceSpec{
 			Type:            corev1.ServiceType(cr.Spec.PrometheusConfigurer.ServiceSpec.Type),
-			Selector:        labels,
+			Selector:        selectorLabels,
 			Ports:           servicePorts,
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
@@ -1254,9 +1532,14 @@ func (r *PmnsystemReconciler) orc8rPrometheusConfigurerService(cr *v1.Pmnsystem)
 }
 func (r *PmnsystemReconciler) orc8rPrometheusKafkaAdapterService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-prometheus-kafka-adapter",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io / instance": "orc8r",
+		"app.kubernetes.io / name":     "prometheus-kafka-adapter",
+		"app.kubernetes.io / version":  "1.0",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/instance": "orc8r",
+		"app.kubernetes.io/name":     "prometheus-kafka-adapter",
 	}
 
 	var servicePorts []corev1.ServicePort
@@ -1285,7 +1568,7 @@ func (r *PmnsystemReconciler) orc8rPrometheusKafkaAdapterService(cr *v1.Pmnsyste
 		},
 		Spec: corev1.ServiceSpec{
 			Type:            corev1.ServiceType(cr.Spec.PrometheusKafkaAdapter.ServiceSpecPrometheusKafkaAdapter.Type),
-			Selector:        labels,
+			Selector:        selectorLabels,
 			Ports:           servicePorts,
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
@@ -1293,9 +1576,14 @@ func (r *PmnsystemReconciler) orc8rPrometheusKafkaAdapterService(cr *v1.Pmnsyste
 }
 func (r *PmnsystemReconciler) orc8rPrometheusNginxProxyService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-prometheus-nginx-proxy",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "prometheus-nginx",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
+		"app.kubernetes.io/version":   "1.0",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "prometheus-nginx",
 	}
 
 	var servicePorts []corev1.ServicePort
@@ -1324,7 +1612,7 @@ func (r *PmnsystemReconciler) orc8rPrometheusNginxProxyService(cr *v1.Pmnsystem)
 		},
 		Spec: corev1.ServiceSpec{
 			Type:            corev1.ServiceType(cr.Spec.PrometheusNginxProxy.Nginx.ServiceOrc8rSpec.Type),
-			Selector:        labels,
+			Selector:        selectorLabels,
 			Ports:           servicePorts,
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
@@ -1332,9 +1620,15 @@ func (r *PmnsystemReconciler) orc8rPrometheusNginxProxyService(cr *v1.Pmnsystem)
 }
 func (r *PmnsystemReconciler) orc8rUserGrafanaService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-user-grafana",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "user-grafana",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
+		"app.kubernetes.io/version":   "1.0",
+	}
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "user-grafana",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
 	}
 
 	var servicePorts []corev1.ServicePort
@@ -1362,7 +1656,7 @@ func (r *PmnsystemReconciler) orc8rUserGrafanaService(cr *v1.Pmnsystem) *corev1.
 		},
 		Spec: corev1.ServiceSpec{
 			Type:            corev1.ServiceType(cr.Spec.UserGrafana.ServiceSpec.Type),
-			Selector:        labels,
+			Selector:        selectorLabels,
 			Ports:           servicePorts,
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
@@ -1370,9 +1664,15 @@ func (r *PmnsystemReconciler) orc8rUserGrafanaService(cr *v1.Pmnsystem) *corev1.
 }
 func (r *PmnsystemReconciler) orc8rAlertManagerConfigurerService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-alertmanager-configurer",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "alertmanager-configurer",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
+		"app.kubernetes.io/version":   "1.0",
+	}
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "alertmanager-configurer",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
 	}
 
 	var servicePorts []corev1.ServicePort
@@ -1399,7 +1699,7 @@ func (r *PmnsystemReconciler) orc8rAlertManagerConfigurerService(cr *v1.Pmnsyste
 		},
 		Spec: corev1.ServiceSpec{
 			Type:            corev1.ServiceType(cr.Spec.AlertmanagerConfigurer.ServiceSpec.Type),
-			Selector:        labels,
+			Selector:        selectorLabels,
 			Ports:           servicePorts,
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
@@ -1407,9 +1707,16 @@ func (r *PmnsystemReconciler) orc8rAlertManagerConfigurerService(cr *v1.Pmnsyste
 }
 func (r *PmnsystemReconciler) orc8rAlterManagerService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-alertmanager",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "alertmanager",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
+		"app.kubernetes.io/version":   "1.0",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "alertmanager",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
 	}
 
 	var servicePorts []corev1.ServicePort
@@ -1437,7 +1744,7 @@ func (r *PmnsystemReconciler) orc8rAlterManagerService(cr *v1.Pmnsystem) *corev1
 		},
 		Spec: corev1.ServiceSpec{
 			Type:            corev1.ServiceType(cr.Spec.AlertManager.ServiceSpec.Type),
-			Selector:        labels,
+			Selector:        selectorLabels,
 			Ports:           servicePorts,
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
@@ -1479,10 +1786,16 @@ func (r *PmnsystemReconciler) servicePostgres(cr *v1.Pmnsystem) *corev1.Service 
 }
 func (r *PmnsystemReconciler) orc8rPrometheusService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app":                          "orc8r-prometheus",
-		"app.kubernetes.io/component":  "prometheus",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "prometheus",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
+		"app.kubernetes.io/version":   "1.0",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "prometheus",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
 	}
 
 	return &corev1.Service{
@@ -1500,7 +1813,7 @@ func (r *PmnsystemReconciler) orc8rPrometheusService(cr *v1.Pmnsystem) *corev1.S
 		},
 		Spec: corev1.ServiceSpec{
 			Type:     corev1.ServiceTypeClusterIP,
-			Selector: labels,
+			Selector: selectorLabels,
 			Ports: []corev1.ServicePort{
 				{
 					Name:       "prometheus",

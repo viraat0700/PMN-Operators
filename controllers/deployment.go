@@ -24,22 +24,20 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	// "k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/intstr"
-	// ctrl "sigs.k8s.io/controller-runtime"
 )
 
-func defLabels() map[string]string {
-	return map[string]string{
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
-	}
-}
+// func defLabels() map[string]string {
+// 	return map[string]string{
+// 		"app.kubernetes.io/instance":   "orc8r",
+// 		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+// 	}
+// }
 
-var defaultLabels = defLabels()
+// var defaultLabels = defLabels()
 
 func (r *PmnsystemReconciler) deployment(
 	strategy *appsv1.DeploymentStrategy,
@@ -71,14 +69,15 @@ func (r *PmnsystemReconciler) deployment(
 	replica *int32,
 	nodeSelector map[string]string,
 	tolerations []corev1.Toleration,
+	matchLabels map[string]string,
 ) *appsv1.Deployment {
-	finalLabels := make(map[string]string)
-	for k, v := range defaultLabels {
-		finalLabels[k] = v
-	}
-	for k, v := range labels {
-		finalLabels[k] = v
-	}
+	// finalLabels := make(map[string]string)
+	// for k, v := range defaultLabels {
+	// 	finalLabels[k] = v
+	// }
+	// for k, v := range labels {
+	// 	finalLabels[k] = v
+	// }
 
 	if securityContext == nil {
 		securityContext = &corev1.SecurityContext{}
@@ -88,19 +87,12 @@ func (r *PmnsystemReconciler) deployment(
 		Add: []corev1.Capability{"NET_ADMIN"},
 	}
 
-	// // Parse tolerations
-	// var tolerations []corev1.Toleration
-	// if err := json.Unmarshal([]byte(toleration), &tolerations); err != nil {
-	// 	r.Log.Error(err, "Failed to parse tolerations")
-	// 	return nil
-	// }
-
 	return &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:        name,
-			Namespace:   cr.Spec.NameSpace,
-			Labels:      finalLabels,
-			Annotations: finalLabels,
+			Name:      name,
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			// Annotations: labels,
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
 					Group:   v1.GroupVersion.Group,
@@ -112,13 +104,13 @@ func (r *PmnsystemReconciler) deployment(
 		Spec: appsv1.DeploymentSpec{
 			Replicas: replica,
 			Selector: &metav1.LabelSelector{
-				MatchLabels: finalLabels,
+				MatchLabels: matchLabels,
 			},
 			Strategy: *strategy,
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
-					Labels:      finalLabels,
-					Annotations: finalLabels,
+					Labels: matchLabels,
+					// Annotations: labels,
 				},
 				Spec: corev1.PodSpec{
 					Tolerations:  tolerations,
@@ -160,7 +152,10 @@ func (r *PmnsystemReconciler) orc8rAccessD(cr *v1.Pmnsystem) *appsv1.Deployment 
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-accessd",
+		"app.kubernetes.io/component": "accessd",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -280,6 +275,12 @@ func (r *PmnsystemReconciler) orc8rAccessD(cr *v1.Pmnsystem) *appsv1.Deployment 
 
 	tolerations := []corev1.Toleration{}
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "accessd",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -310,14 +311,19 @@ func (r *PmnsystemReconciler) orc8rAccessD(cr *v1.Pmnsystem) *appsv1.Deployment 
 		&replicas,                     // Replica
 		nil,                           // Node selector
 		tolerations,                   // Tolerations
+		matchLabels,                   // Match labels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8rAnalyticsDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-analytics",
+		"app.kubernetes.io/component": "analytics",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -443,6 +449,12 @@ func (r *PmnsystemReconciler) orc8rAnalyticsDeployment(cr *v1.Pmnsystem) *appsv1
 
 	tolerations := []corev1.Toleration{}
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "analytics",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -473,6 +485,7 @@ func (r *PmnsystemReconciler) orc8rAnalyticsDeployment(cr *v1.Pmnsystem) *appsv1
 		&replicas,                     // Replicas
 		nil,                           // Node selector
 		tolerations,                   // Tolerations
+		matchLabels,                   // Match labels
 	)
 }
 
@@ -481,7 +494,10 @@ func (r *PmnsystemReconciler) orc8rBootStrapperDeployment(cr *v1.Pmnsystem) *app
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-bootstrapper",
+		"app.kubernetes.io / component": "bootstrapper",
+		"app.kubernetes.io / instance":  "orc8r",
+		"app.kubernetes.io / name":      "orc8r",
+		"app.kubernetes.io/part - of":   "orc8r - app",
 	}
 
 	// Define volumes in a separate variable
@@ -608,6 +624,12 @@ func (r *PmnsystemReconciler) orc8rBootStrapperDeployment(cr *v1.Pmnsystem) *app
 
 	tolerations := []corev1.Toleration{}
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "bootstrapper",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -638,14 +660,19 @@ func (r *PmnsystemReconciler) orc8rBootStrapperDeployment(cr *v1.Pmnsystem) *app
 		&replicas,                     // Replicas
 		nil,                           // Node selector
 		tolerations,                   // Tolerations
+		matchLabels,                   // Match labels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8rCertifierDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-certifier",
+		"app.kubernetes.io/component": "certifier",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -777,6 +804,12 @@ func (r *PmnsystemReconciler) orc8rCertifierDeployment(cr *v1.Pmnsystem) *appsv1
 
 	tolerations := []corev1.Toleration{}
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "certifier",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -807,14 +840,19 @@ func (r *PmnsystemReconciler) orc8rCertifierDeployment(cr *v1.Pmnsystem) *appsv1
 		&replicas,                     // Replica
 		nil,                           // NodeSelector
 		tolerations,                   // Tolerations
+		matchLabels,                   // MatchLabels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8rConfiguratorDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-configurator",
+		"app.kubernetes.io/component": "configurator",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -941,6 +979,12 @@ func (r *PmnsystemReconciler) orc8rConfiguratorDeployment(cr *v1.Pmnsystem) *app
 
 	tolerations := []corev1.Toleration{}
 
+	matchlabels := map[string]string{
+		"app.kubernetes.io/component": "configurator",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -971,14 +1015,19 @@ func (r *PmnsystemReconciler) orc8rConfiguratorDeployment(cr *v1.Pmnsystem) *app
 		replicas,                      // Replicas
 		nil,                           // Node selector
 		tolerations,                   // Tolerations
+		matchlabels,                   // Match labels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8rDeviceDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-device",
+		"app.kubernetes.io/component": "device",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -1104,6 +1153,12 @@ func (r *PmnsystemReconciler) orc8rDeviceDeployment(cr *v1.Pmnsystem) *appsv1.De
 
 	tolerations := []corev1.Toleration{}
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "device",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -1134,14 +1189,19 @@ func (r *PmnsystemReconciler) orc8rDeviceDeployment(cr *v1.Pmnsystem) *appsv1.De
 		&replicas,                     // Replicas
 		nil,                           // Node selector
 		tolerations,                   // Tolerations
+		matchLabels,                   // Match labels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8rDirectorydDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-directoryd",
+		"app.kubernetes.io/component": "directoryd",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -1267,6 +1327,12 @@ func (r *PmnsystemReconciler) orc8rDirectorydDeployment(cr *v1.Pmnsystem) *appsv
 
 	tolerations := []corev1.Toleration{}
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "directoryd",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -1297,14 +1363,19 @@ func (r *PmnsystemReconciler) orc8rDirectorydDeployment(cr *v1.Pmnsystem) *appsv
 		&replicas,                     // Replica
 		nil,                           // NodeSelector
 		tolerations,                   // Tolerations
+		matchLabels,                   // Match labels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8rDispatcherDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-dispatcher",
+		"app.kubernetes.io/component": "dispatcher",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -1431,6 +1502,12 @@ func (r *PmnsystemReconciler) orc8rDispatcherDeployment(cr *v1.Pmnsystem) *appsv
 
 	tolerations := []corev1.Toleration{}
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "dispatcher",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -1461,14 +1538,19 @@ func (r *PmnsystemReconciler) orc8rDispatcherDeployment(cr *v1.Pmnsystem) *appsv
 		&replicas,                     // Replicas
 		nil,                           // NodeSelector
 		tolerations,                   // Tolerations
+		matchLabels,                   // Match labels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8rEventdDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-eventd",
+		"app.kubernetes.io / component": "eventd",
+		"app.kubernetes.io / instance":  "orc8r",
+		"app.kubernetes.io / name":      "orc8r",
+		"app.kubernetes.io/part - of":   "orc8r - app",
 	}
 
 	// Define volumes in a separate variable
@@ -1596,6 +1678,12 @@ func (r *PmnsystemReconciler) orc8rEventdDeployment(cr *v1.Pmnsystem) *appsv1.De
 
 	tolerations := []corev1.Toleration{}
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "eventd",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -1626,14 +1714,19 @@ func (r *PmnsystemReconciler) orc8rEventdDeployment(cr *v1.Pmnsystem) *appsv1.De
 		&replicas,                     // Replicas
 		nil,                           // Node selector
 		tolerations,                   // Tolerations
+		matchLabels,                   // Match labels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8rmetricsdDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-metricsd",
+		"app.kubernetes.io/component": "metricsd",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -1761,6 +1854,12 @@ func (r *PmnsystemReconciler) orc8rmetricsdDeployment(cr *v1.Pmnsystem) *appsv1.
 
 	tolerations := []corev1.Toleration{}
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "metricsd",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -1791,17 +1890,21 @@ func (r *PmnsystemReconciler) orc8rmetricsdDeployment(cr *v1.Pmnsystem) *appsv1.
 		&replicas,                     // Replicas
 		nil,                           // Node selector
 		tolerations,                   // Tolerations
+		matchLabels,                   // Match labels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8rNginxDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-nginx",
+		"app.kubernetes.io/component": "nginx-proxy",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r",
 	}
 
-	// Define volumes in a separate variable
 	volumes := []corev1.Volume{
 		{
 			Name: "certs",
@@ -1823,26 +1926,21 @@ func (r *PmnsystemReconciler) orc8rNginxDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 		},
 	}
 
-	// Define volumeMounts in a separate variable
 	volumeMounts := []corev1.VolumeMount{
 		{Name: "certs", MountPath: cr.Spec.Orc8rNginxDeployment.VolumesMountPathOrc8rNginx.MountPath[0], ReadOnly: true},
 		{Name: "envdir", MountPath: cr.Spec.Orc8rNginxDeployment.VolumesMountPathOrc8rNginx.MountPath[1], ReadOnly: true},
 	}
 
-	// Define the securityContext for the container
 	securityContext := &corev1.SecurityContext{
 		Privileged: func(b bool) *bool { return &b }(true),
 	}
 
-	// Define imagePullSecrets
 	imagePullSecrets := []corev1.LocalObjectReference{
 		{Name: cr.Spec.ImagePullSecrets},
 	}
 
-	// Define environment variables if needed
 	envVars := r.getEnvVarsForOrc8rNginx(cr)
 
-	// Define ports (use nil if not needed)
 	ports := []corev1.ContainerPort{
 		{Name: "clientcert", ContainerPort: cr.Spec.Orc8rNginxDeployment.PortOrc8rNginx.Port[0], Protocol: corev1.ProtocolTCP},
 		{Name: "open", ContainerPort: cr.Spec.Orc8rNginxDeployment.PortOrc8rNginx.Port[1], Protocol: corev1.ProtocolTCP},
@@ -1850,7 +1948,6 @@ func (r *PmnsystemReconciler) orc8rNginxDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 		{Name: "health", ContainerPort: cr.Spec.Orc8rNginxDeployment.PortOrc8rNginx.Port[3], Protocol: corev1.ProtocolTCP},
 	}
 
-	// Liveness and Readiness Probes
 	livenessProbe := &corev1.Probe{
 		FailureThreshold:    3,
 		SuccessThreshold:    1,
@@ -1877,12 +1974,7 @@ func (r *PmnsystemReconciler) orc8rNginxDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 		},
 	}
 
-	// Command for the container
-	command := []string{}
-
-	args := []string{}
-
-	strategy := &appsv1.DeploymentStrategy{
+	strategy := appsv1.DeploymentStrategy{
 		RollingUpdate: &appsv1.RollingUpdateDeployment{
 			MaxSurge:       &intstr.IntOrString{Type: intstr.String, StrVal: "25%"},
 			MaxUnavailable: &intstr.IntOrString{Type: intstr.String, StrVal: "25%"},
@@ -1894,64 +1986,80 @@ func (r *PmnsystemReconciler) orc8rNginxDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 	resources := corev1.ResourceRequirements{}
 
 	terminationMessagePath := "/dev/termination-log"
-
 	terminationMessagePolicy := corev1.TerminationMessagePolicy("File")
 
 	image := cr.Spec.Orc8rNginxDeployment.ImageOrc8rNginx.Repository + ":" + cr.Spec.Orc8rNginxDeployment.ImageOrc8rNginx.Tag
 
-	replicas := &cr.Spec.Orc8rNginxDeployment.Replicas
+	replicas := cr.Spec.Orc8rNginxDeployment.Replicas
 
 	tolerations := cr.Spec.Orc8rNginxDeployment.Tolerations
-
 	nodeSelector := cr.Spec.Orc8rNginxDeployment.NodeSelector
 	if nodeSelector == nil {
-		nodeSelector = map[string]string{} // Default to an empty map
+		nodeSelector = map[string]string{}
 	}
 
-	// Fetch and validate ImagePullPolicy
-	imagePullPolicy := corev1.PullIfNotPresent // Default value
-	switch cr.Spec.Orc8rNginxDeployment.ImageOrc8rNginx.ImagePullPolicy {
-	case "Always":
-		imagePullPolicy = corev1.PullAlways
-	case "Never":
-		imagePullPolicy = corev1.PullNever
-	case "IfNotPresent":
-		imagePullPolicy = corev1.PullIfNotPresent
-	default:
-		r.Log.Info("Invalid imagePullPolicy in CR, defaulting to IfNotPresent", "imagePullPolicy", cr.Spec.Orc8rNginxDeployment.ImageOrc8rNginx.ImagePullPolicy)
+	imagePullPolicy := corev1.PullPolicy(cr.Spec.Orc8rNginxDeployment.ImageOrc8rNginx.ImagePullPolicy)
+
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "nginx-proxy",
 	}
 
-	return r.deployment(
-		strategy, // Deployment strategy
-		cr,
-		"orc8r-nginx",
-		labels,                        // Labels
-		command,                       // Command
-		args,                          // args (nil if not needed)
-		volumeMounts,                  // Volume mounts
-		volumes,                       // Volumes
-		ports,                         // Ports (empty if not needed)
-		nil,                           // Init containers
-		nil,                           // DNS config
-		nil,                           // Annotations
-		envVars,                       // Environment variables
-		livenessProbe,                 // Liveness probe
-		readinessProbe,                // Readiness probe
-		securityContext,               // Security context
-		corev1.DNSClusterFirst,        // DNS policy
-		corev1.RestartPolicyAlways,    // Restart policy
-		imagePullSecrets,              // Image pull secrets
-		terminationGracePeriodSeconds, // terminationGracePeriodSeconds
-		imagePullPolicy,               // Image pull policy
-		resources,                     // Resources
-		terminationMessagePath,        // Termination message path
-		terminationMessagePolicy,      // Termination message policy
-		image,                         // Image
-		nil,                           // Affinity
-		replicas,                      // Replicas
-		nodeSelector,                  // Node selector
-		tolerations,                   // Tolerations
-	)
+	labelsInTemplate := map[string]string{
+		"app.kubernetes.io/component": "nginx-proxy",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
+	return &appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "orc8r-nginx",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: appsv1.DeploymentSpec{
+			Replicas: &replicas,
+			Selector: &metav1.LabelSelector{
+				MatchLabels: matchLabels,
+			},
+			Strategy: strategy,
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: labelsInTemplate,
+				},
+				Spec: corev1.PodSpec{
+					NodeSelector: nodeSelector,
+					Tolerations:  tolerations,
+					Containers: []corev1.Container{
+						{
+							Name:                     "orc8r-nginx",
+							Image:                    image,
+							Ports:                    ports,
+							VolumeMounts:             volumeMounts,
+							Env:                      envVars,
+							SecurityContext:          securityContext,
+							LivenessProbe:            livenessProbe,
+							ReadinessProbe:           readinessProbe,
+							Resources:                resources,
+							TerminationMessagePath:   terminationMessagePath,
+							TerminationMessagePolicy: terminationMessagePolicy,
+							ImagePullPolicy:          imagePullPolicy,
+						},
+					},
+					ImagePullSecrets:              imagePullSecrets,
+					RestartPolicy:                 corev1.RestartPolicyAlways,
+					TerminationGracePeriodSeconds: terminationGracePeriodSeconds,
+					Volumes:                       volumes,
+				},
+			},
+		},
+	}
 }
 
 func (r *PmnsystemReconciler) orc8rNotifierDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
@@ -1959,7 +2067,10 @@ func (r *PmnsystemReconciler) orc8rNotifierDeployment(cr *v1.Pmnsystem) *appsv1.
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-notifier",
+		"app.kubernetes.io/component": "notifier",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -2087,6 +2198,12 @@ func (r *PmnsystemReconciler) orc8rNotifierDeployment(cr *v1.Pmnsystem) *appsv1.
 
 	tolerations := []corev1.Toleration{}
 
+	matchlabels := map[string]string{
+		"app.kubernetes.io/component": "notifier",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -2117,14 +2234,19 @@ func (r *PmnsystemReconciler) orc8rNotifierDeployment(cr *v1.Pmnsystem) *appsv1.
 		&replicas,                     // Replicas
 		nil,                           // Node selector
 		tolerations,                   // Tolerations
+		matchlabels,                   // Match labels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8rObsidianDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-obsidian",
+		"app.kubernetes.io/component": "obsidian",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -2245,6 +2367,12 @@ func (r *PmnsystemReconciler) orc8rObsidianDeployment(cr *v1.Pmnsystem) *appsv1.
 
 	tolerations := []corev1.Toleration{}
 
+	matchlabels := map[string]string{
+		"app.kubernetes.io/component": "obsidian",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -2275,14 +2403,19 @@ func (r *PmnsystemReconciler) orc8rObsidianDeployment(cr *v1.Pmnsystem) *appsv1.
 		replicas,                      // replicas
 		nil,                           // nodeSelector
 		tolerations,                   // toleration
+		matchlabels,                   // match labels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8WorkerDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-orc8r-worker",
+		"app.kubernetes.io/component": "orc8r-worker",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -2402,6 +2535,12 @@ func (r *PmnsystemReconciler) orc8WorkerDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 
 	tolerations := []corev1.Toleration{}
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "orc8r-worker",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -2432,14 +2571,19 @@ func (r *PmnsystemReconciler) orc8WorkerDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 		replicas,                      // replicas
 		nil,                           // nodeSelector
 		tolerations,                   // toleration
+		matchLabels,                   // matchLabels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8orchestratorDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-orchestrator",
+		"app.kubernetes.io/component": "orchestrator",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -2561,6 +2705,12 @@ func (r *PmnsystemReconciler) orc8orchestratorDeployment(cr *v1.Pmnsystem) *apps
 
 	tolerations := []corev1.Toleration{}
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "orchestrator",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -2591,14 +2741,19 @@ func (r *PmnsystemReconciler) orc8orchestratorDeployment(cr *v1.Pmnsystem) *apps
 		replicas,                      // replicas
 		nil,                           // nodeSelector
 		tolerations,                   // toleration
+		matchLabels,                   // matchLabels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8ServiceRegistryDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-service-registry",
+		"app.kubernetes.io/component": "service_registry",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -2656,7 +2811,7 @@ func (r *PmnsystemReconciler) orc8ServiceRegistryDeployment(cr *v1.Pmnsystem) *a
 	ports := []corev1.ContainerPort{
 		{Name: "grpc", ContainerPort: 9180, Protocol: corev1.ProtocolTCP},
 		{Name: "grpc-internal", ContainerPort: 9190, Protocol: corev1.ProtocolTCP},
-	} 
+	}
 
 	// Liveness and Readiness Probes
 	livenessProbe := &corev1.Probe{
@@ -2717,6 +2872,13 @@ func (r *PmnsystemReconciler) orc8ServiceRegistryDeployment(cr *v1.Pmnsystem) *a
 	replicas := &cr.Spec.ReplicaCount
 
 	tolerations := []corev1.Toleration{}
+
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "service_registry",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -2747,14 +2909,19 @@ func (r *PmnsystemReconciler) orc8ServiceRegistryDeployment(cr *v1.Pmnsystem) *a
 		replicas,                      // replicas
 		nil,                           // nodeSelector
 		tolerations,                   // toleration
+		matchLabels,                   // matchLabels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8StateDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-state",
+		"app.kubernetes.io/component": "state",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -2874,6 +3041,12 @@ func (r *PmnsystemReconciler) orc8StateDeployment(cr *v1.Pmnsystem) *appsv1.Depl
 
 	tolerations := []corev1.Toleration{}
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "state",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -2904,15 +3077,20 @@ func (r *PmnsystemReconciler) orc8StateDeployment(cr *v1.Pmnsystem) *appsv1.Depl
 		replicas,                      // replicas
 		nil,                           // nodeSelector
 		tolerations,                   // toleration
+		matchLabels,                   // matchLabels
 
 	)
 }
+
 func (r *PmnsystemReconciler) orc8StreamerDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-streamer",
+		"app.kubernetes.io/component": "streamer",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -3032,6 +3210,12 @@ func (r *PmnsystemReconciler) orc8StreamerDeployment(cr *v1.Pmnsystem) *appsv1.D
 
 	tolerations := []corev1.Toleration{}
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "streamer",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -3062,14 +3246,19 @@ func (r *PmnsystemReconciler) orc8StreamerDeployment(cr *v1.Pmnsystem) *appsv1.D
 		replicas,                      // replicas
 		nil,                           // nodeSelector
 		tolerations,                   // toleration
+		matchLabels,                   // matchLabels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8TenantsDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-tenants",
+		"app.kubernetes.io/component": "tenants",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -3191,6 +3380,12 @@ func (r *PmnsystemReconciler) orc8TenantsDeployment(cr *v1.Pmnsystem) *appsv1.De
 
 	tolerations := []corev1.Toleration{}
 
+	matchlabels := map[string]string{
+		"app.kubernetes.io/component": "tenants",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -3221,14 +3416,19 @@ func (r *PmnsystemReconciler) orc8TenantsDeployment(cr *v1.Pmnsystem) *appsv1.De
 		replicas,                      // replicas
 		nil,                           // nodeSelector
 		tolerations,                   // toleration
+		matchlabels,                   // matchLabels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8rHaDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-ha",
+		"app.kubernetes.io/component": "ha",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -3353,6 +3553,12 @@ func (r *PmnsystemReconciler) orc8rHaDeployment(cr *v1.Pmnsystem) *appsv1.Deploy
 
 	tolerations := []corev1.Toleration{}
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "ha",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -3383,6 +3589,7 @@ func (r *PmnsystemReconciler) orc8rHaDeployment(cr *v1.Pmnsystem) *appsv1.Deploy
 		replicas,                      // replicas
 		nil,                           // nodeSelector
 		tolerations,                   // toleration
+		matchLabels,                   // matchLabels
 	)
 }
 
@@ -3391,7 +3598,10 @@ func (r *PmnsystemReconciler) orc8LteDeployment(cr *v1.Pmnsystem) *appsv1.Deploy
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-lte",
+		"app.kubernetes.io/component": "lte",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -3513,6 +3723,12 @@ func (r *PmnsystemReconciler) orc8LteDeployment(cr *v1.Pmnsystem) *appsv1.Deploy
 
 	tolerations := []corev1.Toleration{}
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "lte",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -3543,14 +3759,19 @@ func (r *PmnsystemReconciler) orc8LteDeployment(cr *v1.Pmnsystem) *appsv1.Deploy
 		replicas,                      // replicas
 		nil,                           // nodeSelector
 		tolerations,                   // toleration
+		matchLabels,                   // matchLabels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8NprobeDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-nprobe",
+		"app.kubernetes.io/component": "nprobe",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -3672,6 +3893,12 @@ func (r *PmnsystemReconciler) orc8NprobeDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 
 	tolerations := []corev1.Toleration{}
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "nprobe",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -3702,6 +3929,7 @@ func (r *PmnsystemReconciler) orc8NprobeDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 		replicas,                      // replicas
 		nil,                           // nodeSelector
 		tolerations,                   // toleration
+		matchLabels,                   // matchLabels
 	)
 }
 
@@ -3710,7 +3938,10 @@ func (r *PmnsystemReconciler) orc8PolicyDbDeployment(cr *v1.Pmnsystem) *appsv1.D
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-policydb",
+		"app.kubernetes.io/component": "policydb",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -3832,6 +4063,12 @@ func (r *PmnsystemReconciler) orc8PolicyDbDeployment(cr *v1.Pmnsystem) *appsv1.D
 
 	tolerations := []corev1.Toleration{}
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "policydb",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -3862,14 +4099,19 @@ func (r *PmnsystemReconciler) orc8PolicyDbDeployment(cr *v1.Pmnsystem) *appsv1.D
 		replicas,                      // replicas
 		nil,                           // nodSelector
 		tolerations,                   // toleration
+		matchLabels,                   // matchLabels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8SmsdDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-smsd",
+		"app.kubernetes.io/component": "smsd",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -3990,6 +4232,13 @@ func (r *PmnsystemReconciler) orc8SmsdDeployment(cr *v1.Pmnsystem) *appsv1.Deplo
 	replicas := &cr.Spec.ReplicaCount
 
 	tolerations := []corev1.Toleration{}
+
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "smsd",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -4020,14 +4269,19 @@ func (r *PmnsystemReconciler) orc8SmsdDeployment(cr *v1.Pmnsystem) *appsv1.Deplo
 		replicas,                      // replicas
 		nil,                           // nodeSelector
 		tolerations,                   // toleration
+		matchLabels,                   // matchLabels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8SubscriberDbCacheDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-subscriberdb-cache",
+		"app.kubernetes.io/component": "subscriberdb-cache",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -4147,6 +4401,13 @@ func (r *PmnsystemReconciler) orc8SubscriberDbCacheDeployment(cr *v1.Pmnsystem) 
 	replicas := &cr.Spec.ReplicaCount
 
 	tolerations := []corev1.Toleration{}
+
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "subscriberdb-cache",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -4177,14 +4438,19 @@ func (r *PmnsystemReconciler) orc8SubscriberDbCacheDeployment(cr *v1.Pmnsystem) 
 		replicas,                      // replicas
 		nil,                           // nodeSelector
 		tolerations,                   // toleration
+		matchLabels,                   // matchLabels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8SubscriberDbDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-subscriberdb",
+		"app.kubernetes.io/component": "subscriberdb",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+		"app.kubernetes.io/part-of":   "orc8r-app",
 	}
 
 	// Define volumes in a separate variable
@@ -4306,6 +4572,12 @@ func (r *PmnsystemReconciler) orc8SubscriberDbDeployment(cr *v1.Pmnsystem) *apps
 
 	tolerations := []corev1.Toleration{}
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "subscriberdb",
+		"app.kubernetes.io/instance":  "lte-pmn",
+		"app.kubernetes.io/name":      "lte-orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -4336,14 +4608,20 @@ func (r *PmnsystemReconciler) orc8SubscriberDbDeployment(cr *v1.Pmnsystem) *apps
 		replicas,                      // Replicas
 		nil,                           // NodeSelector
 		tolerations,                   // Tolerations
+		matchLabels,                   // Match labels
 	)
 }
+
 func (r *PmnsystemReconciler) nmsMagmaLteDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "nms-magmalte",
+		"app.kubernetes.io/component": "magmalte",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "nms",
+		"app.kubernetes.io/part-of":   "magma",
+		"release_group":               "orc8r",
 	}
 
 	// Define volumes in a separate variable
@@ -4465,6 +4743,13 @@ func (r *PmnsystemReconciler) nmsMagmaLteDeployment(cr *v1.Pmnsystem) *appsv1.De
 		r.Log.Info("Invalid imagePullPolicy in CR, defaulting to IfNotPresent", "imagePullPolicy", cr.Spec.NmsMagmaLte.ImageMagmaLte.ImagePullPolicy)
 	}
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "magmalte",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "nms",
+		"release_group":               "orc8r",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -4495,14 +4780,19 @@ func (r *PmnsystemReconciler) nmsMagmaLteDeployment(cr *v1.Pmnsystem) *appsv1.De
 		replicas,                      // replicas
 		nodeSelector,                  // nodeSelector
 		tolerations,                   // toleration
+		matchLabels,                   // match Labels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8PrometheusCacheDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	// int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-prometheus-cache",
+		"app.kubernetes.io/component": "prometheus-cache",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
+		"app.kubernetes.io/version":   "1.0",
 	}
 
 	// Define the securityContext for the container
@@ -4593,6 +4883,12 @@ func (r *PmnsystemReconciler) orc8PrometheusCacheDeployment(cr *v1.Pmnsystem) *a
 
 	tolerations := cr.Spec.PrometheusCache.Tolerations
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "prometheus-cache",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -4623,14 +4919,19 @@ func (r *PmnsystemReconciler) orc8PrometheusCacheDeployment(cr *v1.Pmnsystem) *a
 		replicas,                      // Replica
 		nodeSelector,                  // NodeSelector
 		tolerations,                   // Tolerations
+		matchLabels,                   // match labels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8rPrometheusConfigurerDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	// int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-prometheus-configurer",
+		"app.kubernetes.io/component": "prometheus-configurer",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
+		"app.kubernetes.io/version":   "1.0",
 	}
 
 	// Define volumes in a separate variable
@@ -4756,6 +5057,12 @@ func (r *PmnsystemReconciler) orc8rPrometheusConfigurerDeployment(cr *v1.Pmnsyst
 
 	tolerations := cr.Spec.PrometheusConfigurer.Tolerations
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "prometheus-configurer",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -4786,14 +5093,18 @@ func (r *PmnsystemReconciler) orc8rPrometheusConfigurerDeployment(cr *v1.Pmnsyst
 		replicas,                      // replicas
 		nodeSelector,                  // nodeSelector
 		tolerations,                   // toleration
+		matchLabels,                   // match Labels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8rPrometheusKafkaAdapterDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-prometheus-kafka-adapter",
+		"app.kubernetes.io / instance": "orc8r",
+		"app.kubernetes.io / name":     "prometheus-kafka-adapter",
+		"app.kubernetes.io / version":  "1.0",
 	}
 
 	// Define volumes in a separate variable
@@ -4901,6 +5212,11 @@ func (r *PmnsystemReconciler) orc8rPrometheusKafkaAdapterDeployment(cr *v1.Pmnsy
 
 	tolerations := cr.Spec.PrometheusKafkaAdapter.Tolerations
 
+	matchLabels := map[string]string{
+		"app.kubernetes.io/instance": "orc8r",
+		"app.kubernetes.io/name":     "prometheus-kafka-adapter",
+	}
+
 	return r.deployment(
 		strategy, // Deployment strategy
 		cr,
@@ -4931,6 +5247,7 @@ func (r *PmnsystemReconciler) orc8rPrometheusKafkaAdapterDeployment(cr *v1.Pmnsy
 		replicas,                      // Replica
 		nodeSelector,                  // Node selector
 		tolerations,                   // Tolerations
+		matchLabels,                   // matchLabels
 	)
 }
 
@@ -4939,7 +5256,14 @@ func (r *PmnsystemReconciler) orc8rPrometheusNginxProxyDeployment(cr *v1.Pmnsyst
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-prometheus-nginx-proxy",
+		"app.kubernetes.io/component": "prometheus-nginx",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
+		"app.kubernetes.io/version":   "1.0",
+	}
+
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "prometheus-nginx",
 	}
 
 	// Define volumes in a separate variable
@@ -5079,14 +5403,25 @@ func (r *PmnsystemReconciler) orc8rPrometheusNginxProxyDeployment(cr *v1.Pmnsyst
 		replicas,                       // replicas
 		nil,                            // Nodeselector
 		tolerations,                    // toleration
+		matchLabels,                    // match labels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8rUserGrafanaDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-user-grafana",
+		"app.kubernetes.io/component": "user-grafana",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
+		"app.kubernetes.io/version":   "1.0",
+	}
+
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "user-grafana",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
 	}
 
 	claimNameGrafanaDataSource := cr.Spec.UserGrafana.VolumesUserGrafana[0].Name
@@ -5322,13 +5657,23 @@ func (r *PmnsystemReconciler) orc8rUserGrafanaDeployment(cr *v1.Pmnsystem) *apps
 		replicas,                      // replicas
 		nodeSelector,                  // nodeSelector
 		tolerations,                   // tolerations
+		matchLabels,                   // matchlabels
 	)
 }
+
 func (r *PmnsystemReconciler) orc8AlertManagerConfigurerDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-alertmanager-configurer",
+		"app.kubernetes.io/component": "alertmanager-configurer",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
+		"app.kubernetes.io/version":   "1.0",
+	}
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "alertmanager-configurer",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
 	}
 
 	replica := &cr.Spec.AlertmanagerConfigurer.Replica
@@ -5490,6 +5835,7 @@ func (r *PmnsystemReconciler) orc8AlertManagerConfigurerDeployment(cr *v1.Pmnsys
 		replica,                       // replicas
 		nodeSelector,                  // Node Selector for AlertManagerConfigurer
 		tolerations,                   // tolerations
+		matchLabels,                   // match Labels
 	)
 }
 
@@ -5497,7 +5843,15 @@ func (r *PmnsystemReconciler) orc8AlertManagerDeployment(cr *v1.Pmnsystem) *apps
 	int64Ptr := func(i int64) *int64 { return &i }
 
 	labels := map[string]string{
-		"app": "orc8r-alertmanager",
+		"app.kubernetes.io/component": "alertmanager",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
+		"app.kubernetes.io/version":   "1.0",
+	}
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "alertmanager",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
 	}
 
 	// Define volumes in a separate variable
@@ -5657,6 +6011,7 @@ func (r *PmnsystemReconciler) orc8AlertManagerDeployment(cr *v1.Pmnsystem) *apps
 		replica,                       // replicas
 		nodeSelector,                  // nodeSelector
 		tolerations,                   // toleration
+		matchLabels,                   // match labels
 	)
 }
 
@@ -5668,16 +6023,16 @@ func (r *PmnsystemReconciler) createOrc8rPrometheusStateFullSet(cr *v1.Pmnsystem
 	volumeMode := "Filesystem"
 
 	labels := map[string]string{
-		"app":                          "orc8r-prometheus",
-		"app.kubernetes.io/component":  "prometheus",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+		"app.kubernetes.io/component": "prometheus",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
+		"app.kubernetes.io/version":   "1.0",
 	}
 
-	annotations := map[string]string{
-		"app":                          "orc8r-prometheus",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/managed-by": "Orc8r-Operator",
+	matchLabels := map[string]string{
+		"app.kubernetes.io/component": "prometheus",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "metrics",
 	}
 
 	// Define VolumeClaimTemplates correctly
@@ -5838,21 +6193,19 @@ func (r *PmnsystemReconciler) createOrc8rPrometheusStateFullSet(cr *v1.Pmnsystem
 
 	return &appsv1.StatefulSet{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:        "orc8r-prometheus",
-			Namespace:   cr.Spec.NameSpace,
-			Labels:      labels,
-			Annotations: annotations,
+			Name:      "orc8r-prometheus",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
 		},
 		Spec: appsv1.StatefulSetSpec{
 			Replicas: &cr.Spec.ReplicaCount,
 			Selector: &metav1.LabelSelector{
-				MatchLabels: labels,
+				MatchLabels: matchLabels,
 			},
 			ServiceName: "orc8r-prometheus",
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
-					Labels:      labels,
-					Annotations: annotations,
+					Labels: matchLabels,
 				},
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{
