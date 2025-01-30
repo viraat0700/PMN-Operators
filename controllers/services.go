@@ -209,10 +209,19 @@ func (r *PmnsystemReconciler) orc8rCertifierService(cr *v1.Pmnsystem) *corev1.Se
 }
 func (r *PmnsystemReconciler) orc8rConfiguratorService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app.kubernetes.io/component": "orc8r",
-		"app.kubernetes.io/instance":  "orc8r",
-		"app.kubernetes.io/name":      "orc8r",
-		"app.kubernetes.io/part-of":   "orc8r-app",
+		"app.kubernetes.io/component":  "orc8r",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Helm",
+		"app.kubernetes.io/name":       "orc8r",
+		"app.kubernetes.io/part-of":    "orc8r-app",
+		"helm.sh/chart":                "orc8r-1.8.0",
+	}
+
+	annotations := map[string]string{
+		"chart-version":                  "1.8.0",
+		"meta.helm.sh/release-name":      "orc8r",
+		"meta.helm.sh/release-namespace": "pmn",
+		"release-name":                   "orc8r",
 	}
 
 	selectorLabels := map[string]string{
@@ -223,9 +232,10 @@ func (r *PmnsystemReconciler) orc8rConfiguratorService(cr *v1.Pmnsystem) *corev1
 
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "orc8r-configurator",
-			Namespace: cr.Spec.NameSpace,
-			Labels:    labels,
+			Name:        "orc8r-configurator",
+			Namespace:   cr.Spec.NameSpace,
+			Labels:      labels,
+			Annotations: annotations,
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
 					Group:   v1.GroupVersion.Group,
@@ -579,7 +589,7 @@ func (r *PmnsystemReconciler) orc8rNginxProxyService(cr *v1.Pmnsystem) *corev1.S
 }
 func (r *PmnsystemReconciler) orc8rNotifierService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app.kubernetes.io/component":  "notifier",
+		"app.kubernetes.io/component": "notifier",
 	}
 
 	selectorLabels := map[string]string{

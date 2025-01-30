@@ -844,15 +844,200 @@ func (r *PmnsystemReconciler) orc8rCertifierDeployment(cr *v1.Pmnsystem) *appsv1
 	)
 }
 
+// func (r *PmnsystemReconciler) orc8rConfiguratorDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
+// 	int64Ptr := func(i int64) *int64 { return &i }
+// 	int32Ptr := func(i int32) *int32 { return &i }
+
+// 	labels := map[string]string{
+// 		"app.kubernetes.io/component": "configurator",
+// 		"app.kubernetes.io/instance":  "orc8r",
+// 		"app.kubernetes.io/name":      "orc8r",
+// 		"app.kubernetes.io/part-of":   "orc8r-app",
+// 	}
+
+// 	// Define volumes in a separate variable
+// 	volumes := []corev1.Volume{
+// 		{
+// 			Name: "certs",
+// 			VolumeSource: corev1.VolumeSource{
+// 				Secret: &corev1.SecretVolumeSource{
+// 					SecretName:  "pmn-certs",
+// 					DefaultMode: int32Ptr(420),
+// 				},
+// 			},
+// 		},
+// 		{
+// 			Name: "envdir",
+// 			VolumeSource: corev1.VolumeSource{
+// 				Secret: &corev1.SecretVolumeSource{
+// 					SecretName:  "pmn-envdir",
+// 					DefaultMode: int32Ptr(420),
+// 				},
+// 			},
+// 		},
+// 		{
+// 			Name: "pmn-configs-orc8r",
+// 			VolumeSource: corev1.VolumeSource{
+// 				Secret: &corev1.SecretVolumeSource{
+// 					SecretName:  "pmn-configs",
+// 					DefaultMode: int32Ptr(420),
+// 				},
+// 			},
+// 		},
+// 	}
+
+// 	// Define volumeMounts in a separate variable
+// 	volumeMounts := []corev1.VolumeMount{
+// 		{Name: "certs", MountPath: "/var/opt/magma/certs", ReadOnly: true},
+// 		{Name: "envdir", MountPath: "/var/opt/magma/envdir", ReadOnly: true},
+// 		{Name: "pmn-configs-orc8r", MountPath: "/var/opt/magma/configs/orc8r", ReadOnly: true},
+// 	}
+
+// 	// Define the securityContext for the container
+// 	securityContext := &corev1.SecurityContext{
+// 		Privileged: func(b bool) *bool { return &b }(true),
+// 	}
+
+// 	// Define imagePullSecrets
+// 	imagePullSecrets := []corev1.LocalObjectReference{
+// 		{Name: cr.Spec.ImagePullSecrets},
+// 	}
+
+// 	// Define environment variables if needed
+// 	envVars := r.getEnvVarsForAccessD(cr)
+
+// 	// Define ports (use nil if not needed)
+// 	ports := []corev1.ContainerPort{
+// 		{Name: "grpc", ContainerPort: 9108, Protocol: corev1.ProtocolTCP},
+// 		{Name: "grpc-internal", ContainerPort: 9208, Protocol: corev1.ProtocolTCP},
+// 		{Name: "moso", ContainerPort: 8088, Protocol: corev1.ProtocolTCP},
+// 	}
+
+// 	// Liveness and Readiness Probes
+// 	livenessProbe := &corev1.Probe{
+// 		FailureThreshold:    3,
+// 		SuccessThreshold:    1,
+// 		TimeoutSeconds:      1,
+// 		InitialDelaySeconds: 10,
+// 		PeriodSeconds:       30,
+// 		ProbeHandler: corev1.ProbeHandler{
+// 			TCPSocket: &corev1.TCPSocketAction{
+// 				Port: intstr.IntOrString{
+// 					Type:   intstr.Int,
+// 					IntVal: 9108,
+// 				},
+// 			},
+// 		},
+// 	}
+
+// 	readinessProbe := &corev1.Probe{
+// 		FailureThreshold:    3,
+// 		SuccessThreshold:    1,
+// 		TimeoutSeconds:      1,
+// 		InitialDelaySeconds: 10,
+// 		PeriodSeconds:       30,
+// 		ProbeHandler: corev1.ProbeHandler{
+// 			TCPSocket: &corev1.TCPSocketAction{
+// 				Port: intstr.IntOrString{
+// 					Type:   intstr.Int,
+// 					IntVal: 9108,
+// 				},
+// 			},
+// 		},
+// 	}
+
+// 	// Command for the container
+// 	command := []string{
+// 		"/usr/bin/envdir",
+// 	}
+
+// 	args := []string{
+// 		"/var/opt/magma/envdir",
+// 		"/var/opt/magma/bin/configurator",
+// 		"-logtostderr=true",
+// 		"-v=0",
+// 	}
+
+// 	strategy := &appsv1.DeploymentStrategy{
+// 		RollingUpdate: &appsv1.RollingUpdateDeployment{
+// 			MaxSurge:       &intstr.IntOrString{Type: intstr.String, StrVal: "25%"},
+// 			MaxUnavailable: &intstr.IntOrString{Type: intstr.String, StrVal: "25%"},
+// 		},
+// 	}
+
+// 	terminationGracePeriodSeconds := int64Ptr(30)
+
+// 	resources := corev1.ResourceRequirements{}
+
+// 	terminationMessagePath := "/dev/termination-log"
+
+// 	terminationMessagePolicy := corev1.TerminationMessagePolicy("File")
+
+// 	image := cr.Spec.Image.Repository + ":" + cr.Spec.Image.Tag
+
+// 	replicas := &cr.Spec.ReplicaCount
+
+// 	tolerations := []corev1.Toleration{}
+
+// 	matchlabels := map[string]string{
+// 		"app.kubernetes.io/component": "configurator",
+// 		"app.kubernetes.io/instance":  "orc8r",
+// 		"app.kubernetes.io/name":      "orc8r",
+// 	}
+
+// 	return r.deployment(
+// 		strategy, // Deployment strategy
+// 		cr,
+// 		"orc8r-configurator",
+// 		labels,                        // Labels
+// 		command,                       // Command
+// 		args,                          // args (nil if not needed)
+// 		volumeMounts,                  // Volume mounts
+// 		volumes,                       // Volumes
+// 		ports,                         // Ports (empty if not needed)
+// 		nil,                           // Init containers
+// 		nil,                           // DNS config
+// 		nil,                           // Annotations
+// 		envVars,                       // Environment variables
+// 		livenessProbe,                 // Liveness probe
+// 		readinessProbe,                // Readiness probe
+// 		securityContext,               // Security context
+// 		corev1.DNSClusterFirst,        // DNS policy
+// 		corev1.RestartPolicyAlways,    // Restart policy
+// 		imagePullSecrets,              // Image pull secrets
+// 		terminationGracePeriodSeconds, // terminationGracePeriodSeconds
+// 		corev1.PullIfNotPresent,       // Image pull policy
+// 		resources,                     // Resources
+// 		terminationMessagePath,        // Termination message path
+// 		terminationMessagePolicy,      // Termination message policy
+// 		image,                         // Image
+// 		nil,                           // Affinity
+// 		replicas,                      // Replicas
+// 		nil,                           // Node selector
+// 		tolerations,                   // Tolerations
+// 		matchlabels,                   // Match labels
+// 	)
+// }
+
 func (r *PmnsystemReconciler) orc8rConfiguratorDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
 	int64Ptr := func(i int64) *int64 { return &i }
 	int32Ptr := func(i int32) *int32 { return &i }
 
 	labels := map[string]string{
-		"app.kubernetes.io/component": "configurator",
-		"app.kubernetes.io/instance":  "orc8r",
-		"app.kubernetes.io/name":      "orc8r",
-		"app.kubernetes.io/part-of":   "orc8r-app",
+		"app.kubernetes.io/component":  "configurator",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Helm",
+		"app.kubernetes.io/name":       "orc8r",
+		"app.kubernetes.io/part-of":    "orc8r-app",
+		"helm.sh/chart":                "orc8r-1.8.0",
+	}
+
+	annotation := map[string]string{
+		"chart-version":                     "1.8.0",
+		"deployment.kubernetes.io/revision": "165",
+		"meta.helm.sh/release-name":         "orc8r",
+		"meta.helm.sh/release-namespace":    "pmn",
+		"release-name":                      "orc8r",
 	}
 
 	// Define volumes in a separate variable
@@ -985,38 +1170,58 @@ func (r *PmnsystemReconciler) orc8rConfiguratorDeployment(cr *v1.Pmnsystem) *app
 		"app.kubernetes.io/name":      "orc8r",
 	}
 
-	return r.deployment(
-		strategy, // Deployment strategy
-		cr,
-		"orc8r-configurator",
-		labels,                        // Labels
-		command,                       // Command
-		args,                          // args (nil if not needed)
-		volumeMounts,                  // Volume mounts
-		volumes,                       // Volumes
-		ports,                         // Ports (empty if not needed)
-		nil,                           // Init containers
-		nil,                           // DNS config
-		nil,                           // Annotations
-		envVars,                       // Environment variables
-		livenessProbe,                 // Liveness probe
-		readinessProbe,                // Readiness probe
-		securityContext,               // Security context
-		corev1.DNSClusterFirst,        // DNS policy
-		corev1.RestartPolicyAlways,    // Restart policy
-		imagePullSecrets,              // Image pull secrets
-		terminationGracePeriodSeconds, // terminationGracePeriodSeconds
-		corev1.PullIfNotPresent,       // Image pull policy
-		resources,                     // Resources
-		terminationMessagePath,        // Termination message path
-		terminationMessagePolicy,      // Termination message policy
-		image,                         // Image
-		nil,                           // Affinity
-		replicas,                      // Replicas
-		nil,                           // Node selector
-		tolerations,                   // Tolerations
-		matchlabels,                   // Match labels
-	)
+	return &appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "orc8r-configurator",
+			Namespace: cr.Spec.NameSpace,
+			Labels:    labels,
+			Annotations: annotation,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: appsv1.DeploymentSpec{
+			Replicas: replicas,
+			Selector: &metav1.LabelSelector{
+				MatchLabels: matchlabels,
+			},
+			Strategy: *strategy,
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: matchlabels,
+				},
+				Spec: corev1.PodSpec{
+					Tolerations: tolerations,
+					Containers: []corev1.Container{
+						{
+							Name:                     "orc8r-configurator",
+							Image:                    image,
+							Command:                  command,
+							Args:                     args,
+							Ports:                    ports,
+							VolumeMounts:             volumeMounts,
+							Env:                      envVars,
+							SecurityContext:          securityContext,
+							LivenessProbe:            livenessProbe,
+							ReadinessProbe:           readinessProbe,
+							Resources:                resources,
+							TerminationMessagePath:   terminationMessagePath,
+							TerminationMessagePolicy: terminationMessagePolicy,
+							ImagePullPolicy:          corev1.PullIfNotPresent,
+						},
+					},
+					ImagePullSecrets:              imagePullSecrets,
+					RestartPolicy:                 corev1.RestartPolicyAlways,
+					TerminationGracePeriodSeconds: terminationGracePeriodSeconds,
+					Volumes:                       volumes,
+				},
+			},
+		},
+	}
 }
 
 func (r *PmnsystemReconciler) orc8rDeviceDeployment(cr *v1.Pmnsystem) *appsv1.Deployment {
