@@ -209,25 +209,25 @@ func (r *PmnsystemReconciler) orc8rCertifierService(cr *v1.Pmnsystem) *corev1.Se
 }
 func (r *PmnsystemReconciler) orc8rConfiguratorService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app.kubernetes.io/component":"orc8r",
-		"app.kubernetes.io/instance":"orc8r",
-		"app.kubernetes.io/managed-by":"Helm",
-		"app.kubernetes.io/name":"orc8r",
-		"app.kubernetes.io/part-of":"orc8r-app",
-		"helm.sh/chart":"orc8r-1.8.0",
+		"app.kubernetes.io/component":  "orc8r",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/managed-by": "Helm",
+		"app.kubernetes.io/name":       "orc8r",
+		"app.kubernetes.io/part-of":    "orc8r-app",
+		"helm.sh/chart":                "orc8r-1.8.0",
 	}
 
 	annotations := map[string]string{
-		"chart-version":"1.8.0",
-		"meta.helm.sh/release-name":"orc8r",
-		"meta.helm.sh/release-namespace":"pmn",
-		"release-name":"orc8r",
+		"chart-version":                  "1.8.0",
+		"meta.helm.sh/release-name":      "orc8r",
+		"meta.helm.sh/release-namespace": "pmn",
+		"release-name":                   "orc8r",
 	}
 
 	selectorLabels := map[string]string{
-		"app.kubernetes.io/component":"configurator",
-		"app.kubernetes.io/instance":"orc8r",
-		"app.kubernetes.io/name":"orc8r",
+		"app.kubernetes.io/component": "configurator",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
 	}
 
 	return &corev1.Service{

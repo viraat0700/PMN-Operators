@@ -169,7 +169,7 @@ spec:
       value: "notifier.crt"
     - name: "NOTIF_SERVER_KEY"
       value: "notifier.key"
-  replicaCount: 1
+  replicaCount: 2
   pullPolicy: IfNotPresent
   nameSpace: "pmn"
   notifierImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/notifier:1.8.0-a914c772"

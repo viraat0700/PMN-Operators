@@ -18,6 +18,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
@@ -48,6 +49,11 @@ type PmnsystemReconciler struct {
 // move the current state of the cluster closer to the desired state.
 func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = r.Log.WithValues("Pmnsystem", req.NamespacedName)
+	fmt.Println("🔹 Reconciler Object (r):", r)         // Printing the Reconciler instance
+	fmt.Println("🔹 Context (ctx):", ctx)               // Printing the Context
+	fmt.Println("🔹 Request Object (request):", req)    // Printing the entire request object
+	fmt.Println("🔹 Request Name:", req.Name)           // Extracting the resource name
+	fmt.Println("🔹 Request Namespace:", req.Namespace) // Extracting the namespace of the resource
 
 	r.Log.Info("Reconciling Pmnsystem")
 

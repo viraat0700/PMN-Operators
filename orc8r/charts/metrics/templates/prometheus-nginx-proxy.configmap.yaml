@@ -1,0 +1,14 @@
+{{- if .Values.prometheus.nginx.create }}
+{{- $envAll := . }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-nginx-proxy
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "metrics.labels" . | indent 4 }}
+data:
+  nginx_prometheus_ssl.conf: |
+{{ tuple "etc/_nginx_proxy_ssl.conf.tpl" . | include "metrics.template" | indent 4 }}
+{{- end }}

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: notifier
+  labels:
+    app.kubernetes.io/component: notifier
+  annotations:
+{{ with .Values.notifier.service.annotations }}{{ toYaml . | indent 4 }}{{ end }}
+spec:
+  selector:
+    app.kubernetes.io/component: notifier
+  type: "{{ .Values.notifier.service.type }}"
+  ports:
+    - name: notifier
+      port: {{ .Values.global.subscriberPort }}
+      targetPort: {{ .Values.global.subscriberPort }}
