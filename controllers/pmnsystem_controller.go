@@ -22,11 +22,13 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
+	networkingv1 "k8s.io/api/networking/v1"
 	policyv1 "k8s.io/api/policy/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	"github.com/go-logr/logr"
 
@@ -220,6 +222,8 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		{"orc8rUserGrafanaService", r.orc8rUserGrafanaService},
 		{"orc8rPrometheusService", r.orc8rPrometheusService},
 		{"orc8rAlertManagerConfigurerService", r.orc8rAlertManagerConfigurerService},
+		{"orc8rBootstrapNginxService", r.orc8rBootstrapNginxService},
+		{"orc8rClientcertService", r.orc8rClientcertService},
 	}
 	// Iterate over service functions
 	for _, service := range serviceFunctions {
@@ -308,6 +312,13 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		r.Log.Info("Job created successfully", "Job.Name", job.Name)
 	}
 
+
+	// Ensure Ingress exists and is recreated if deleted
+    if err := r.ensureIngress(ctx, pmnsystem); err != nil {
+        log.Log.Error(err, "Failed to ensure Ingress")
+        return ctrl.Result{}, err
+    }
+
 	return ctrl.Result{}, nil
 }
 
@@ -322,5 +333,6 @@ func (r *PmnsystemReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Owns(&corev1.ConfigMap{}).
 		Owns(&corev1.Pod{}).
 		Owns(&batchv1.Job{}).
+		Owns(&networkingv1.Ingress{}).
 		Complete(r)
 }

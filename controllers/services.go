@@ -260,12 +260,12 @@ func (r *PmnsystemReconciler) orc8rConfiguratorService(cr *v1.Pmnsystem) *corev1
 					Protocol:   corev1.ProtocolTCP,
 					TargetPort: intstr.FromInt(9208),
 				},
-				{
-					Name:       "moso",
-					Port:       8088,
-					Protocol:   corev1.ProtocolTCP,
-					TargetPort: intstr.FromInt(8088),
-				},
+				// {
+				// 	Name:       "moso",
+				// 	Port:       8088,
+				// 	Protocol:   corev1.ProtocolTCP,
+				// 	TargetPort: intstr.FromInt(8088),
+				// },
 			},
 			SessionAffinity: corev1.ServiceAffinityNone,
 		},
@@ -431,11 +431,16 @@ func (r *PmnsystemReconciler) orc8rEventdService(cr *v1.Pmnsystem) *corev1.Servi
 		"app.kubernetes.io/name":      "orc8r",
 	}
 
+	annotations := map[string]string{
+		"orc8r.io/obsidian_handlers_path_prefixes": "/magma/v1/networks/:network_id/logs, /magma/v1/events",
+	}
+
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "orc8r-eventd",
-			Namespace: cr.Spec.NameSpace,
-			Labels:    labels,
+			Name:        "orc8r-eventd",
+			Namespace:   cr.Spec.NameSpace,
+			Labels:      labels,
+			Annotations: annotations,
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
 					Group:   v1.GroupVersion.Group,
@@ -486,12 +491,16 @@ func (r *PmnsystemReconciler) orc8rmetricsdService(cr *v1.Pmnsystem) *corev1.Ser
 		"app.kubernetes.io/instance":  "orc8r",
 		"app.kubernetes.io/name":      "orc8r",
 	}
+	annotations := map[string]string{
+		"orc8r.io/obsidian_handlers_path_prefixes": "/magma/v1/networks/:network_id/alerts, /magma/v1/networks/:network_id/metrics, /magma/v1/networks/:network_id/prometheus, /magma/v1/tenants/:tenant_id/metrics, /magma/v1/tenants/targets_metadata",
+	}
 
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "orc8r-metricsd",
-			Namespace: cr.Spec.NameSpace,
-			Labels:    labels,
+			Name:        "orc8r-metricsd",
+			Namespace:   cr.Spec.NameSpace,
+			Labels:      labels,
+			Annotations: annotations,
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
 					Group:   v1.GroupVersion.Group,
@@ -787,11 +796,18 @@ func (r *PmnsystemReconciler) orc8rOrchestratorService(cr *v1.Pmnsystem) *corev1
 		"app.kubernetes.io/name":      "orc8r",
 	}
 
+	annotations := map[string]string{
+		"orc8r.io/obsidian_handlers_path_prefixes": "/, /magma/v1/channels, /magma/v1/networks, /magma/v1/networks/:network_id, /magma/v1/about",
+		"orc8r.io/state_indexer_types":             "directory_record",
+		"orc8r.io/state_indexer_version":           "1",
+	}
+
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "orc8r-orchestrator",
-			Namespace: cr.Spec.NameSpace,
-			Labels:    labels,
+			Name:        "orc8r-orchestrator",
+			Namespace:   cr.Spec.NameSpace,
+			Labels:      labels,
+			Annotations: annotations,
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
 					Group:   v1.GroupVersion.Group,
@@ -987,11 +1003,16 @@ func (r *PmnsystemReconciler) orc8rTenantsService(cr *v1.Pmnsystem) *corev1.Serv
 		"app.kubernetes.io/name":      "orc8r",
 	}
 
+	annotations := map[string]string{
+		"orc8r.io/obsidian_handlers_path_prefixes": "/magma/v1/tenants, /magma/v1/tenants/:tenants_id",
+	}
+
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "orc8r-tenants",
-			Namespace: cr.Spec.NameSpace,
-			Labels:    labels,
+			Name:        "orc8r-tenants",
+			Namespace:   cr.Spec.NameSpace,
+			Labels:      labels,
+			Annotations: annotations,
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
 					Group:   v1.GroupVersion.Group,
@@ -1089,11 +1110,18 @@ func (r *PmnsystemReconciler) orc8rLteService(cr *v1.Pmnsystem) *corev1.Service 
 		"app.kubernetes.io/name":      "lte-orc8r",
 	}
 
+	annotations := map[string]string{
+		"orc8r.io/obsidian_handlers_path_prefixes": "/magma/v1/lte, /magma/v1/lte/:network_id",
+		"orc8r.io/state_indexer_types":             "single_enodeb",
+		"orc8r.io/state_indexer_version":           "1",
+	}
+
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "orc8r-lte",
-			Namespace: cr.Spec.NameSpace,
-			Labels:    labels,
+			Name:        "orc8r-lte",
+			Namespace:   cr.Spec.NameSpace,
+			Labels:      labels,
+			Annotations: annotations,
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
 					Group:   v1.GroupVersion.Group,
@@ -1145,11 +1173,16 @@ func (r *PmnsystemReconciler) orc8rNprobeService(cr *v1.Pmnsystem) *corev1.Servi
 		"app.kubernetes.io/name":      "lte-orc8r",
 	}
 
+	annotations := map[string]string{
+		"orc8r.io/obsidian_handlers_path_prefixes": "/magma/v1/lte/:network_id/network_probe",
+	}
+
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "orc8r-nprobe",
-			Namespace: cr.Spec.NameSpace,
-			Labels:    labels,
+			Name:        "orc8r-nprobe",
+			Namespace:   cr.Spec.NameSpace,
+			Labels:      labels,
+			Annotations: annotations,
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
 					Group:   v1.GroupVersion.Group,
@@ -1201,11 +1234,16 @@ func (r *PmnsystemReconciler) orc8rPolicyDbService(cr *v1.Pmnsystem) *corev1.Ser
 		"app.kubernetes.io/name":      "lte-orc8r",
 	}
 
+	annotations := map[string]string{
+		"orc8r.io/obsidian_handlers_path_prefixes": "/magma/v1/lte/:network_id/policy_qos_profiles, /magma/v1/networks/:network_id/policies, /magma/v1/networks/:network_id/rating_groups",
+	}
+
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "orc8r-policydb",
-			Namespace: cr.Spec.NameSpace,
-			Labels:    labels,
+			Name:        "orc8r-policydb",
+			Namespace:   cr.Spec.NameSpace,
+			Labels:      labels,
+			Annotations: annotations,
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
 					Group:   v1.GroupVersion.Group,
@@ -1257,11 +1295,16 @@ func (r *PmnsystemReconciler) orc8rSmsdService(cr *v1.Pmnsystem) *corev1.Service
 		"app.kubernetes.io/name":      "lte-orc8r",
 	}
 
+	annotations := map[string]string{
+		"orc8r.io/obsidian_handlers_path_prefixes": "/magma/v1/lte/:network_id/sms",
+	}
+
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "orc8r-smsd",
-			Namespace: cr.Spec.NameSpace,
-			Labels:    labels,
+			Name:        "orc8r-smsd",
+			Namespace:   cr.Spec.NameSpace,
+			Annotations: annotations,
+			Labels:      labels,
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
 					Group:   v1.GroupVersion.Group,
@@ -1362,11 +1405,18 @@ func (r *PmnsystemReconciler) orc8rSubscriberDbService(cr *v1.Pmnsystem) *corev1
 		"app.kubernetes.io/name":      "lte-orc8r",
 	}
 
+	annotations := map[string]string{
+		"orc8r.io/obsidian_handlers_path_prefixes": "/magma/v1/lte/:network_id/msisdns, /magma/v1/lte/:network_id/subscriber_state, /magma/v1/lte/:network_id/subscribers, /magma/v1/lte/:network_id/subscribers_v2",
+		"orc8r.io/state_indexer_types":             "mobilityd_ipdesc_record,gateway_subscriber_state",
+		"orc8r.io/state_indexer_version":           "1",
+	}
+
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "orc8r-subscriberdb",
-			Namespace: cr.Spec.NameSpace,
-			Labels:    labels,
+			Name:        "orc8r-subscriberdb",
+			Namespace:   cr.Spec.NameSpace,
+			Labels:      labels,
+			Annotations: annotations,
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
 					Group:   v1.GroupVersion.Group,
@@ -1835,3 +1885,124 @@ func (r *PmnsystemReconciler) orc8rPrometheusService(cr *v1.Pmnsystem) *corev1.S
 		},
 	}
 } // service for statefulset
+func (r *PmnsystemReconciler) orc8rBootstrapNginxService(cr *v1.Pmnsystem) *corev1.Service {
+	labels := map[string]string{
+		"app.kubernetes.io/component":  "nginx-proxy",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/name":       "orc8r",
+	}
+
+	annotations := map[string]string{
+		"chart-version":                  "1.8.0",
+		"meta.helm.sh/release-name":      "orc8r",
+		"meta.helm.sh/release-namespace": "pmn",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "nginx-proxy",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        "orc8r-bootstrap-nginx",
+			Namespace:   cr.Spec.NameSpace,
+			Labels:      labels,
+			Annotations: annotations,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Type:     corev1.ServiceTypeClusterIP,
+			Selector: selectorLabels,
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "health",
+					Port:       80,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(80),
+				},
+				{
+					Name:       "open-legacy",
+					Port:       443,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(8444),
+				},
+				{
+					Name:       "open",
+					Port:       8444,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(8444),
+				},
+			},
+			SessionAffinity: corev1.ServiceAffinityNone,
+		},
+	}
+}
+func (r *PmnsystemReconciler) orc8rClientcertService(cr *v1.Pmnsystem) *corev1.Service {
+	labels := map[string]string{
+		"app.kubernetes.io/component":  "nginx-proxy",
+		"app.kubernetes.io/instance":   "orc8r",
+		"app.kubernetes.io/name":       "orc8r",
+	}
+
+	annotations := map[string]string{
+		"chart-version":                  "1.8.0",
+		"meta.helm.sh/release-name":      "orc8r",
+		"meta.helm.sh/release-namespace": "pmn",
+		"release-name":                   "orc8r",
+	}
+
+	selectorLabels := map[string]string{
+		"app.kubernetes.io/component": "nginx-proxy",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
+	}
+
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        "orc8r-clientcert-nginx",
+			Namespace:   cr.Spec.NameSpace,
+			Labels:      labels,
+			Annotations: annotations,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(cr, schema.GroupVersionKind{
+					Group:   v1.GroupVersion.Group,
+					Version: v1.GroupVersion.Version,
+					Kind:    "Pmnsystem",
+				}),
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Type:     corev1.ServiceTypeClusterIP,
+			Selector: selectorLabels,
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "health",
+					Port:       80,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(80),
+				},
+				{
+					Name:       "clientcert-legacy",
+					Port:       443,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(8443),
+				},
+				{
+					Name:       "clientcert",
+					Port:       8443,
+					Protocol:   corev1.ProtocolTCP,
+					TargetPort: intstr.FromInt(8443),
+				},
+			},
+			SessionAffinity: corev1.ServiceAffinityNone,
+		},
+	}
+}
