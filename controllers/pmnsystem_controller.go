@@ -312,12 +312,11 @@ func (r *PmnsystemReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		r.Log.Info("Job created successfully", "Job.Name", job.Name)
 	}
 
-
 	// Ensure Ingress exists and is recreated if deleted
-    if err := r.ensureIngress(ctx, pmnsystem); err != nil {
-        log.Log.Error(err, "Failed to ensure Ingress")
-        return ctrl.Result{}, err
-    }
+	if err := r.ensureIngress(ctx, pmnsystem); err != nil {
+		log.Log.Error(err, "Failed to ensure Ingress")
+		return ctrl.Result{}, err
+	}
 
 	return ctrl.Result{}, nil
 }

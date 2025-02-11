@@ -1,0 +1,23 @@
+apiVersion: v1
+data:
+  nginx_prometheus_ssl.conf: "server {\n  listen 443 ssl;\n  server_name prometheus.operator.wavelabs.int;
+    \n  ssl_certificate /etc/nginx/conf.d/prometheus.crt;\n  ssl_certificate_key /etc/nginx/conf.d/prometheus.key;\n
+    \ ssl_verify_client on; \n  ssl_client_certificate /etc/nginx/conf.d/prometheus-ca.crt;\n
+    \ location / { \n     proxy_pass http://orc8r-prometheus:9090;\n     proxy_set_header
+    Host $http_host;\n     proxy_set_header X-Forwarded-Proto $scheme;\n  }\n}\n"
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: orc8r
+    meta.helm.sh/release-namespace: pmn
+  creationTimestamp: "2024-03-22T07:00:11Z"
+  labels:
+    app.kubernetes.io/instance: orc8r
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: metrics
+    app.kubernetes.io/version: "1.0"
+    helm.sh/chart: metrics-1.4.24
+  name: prometheus-nginx-proxy
+  namespace: pmn
+  resourceVersion: "75572548"
+  uid: 07468b31-d9eb-4bb5-bafd-4894a54043d2
