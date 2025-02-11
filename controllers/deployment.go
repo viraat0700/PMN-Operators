@@ -114,10 +114,10 @@ func (r *PmnsystemReconciler) deployment(
 					// Annotations: labels,
 				},
 				Spec: corev1.PodSpec{
-					Tolerations:  tolerations,
+					Tolerations:        tolerations,
 					ServiceAccountName: serviceAccount,
-					NodeSelector: nodeSelector,
-					Affinity:     affinity,
+					NodeSelector:       nodeSelector,
+					Affinity:           affinity,
 					Containers: []corev1.Container{
 						{
 							Name:                     name,
@@ -670,7 +670,7 @@ func (r *PmnsystemReconciler) orc8rBootStrapperDeployment(cr *v1.Pmnsystem) *app
 		nil,                           // Node selector
 		tolerations,                   // Tolerations
 		matchLabels,                   // Match labels
-		serviceAccount, 
+		serviceAccount,
 	)
 }
 
@@ -814,7 +814,7 @@ func (r *PmnsystemReconciler) orc8rCertifierDeployment(cr *v1.Pmnsystem) *appsv1
 
 	tolerations := []corev1.Toleration{}
 
-	serviceAccount:= ""
+	serviceAccount := ""
 
 	matchLabels := map[string]string{
 		"app.kubernetes.io/component": "certifier",
@@ -1149,7 +1149,7 @@ func (r *PmnsystemReconciler) orc8rConfiguratorDeployment(cr *v1.Pmnsystem) *app
 		"/usr/bin/envdir",
 	}
 
-	serviceAccount:=""
+	serviceAccount := ""
 
 	args := []string{
 		"/var/opt/magma/envdir",
@@ -1210,7 +1210,7 @@ func (r *PmnsystemReconciler) orc8rConfiguratorDeployment(cr *v1.Pmnsystem) *app
 					Labels: matchlabels,
 				},
 				Spec: corev1.PodSpec{
-					Tolerations: tolerations,
+					Tolerations:        tolerations,
 					ServiceAccountName: serviceAccount,
 					Containers: []corev1.Container{
 						{
@@ -1767,7 +1767,7 @@ func (r *PmnsystemReconciler) orc8rDispatcherDeployment(cr *v1.Pmnsystem) *appsv
 		nil,                           // NodeSelector
 		tolerations,                   // Tolerations
 		matchLabels,                   // Match labels
-		serviceAccount ,
+		serviceAccount,
 	)
 }
 
@@ -1946,7 +1946,7 @@ func (r *PmnsystemReconciler) orc8rEventdDeployment(cr *v1.Pmnsystem) *appsv1.De
 		nil,                           // Node selector
 		tolerations,                   // Tolerations
 		matchLabels,                   // Match labels
-		serviceAccount ,
+		serviceAccount,
 	)
 }
 
@@ -2247,7 +2247,6 @@ func (r *PmnsystemReconciler) orc8rNginxDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 		"app.kubernetes.io/name":      "orc8r",
 	}
 
-	
 	return &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "orc8r-nginx",
@@ -2273,8 +2272,8 @@ func (r *PmnsystemReconciler) orc8rNginxDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 				},
 				Spec: corev1.PodSpec{
 					ServiceAccountName: serviceAccount,
-					NodeSelector: nodeSelector,
-					Tolerations:  tolerations,
+					NodeSelector:       nodeSelector,
+					Tolerations:        tolerations,
 					Containers: []corev1.Container{
 						{
 							Name:                     "orc8r-nginx",
@@ -2476,7 +2475,7 @@ func (r *PmnsystemReconciler) orc8rNotifierDeployment(cr *v1.Pmnsystem) *appsv1.
 		nil,                           // Node selector
 		tolerations,                   // Tolerations
 		matchlabels,                   // Match labels
-		serviceAccount ,
+		serviceAccount,
 	)
 }
 
@@ -3334,7 +3333,6 @@ func (r *PmnsystemReconciler) orc8StateDeployment(cr *v1.Pmnsystem) *appsv1.Depl
 		tolerations,                   // toleration
 		matchLabels,                   // matchLabels
 		serviceAccount,
-
 	)
 }
 
@@ -3821,7 +3819,7 @@ func (r *PmnsystemReconciler) orc8rHaDeployment(cr *v1.Pmnsystem) *appsv1.Deploy
 		"app.kubernetes.io/name":      "lte-orc8r",
 	}
 
-	serviceAccount:= ""
+	serviceAccount := ""
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -3994,7 +3992,7 @@ func (r *PmnsystemReconciler) orc8LteDeployment(cr *v1.Pmnsystem) *appsv1.Deploy
 		"app.kubernetes.io/name":      "lte-orc8r",
 	}
 
-	serviceAccount:= ""
+	serviceAccount := ""
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -4167,7 +4165,7 @@ func (r *PmnsystemReconciler) orc8NprobeDeployment(cr *v1.Pmnsystem) *appsv1.Dep
 		"app.kubernetes.io/name":      "lte-orc8r",
 	}
 
-	serviceAccount:= ""
+	serviceAccount := ""
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -4340,7 +4338,7 @@ func (r *PmnsystemReconciler) orc8PolicyDbDeployment(cr *v1.Pmnsystem) *appsv1.D
 		"app.kubernetes.io/name":      "lte-orc8r",
 	}
 
-	serviceAccount:= ""
+	serviceAccount := ""
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -4513,7 +4511,7 @@ func (r *PmnsystemReconciler) orc8SmsdDeployment(cr *v1.Pmnsystem) *appsv1.Deplo
 		"app.kubernetes.io/name":      "lte-orc8r",
 	}
 
-	serviceAccount:= ""
+	serviceAccount := ""
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -4685,7 +4683,7 @@ func (r *PmnsystemReconciler) orc8SubscriberDbCacheDeployment(cr *v1.Pmnsystem) 
 		"app.kubernetes.io/name":      "lte-orc8r",
 	}
 
-	serviceAccount:=""
+	serviceAccount := ""
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -4858,7 +4856,7 @@ func (r *PmnsystemReconciler) orc8SubscriberDbDeployment(cr *v1.Pmnsystem) *apps
 		"app.kubernetes.io/name":      "lte-orc8r",
 	}
 
-	serviceAccount:=""
+	serviceAccount := ""
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -5033,7 +5031,7 @@ func (r *PmnsystemReconciler) nmsMagmaLteDeployment(cr *v1.Pmnsystem) *appsv1.De
 		"release_group":               "orc8r",
 	}
 
-	serviceAccount:=""
+	serviceAccount := ""
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -5174,7 +5172,7 @@ func (r *PmnsystemReconciler) orc8PrometheusCacheDeployment(cr *v1.Pmnsystem) *a
 		"app.kubernetes.io/instance":  "orc8r",
 		"app.kubernetes.io/name":      "metrics",
 	}
-	serviceAccount:= ""
+	serviceAccount := ""
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -5350,7 +5348,7 @@ func (r *PmnsystemReconciler) orc8rPrometheusConfigurerDeployment(cr *v1.Pmnsyst
 		"app.kubernetes.io/instance":  "orc8r",
 		"app.kubernetes.io/name":      "metrics",
 	}
-	serviceAccount:= ""
+	serviceAccount := ""
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -5507,7 +5505,7 @@ func (r *PmnsystemReconciler) orc8rPrometheusKafkaAdapterDeployment(cr *v1.Pmnsy
 		"app.kubernetes.io/name":     "prometheus-kafka-adapter",
 	}
 
-	serviceAccount:= ""
+	serviceAccount := ""
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -5666,7 +5664,7 @@ func (r *PmnsystemReconciler) orc8rPrometheusNginxProxyDeployment(cr *v1.Pmnsyst
 
 	tolerations := []corev1.Toleration{}
 
-	serviceAccount:= ""
+	serviceAccount := ""
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -5923,7 +5921,7 @@ func (r *PmnsystemReconciler) orc8rUserGrafanaDeployment(cr *v1.Pmnsystem) *apps
 		nodeSelector = map[string]string{} // Default to an empty map
 	}
 
-	serviceAccount:= ""
+	serviceAccount := ""
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -6104,7 +6102,7 @@ func (r *PmnsystemReconciler) orc8AlertManagerConfigurerDeployment(cr *v1.Pmnsys
 		nodeSelector = map[string]string{} // Default to an empty map
 	}
 
-	serviceAccount:= ""
+	serviceAccount := ""
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -6283,7 +6281,7 @@ func (r *PmnsystemReconciler) orc8AlertManagerDeployment(cr *v1.Pmnsystem) *apps
 		r.Log.Info("Invalid imagePullPolicy in CR, defaulting to IfNotPresent", "imagePullPolicy", cr.Spec.AlertManager.ImageAlertmanager.ImagePullPolicy)
 	}
 
-	serviceAccount:= ""
+	serviceAccount := ""
 
 	return r.deployment(
 		strategy, // Deployment strategy
@@ -6489,7 +6487,7 @@ func (r *PmnsystemReconciler) createOrc8rPrometheusStateFullSet(cr *v1.Pmnsystem
 		},
 	}
 
-	serviceAccount:= ""
+	serviceAccount := ""
 
 	updateStrategy := appsv1.StatefulSetUpdateStrategy{
 		RollingUpdate: &appsv1.RollingUpdateStatefulSetStrategy{

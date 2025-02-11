@@ -102,28 +102,28 @@ func (r *PmnsystemReconciler) orc8rIngress(cr *v1.Pmnsystem) *networkingv1.Ingre
 }
 
 func (r *PmnsystemReconciler) ensureIngress(ctx context.Context, cr *v1.Pmnsystem) error {
-    log := r.Log.WithValues("Ingress", cr.Name)
+	log := r.Log.WithValues("Ingress", cr.Name)
 
-    // Check if Ingress already exists
-    found := &networkingv1.Ingress{}
-    err := r.Get(ctx, types.NamespacedName{Name: "orc8r-passthrough-ingress", Namespace: cr.Spec.NameSpace}, found)
+	// Check if Ingress already exists
+	found := &networkingv1.Ingress{}
+	err := r.Get(ctx, types.NamespacedName{Name: "orc8r-passthrough-ingress", Namespace: cr.Spec.NameSpace}, found)
 
-    if err != nil && errors.IsNotFound(err) {
-        log.Info("Ingress not found, creating a new one.")
-        ingress := r.orc8rIngress(cr) // Generate the Ingress manifest
+	if err != nil && errors.IsNotFound(err) {
+		log.Info("Ingress not found, creating a new one.")
+		ingress := r.orc8rIngress(cr) // Generate the Ingress manifest
 
-        if err := r.Create(ctx, ingress); err != nil {
-            log.Error(err, "Failed to create Ingress")
-            return err
-        }
-        log.Info("Successfully created Ingress.")
-        return nil
-    } else if err != nil {
-        log.Error(err, "Failed to get Ingress")
-        return err
-    }
+		if err := r.Create(ctx, ingress); err != nil {
+			log.Error(err, "Failed to create Ingress")
+			return err
+		}
+		log.Info("Successfully created Ingress.")
+		return nil
+	} else if err != nil {
+		log.Error(err, "Failed to get Ingress")
+		return err
+	}
 
-    // Ingress exists, nothing to do
-    log.Info("Ingress already exists.")
-    return nil
+	// Ingress exists, nothing to do
+	log.Info("Ingress already exists.")
+	return nil
 }

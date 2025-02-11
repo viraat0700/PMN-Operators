@@ -177,8 +177,8 @@ spec:
   imagePullSecrets: "artifactory"
   devEnvironment: true
   cloudEnvironment: false
-  certDir: "/home/ubuntu/pmn-operator/VMFolder" ##where call the certificates are stored in the VM
-  repoPath: "/home/ubuntu/pmn-operator/mTLS" ##Repo which will be used to generate the certificates
+  certDir: "/mnt/c/Users/MSI-1/Desktop/PMN-Operator-Two/pmn-operator/Certificates" ##where call the certificates are stored in the VM
+  repoPath: "/mnt/c/Users/MSI-1/Desktop/PMN-Operator-Two/pmn-operator/certGenerator" ##Repo which will be used to generate the certificates
   secrets:
     - secretName: "pmn-certs"
       requiredFiles:

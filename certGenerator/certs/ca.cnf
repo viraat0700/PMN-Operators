@@ -1,0 +1,19 @@
+[req]
+default_md = sha256
+prompt = no
+req_extensions = v3_ext
+distinguished_name = req_distinguished_name
+
+[req_distinguished_name]
+countryName=		IN
+stateOrProvinceName=	TS
+localityName=		HYD
+organizationName=	veltris
+organizationalUnitName=	conn
+commonName=		notifier-ca.operator.wavelabs.int
+emailAddress=		viraat.shrivastava@veltris.com
+
+[v3_ext]
+keyUsage = critical,digitalSignature,keyEncipherment
+extendedKeyUsage = critical,serverAuth,clientAuth
+subjectAltName = DNS:notifier-ca.operator.wavelabs.int

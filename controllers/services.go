@@ -1887,9 +1887,9 @@ func (r *PmnsystemReconciler) orc8rPrometheusService(cr *v1.Pmnsystem) *corev1.S
 } // service for statefulset
 func (r *PmnsystemReconciler) orc8rBootstrapNginxService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app.kubernetes.io/component":  "nginx-proxy",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/name":       "orc8r",
+		"app.kubernetes.io/component": "nginx-proxy",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
 	}
 
 	annotations := map[string]string{
@@ -1947,9 +1947,9 @@ func (r *PmnsystemReconciler) orc8rBootstrapNginxService(cr *v1.Pmnsystem) *core
 }
 func (r *PmnsystemReconciler) orc8rClientcertService(cr *v1.Pmnsystem) *corev1.Service {
 	labels := map[string]string{
-		"app.kubernetes.io/component":  "nginx-proxy",
-		"app.kubernetes.io/instance":   "orc8r",
-		"app.kubernetes.io/name":       "orc8r",
+		"app.kubernetes.io/component": "nginx-proxy",
+		"app.kubernetes.io/instance":  "orc8r",
+		"app.kubernetes.io/name":      "orc8r",
 	}
 
 	annotations := map[string]string{
