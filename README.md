@@ -75,25 +75,23 @@ $ cd pmn-opertor/pmn-operator/configs/secrets
 
 ```
 
+```
 1. magmalte-mysql-secrets - it contains MYSQL Username and Password so edit them before applying.
 
 kubectl apply -f pmn-operator/configs/secrets/magmalte-mysql-secrets.yaml -n pmn
-
 ```
 
 ```
-
 2. orc8r-controller - it contains encoded string of DB username and password so edit them before applying.
 
 kubectl apply -f pmn-operator/configs/secrets/orc8r-controller.yaml -n pmn
-
 ```
 
 ```
-
 3. pmn-configs - it contains four files which needs to be mounted analytics.yml, elastic.yml, metricsd.yml and orchestrator.yml. (edit them accordingly)
 
 kubectl apply -f pmn-operator/configs/secrets/pmn-configs.yaml -n pmn
+```
 
 ```
 4. pmn-envdir - this secret defines a comma-separated list of enabled services for the Orc8r-Operator.
