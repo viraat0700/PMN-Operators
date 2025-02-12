@@ -363,6 +363,8 @@ type PmnsystemSpec struct {
 	NmsMagmaLte                   NmsMagmaLte                             `json:"nmsMagmaLte,omitempty"`
 	Orc8rNotifier                 Orc8rNotifier                           `json:"orc8rNotifier,omitempty"`
 	Orc8rNginxDeployment          Orc8rNginxDeployment                    `json:"orc8rNginxDeployment,omitempty"`
+	LinesToReplace                map[string]map[string]string            `json:"linesToReplace"`
+	NewFileNames                  map[string]string                       `json:"newFileNames"`
 }
 
 // PmnsystemStatus defines the observed state of Pmnsystem

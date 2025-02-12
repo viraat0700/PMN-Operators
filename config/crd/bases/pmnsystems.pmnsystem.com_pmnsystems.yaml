@@ -278,6 +278,12 @@ spec:
                 type: object
               imagePullSecrets:
                 type: string
+              linesToReplace:
+                additionalProperties:
+                  additionalProperties:
+                    type: string
+                  type: object
+                type: object
               metrics:
                 properties:
                   volumes:
@@ -291,6 +297,10 @@ spec:
                 type: object
               nameSpace:
                 type: string
+              newFileNames:
+                additionalProperties:
+                  type: string
+                type: object
               nginxImage:
                 type: string
               nmsMagmaLte:
@@ -959,6 +969,9 @@ spec:
                       type: object
                     type: array
                 type: object
+            required:
+            - linesToReplace
+            - newFileNames
             type: object
           status:
             description: PmnsystemStatus defines the observed state of Pmnsystem
