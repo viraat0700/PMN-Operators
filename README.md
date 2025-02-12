@@ -57,7 +57,7 @@ $ cd pmn-operator/config/crd/bases
 $ kubectl apply -f pmnsystems.pmnsystem.com_pmnsystems.yaml
 ```
 
-### To Install the Orc8r-operator
+### To Uninstall the Orc8r-operator
 
 $ cd pmn-operator
 
