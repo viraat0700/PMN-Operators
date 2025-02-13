@@ -10,281 +10,77 @@ metadata:
   name: pmnsystem-sample
 spec:
   # TODO(user): Add fields here
-  linesToReplace:
-    ca.cnf:
-      commonName: "notifier-ca.operator.wavelabs.int"
-      emailAddress: "viraat.shrivastava@veltris.com"
-      subjectAltName: "DNS:notifier-ca.operator.wavelabs.int"
-    client.cnf:
-      commonName: "notifier-client.operator.wavelabs.int"
-      emailAddress: "viraat.shrivastava@veltris.com"
-      subjectAltName: "DNS:notifier-client.operator.wavelabs.int"
-    server.cnf:
-      commonName: "notifier-server.operator.wavelabs.int"
-      emailAddress: "viraat.shrivastava@veltris.com"
-      subjectAltName: "DNS:notifier-server.operator.wavelabs.int"
-  newFileNames:
-    ca.crt: "notifier-ca.crt"
-    ca.key: "notifier-ca.key"
-    client.key: "notifier-client.key"
-    client.crt: "notifier-client.crt"
-    server.key: "notifier-server.key"
-    server.crt: "notifier-server.crt"
-  envVariablesPrometheusKafka:
-    - name: "KAFKA_BROKER_LIST"
-      value: "a7eda74b9c8a841b2935e41ee307e0df-1871632677.us-west-2.elb.amazonaws.com:9094"
-    - name: "KAFKA_TOPIC"
-      value: "metrics"
-    - name: "KAFKA_SECURITY_PROTOCOL"
-      value: "sasl_ssl"
-    - name: "KAFKA_SASL_MECHANISM"
-      value: "PLAIN"
-    - name: "KAFKA_SASL_USERNAME"
-      value: "admin"
-    - name: "KAFKA_SASL_PASSWORD"
-      value: "admin-secret"
-    - name: "KAFKA_COMPRESSION"
-      value: ""
-    - name: "KAFKA_BATCH_NUM_MESSAGES"
-      value: ""
-    - name: "SERIALIZATION_FORMAT"
-      value: ""
-    - name: "PORT"
-      value: "8080"
-    - name: "LOG_LEVEL"
-      value: ""
-    - name: "GIN_MODE"
-      value: ""
-    - name: "KAFKA_SSL_CLIENT_CERT_FILE"
-      value: "/client_cert/adapter-client.crt"
-    - name: "KAFKA_SSL_CLIENT_KEY_FILE"
-      value: "/client_cert/adapter-client.key"
-    - name: "KAFKA_SSL_CA_CERT_FILE"
-      value: "/client_cert/adapter-ca.crt"
-  envVariablesNMSMagmaLte:
-    - name: "API_CERT_FILENAME"
-      value: "/run/secrets/admin_operator.pem"
-    - name: "API_PRIVATE_KEY_FILENAME"
-      value: "/run/secrets/admin_operator.key.pem"
-    - name: "API_HOST"
-      value: "api.operator.wavelabs.int"
-    - name: "HOST"
-      value: "0.0.0.0"
-    - name: "PORT"
-      value: "8081"
-    - name: "MYSQL_DB"
-      value: "pmndev"
-    - name: "MYSQL_HOST"
-      value: "postgres.pmn.svc.cluster.local"
-    - name: "MYSQL_PORT"
-      value: "5432"
-    - name: "MYSQL_DIALECT"
-      value: "postgres"
-    - name: "USER_GRAFANA_ADDRESS"
-      value: "orc8r-user-grafana:3000"
-  envVariablesNMSMagmaLteDevEnv:
-    - name: API_CERT_FILENAME
-      value: /run/secrets/admin_operator.pem
-    - name: API_PRIVATE_KEY_FILENAME
-      value: /run/secrets/admin_operator.key.pem
-    - name: API_HOST
-      value: api.operator.wavelabs.int
-    - name: HOST
-      value: "0.0.0.0"
-    - name: PORT
-      value: "8081"
-    - name: MYSQL_DB
-      value: postgres
-    - name: MYSQL_HOST
-      value: postgres.pmn.svc.cluster.local
-    - name: MYSQL_PORT
-      value: "5432"
-    - name: MYSQL_DIALECT
-      value: postgres
-    - name: USER_GRAFANA_ADDRESS
-      value: orc8r-user-grafana:3000
-  envVariablesOrc8rNotifier:
-    - name: "PUBLISHER_PORT"
-      value: "5442"
-    - name: "SUBSCRIBER_PORT"
-      value: "443"
-    - name: "NOTIF_CERT_CA"
-      value: "notifier-ca.crt"
-    - name: "NOTIF_SERVER_CERT"
-      value: "notifier.crt"
-    - name: "NOTIF_SERVER_KEY"
-      value: "notifier.key"
-    - name: "NOTIF_SUBSCRIBER"
-      value: "notifier-internal"
-    - name: "NOTIF_PUBLISHER"
-      value: "notifier-internal"
-  envVariablesOrc8rNginx:
-    - name: "PROXY_BACKENDS"
-      value: "postgres.pmn.svc.cluster.local"
-    - name: "CONTROLLER_HOSTNAME"
-      value: "controller.operator.wavelabs.int"
-    - name: "RESOLVER"
-      value: "coredns.kube-system.svc.cluster.local valid=10s"
-    - name: "SERVICE_REGISTRY_MODE"
-      value: "k8s "
-    - name: "SSL_CERTIFICATE"
-      value: "/var/opt/magma/certs/controller.crt"
-    - name: "SSL_CERTIFICATE_KEY"
-      value: "/var/opt/magma/certs/controller.key"
-    - name: "SSL_CLIENT_CERTIFICATE"
-      value: "/var/opt/magma/certs/certifier.pem"
+  linesToReplace: {{- toYaml .Values.linesToReplace | nindent 4 }}
+  newFileNames: {{- toYaml .Values.newFileNames | nindent 4 }}
+  envVariablesPrometheusKafka: {{ toYaml .Values.envVariablesPrometheusKafka | nindent 2 }}
+  envVariablesNMSMagmaLte: {{ toYaml .Values.envVariablesNMSMagmaLte | nindent 2 }}
+  envVariablesNMSMagmaLteDevEnv: {{ toYaml .Values.envVariablesNMSMagmaLteDevEnv | nindent 2 }}
+  envVariablesOrc8rNotifier: {{ toYaml .Values.envVariablesOrc8rNotifier | nindent 2 }}
+  envVariablesOrc8rNginx: {{ toYaml .Values.envVariablesOrc8rNginx | nindent 2 }}
   envVariablesDirectoryD:
-    - name: "SQL_DRIVER"
-      value: "postgres"
-    - name: "SQL_DIALECT"
-      value: "psql"
-    - name: "SERVICE_REGISTRY_MODE"
-      value: "k8s"
-    - name: "HELM_RELEASE_NAME"
-      value: "orc8r"
-    - name: "SERVICE_REGISTRY_NAMESPACE"
-      value: "pmn"
-    - name: "HELM_VERSION_TAG"
-      value: "1.8.0"
-    - name: "VERSION_TAG"
-      value: "1.8.0-6c4579b5"
-    - name: "ORC8R_DOMAIN_NAME"
-      value: "magma.test"
-    - name: "PUBLISHER_PORT"
-      value: "5442"
-    - name: "SUBSCRIBER_PORT"
-      value: "443"
-    - name: "NOTIF_PUBLISHER"
-      value: "notifier-internal"
-    - name: "NOTIF_SUBSCRIBER"
-      value: "notifier-internal"
-  envVariables:
-    - name: "SQL_DRIVER"
-      value: "postgres"
-    - name: "SQL_DIALECT"
-      value: "psql"
-    - name: "SERVICE_REGISTRY_MODE"
-      value: "k8s"
-    - name: "HELM_RELEASE_NAME"
-      value: "orc8r"
-    - name: "SERVICE_REGISTRY_NAMESPACE"
-      value: "pmn"
-    - name: "HELM_VERSION_TAG"
-      value: "1.8.0"
-    - name: "VERSION_TAG"
-      value: "1.8.0-6c4579b5"
-    - name: "ORC8R_DOMAIN_NAME"
-      value: "magma.test"
-    - name: "PUBLISHER_PORT"
-      value: "5442"
-    - name: "SUBSCRIBER_PORT"
-      value: "443"
-    - name: "NOTIF_PUBLISHER"
-      value: "notifier-internal"
-    - name: "NOTIF_SUBSCRIBER"
-      value: "notifier-internal"
-    - name: "NOTIF_CERT_CA"
-      value: "notifier-ca.crt"
-    - name: "NOTIF_SERVER_CERT"
-      value: "notifier.crt"
-    - name: "NOTIF_SERVER_KEY"
-      value: "notifier.key"
-  replicaCount: 1
-  pullPolicy: IfNotPresent
-  nameSpace: "pmn"
-  notifierImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/notifier:1.8.0-a914c772"
-  nginxImage: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/nginx:1.8.0-a914c772"
+    {{ toYaml .Values.envVariablesDirectoryD | nindent 2 }}
+  envVariables: {{ toYaml .Values.envVariables | nindent 2 }}
+  replicaCount: {{ .Values.replicaCount }}
+  pullPolicy: "{{ .Values.pullPolicy }}"
+  nameSpace: "{{ .Values.namespace }}"
+  notifierImage: "{{ .Values.notifierImage }}"
+  nginxImage: "{{ .Values.nginxImage }}"
   imagePullSecrets: "artifactory"
-  devEnvironment: true
-  cloudEnvironment: false
+  devEnvironment: {{ .Values.devEnvironment }}
+  cloudEnvironment: {{ .Values.cloudEnvironment }}
   certDir: "{{ .Values.certDir }}" ##where call the certificates are stored in the VM
   repoPath: "{{ .Values.repoPath }}" ##Repo which will be used to generate the certificates
-  secrets:
-    - secretName: "pmn-certs"
-      requiredFiles:
-        - "controller.crt"
-        - "controller.key"
-        - "certifier.pem"
-        - "certifier.key"
-        - "notifier.crt"
-        - "notifier.key"
-        - "notifier-ca.crt"
-        - "admin_operator.pem"
-        - "admin_operator.key.pem"
-        - "bootstrapper.key"
-        - "rootCA.pem"
-        - "rootCA.key"
-    - secretName: "prometheus-adapter-certs"
-      requiredFiles:
-        - "adapter-ca.crt"
-        - "adapter-client.crt"
-        - "adapter-client.key"
-    - secretName: "prometheus-certs"
-      requiredFiles:
-        - "prometheus-ca.crt"
-        - "prometheus.crt"
-        - "prometheus.key"
-    - secretName: "nms-certs"
-      requiredFiles:
-        - "admin_operator.key.pem"
-        - "admin_operator.pem"
-        - "controller.crt"
-        - "controller.key"
+  secrets: {{ toYaml .Values.secrets | nindent 2 }}
   persistentForStatefulSet:
-    pvcClaimName: "abc"
-    storageClassName: "nfs"
+    pvcClaimName: "{{ .Values.persistentForStatefulSet.pvcClaimName}}"
+    storageClassName: "{{ .Values.persistentForStatefulSet.storageClassName}}"
   persistent:
-    pvcClaimName: "promcfg"
-    storageClassName: "nfs"
+    pvcClaimName: "{{ .Values.persistent.pvcClaimName }}"
+    storageClassName: "{{ .Values.persistent.storageClassName }}"
   image:
-    repository: "815281572631.dkr.ecr.us-west-2.amazonaws.com/pmn/dev/controller"
-    tag: "1.8.0-6c4579b5"
+    repository: "{{ .Values.image.repository }}"
+    tag: "{{ .Values.image.tag }}"
   alertmanagerConfigurer:
-    replica: 1
-    nodeSelector: {}
+    replica: {{ .Values.alertmanagerConfigurer.replica }}
+    {{- if .Values.alertmanagerConfigurer.nodeSelector }}
+    nodeSelector:
+      {{- toYaml .Values.alertmanagerConfigurer.nodeSelector | nindent 6 }}
+    {{- end }}
     tolerations:
-      - key: "key1"
-        operator: "Equal"
-        value: "value1"
-        effect: "NoSchedule"
+      {{- toYaml .Values.alertmanagerConfigurer.tolerations | nindent 6 }}
     imageAlertManagerConfigurer:
-      repository: "docker.io/facebookincubator/alertmanager-configurer"
-      tag: "1.0.4"
-      imagePullPolicy: IfNotPresent
-    alertManagerConfigPort: 9101
-    alertManagerConfPath: "/etc/configs/alertmanager.yml"
-    alertmanagerURL: "orc8r-alertmanager:9093"
+      repository: "{{ .Values.alertmanagerConfigurer.imageAlertManagerConfigurer.repository }}"
+      tag: "{{ .Values.alertmanagerConfigurer.imageAlertManagerConfigurer.tag }}"
+      imagePullPolicy: "{{ .Values.alertmanagerConfigurer.imageAlertManagerConfigurer.imagePullPolicy }}"
+    alertManagerConfigPort: {{ .Values.alertmanagerConfigurer.alertManagerConfigPort }}
+    alertManagerConfPath: "{{ .Values.alertmanagerConfigurer.alertManagerConfPath }}"
+    alertmanagerURL: "{{ .Values.alertmanagerConfigurer.alertmanagerURL }}"
     serviceSpec:
-      type: "ClusterIP"
+      type: "{{ .Values.alertmanagerConfigurer.serviceSpec.type }}"
       portSpec:
-        - name: "alertmanager-config"
-          port: 9101
-          protocol: TCP
-          targetPort: 9101
+        {{- toYaml .Values.alertmanagerConfigurer.serviceSpec.portSpec | nindent 8 }}
   metrics:
     volumes:
       prometheusConfig:
-        volumeSpec: ""
+        volumeSpec: "{{ .Values.metrics.volumes.prometheusConfig.volumeSpec }}"
   prometheus:
-    replicas: 1
+    replicas: {{ .Values.prometheus.replicas }}
   alertManager:
     serviceSpec:
-      type: "ClusterIP"
+      type: {{ .Values.alertManager.serviceSpec.type }}
       portSpec:
-        - name: "alertmanager"
-          port: 9093
-          protocol: TCP
-          targetPort: 9093
-    nodeSelector: {}
-    tolerations:
-      - key: "key1"
-        operator: "Equal"
-        value: "value1"
-        effect: "NoSchedule"
+        {{- range .Values.alertManager.serviceSpec.portSpec }}
+        - name: "{{ .name }}"
+          port: {{ .port }}
+          protocol: "{{ .protocol }}"
+          targetPort: {{ .targetPort }}
+      {{- end }}
+    nodeSelector: {{ toYaml .Values.alertManager.nodeSelector | nindent 6 }}
+    tolerations: {{ toYaml .Values.alertManager.tolerations | nindent 6 }}
     imageAlertmanager:
-      repository: "docker.io/prom/alertmanager"
-      tag: "v0.18.0"
-      imagePullPolicy: "IfNotPresent"
+      repository: "{{ .Values.alertManager.imageAlertmanager.repository }}"
+      tag: "{{ .Values.alertManager.imageAlertmanager.tag }}"
+      imagePullPolicy: "{{ .Values.alertManager.imageAlertmanager.imagePullPolicy }}"
   userGrafana:
     serviceSpec:
       type: "ClusterIP"
@@ -492,4 +288,3 @@ spec:
         - 8444
         - 9443
         - 80
-
