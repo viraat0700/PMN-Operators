@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pmnoperator-deployment
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: pmnoperator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pmnoperator
+  template:
+    metadata:
+      labels:
+        app: pmnoperator
+    spec:
+      containers:
+      - name: pmnoperator
+        image: {{ .Values.operatorImage }}
+        volumeMounts:
+        - name: certs-volume
+          mountPath: {{ .Values.repoPath }}
+        - name: certificates-volume
+          mountPath: {{ .Values.certDir }}
+      serviceAccountName: pmn
+      volumes:
+      - name: certs-volume
+        hostPath:
+          path: {{ .Values.repoPath }}
+          type: DirectoryOrCreate
+      - name: certificates-volume
+        hostPath:
+          path: {{ .Values.certDir }}
+          type: DirectoryOrCreate
+

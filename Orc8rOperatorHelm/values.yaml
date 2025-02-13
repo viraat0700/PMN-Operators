@@ -1,0 +1,4 @@
+operatorImage: viraat0700/orc8r-operator:v1
+namespace: "pmn"
+certDir: "/home/ubuntu/pmn-operator/Orc8rOperatorHelm/Certificates"
+repoPath: "/home/ubuntu/pmn-operator/Orc8rOperatorHelm/certGenerator/certs"

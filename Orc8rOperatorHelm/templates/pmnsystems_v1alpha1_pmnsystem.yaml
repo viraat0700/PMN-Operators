@@ -197,8 +197,8 @@ spec:
   imagePullSecrets: "artifactory"
   devEnvironment: true
   cloudEnvironment: false
-  certDir: "/home/ubuntu/pmn-operator/Certificates" ##where call the certificates are stored in the VM
-  repoPath: "/home/ubuntu/pmn-operator/certGenerator" ##Repo which will be used to generate the certificates
+  certDir: "{{ .Values.certDir }}" ##where call the certificates are stored in the VM
+  repoPath: "{{ .Values.repoPath }}" ##Repo which will be used to generate the certificates
   secrets:
     - secretName: "pmn-certs"
       requiredFiles:
@@ -492,3 +492,4 @@ spec:
         - 8444
         - 9443
         - 80
+
