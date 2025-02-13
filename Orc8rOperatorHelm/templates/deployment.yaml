@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pmnoperator-deployment
+  name: Orc8rOperator-deployment
   namespace: {{ .Release.Namespace }}
   labels:
-    app: pmnoperator
+    app: Orc8rOperator
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: pmnoperator
+      app: Orc8rOperator
   template:
     metadata:
       labels:
-        app: pmnoperator
+        app: Orc8rOperator
     spec:
       containers:
-      - name: pmnoperator
+      - name: Orc8rOperator
         image: {{ .Values.operatorImage }}
         volumeMounts:
         - name: certs-volume

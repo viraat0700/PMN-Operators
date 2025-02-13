@@ -2,64 +2,21 @@
 
 ## Pre-requisites
 
-- Golang
-- make
-- Operator-sdk
+- Helm
 - A running Kubernetes cluster
 
-#### Golang
+#### Helm
 
-To install Golang use the below command:
+To install Helm use the below command:
 
 ```
-$ sudo apt update
-$ sudo apt install golang -y
-$ wget https://go.dev/dl/go1.22.0.linux-amd64.tar.gz
-$ sudo tar -C /usr/local -xzf go1.22.0.linux-amd64.tar.gz
-$ echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
-$ source ~/.bashrc
-$ go version
+$ curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 ```
 
 To verify the Golang installation:
 
 ```
-go version
-```
-
-#### make
-
-To install make use the below command:
-
-```
-$ sudo apt update
-$ sudo apt install make -y
-```
-
-To verify the make installation:
-
-```
-make --version
-```
-
-#### Operator-sdk
-
-To install operator-sdk use the below command:
-
-```
-$ export ARCH=$(uname -m)
-$ export OS=$(uname | awk '{print tolower($0)}')
-$ export OPERATOR_SDK_DL_URL=https://github.com/operator-framework/operator-sdk/releases/latest/download
-$ curl -LO ${OPERATOR_SDK_DL_URL}/operator-sdk_${OS}_${ARCH}
-$ chmod +x operator-sdk_${OS}_${ARCH}
-$ sudo mv operator-sdk_${OS}_${ARCH} /usr/local/bin/operator-sdk
-
-```
-
-To verify the operator-sdk installation:
-
-```
-operator-sdk version
+$ helm version
 ```
 
 #### Create the 'PMN' namespace
